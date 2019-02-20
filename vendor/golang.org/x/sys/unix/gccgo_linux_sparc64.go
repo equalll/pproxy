@@ -5,13 +5,14 @@
 // +build gccgo,linux,sparc64
 
 package unix
+import "github.com/equalll/mydebug"
 
 import "syscall"
 
 //extern sysconf
 func realSysconf(name int) int64
 
-func sysconf(name int) (n int64, err syscall.Errno) {
+func sysconf(name int) (n int64, err syscall.Errno) {mydebug.INFO()
 	r := realSysconf(name)
 	if r < 0 {
 		return 0, syscall.GetErrno()

@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"encoding/base64"
@@ -9,7 +10,7 @@ import (
 
 var proxyAuthorizatonHeader = "Proxy-Authorization"
 
-func getAuthorInfo(req *http.Request) *User {
+func getAuthorInfo(req *http.Request) *User {mydebug.INFO()
 	defaultInfo := new(User)
 	authheader := strings.SplitN(req.Header.Get(proxyAuthorizatonHeader), " ", 2)
 	if len(authheader) != 2 || authheader[0] != "Basic" {
@@ -26,7 +27,7 @@ func getAuthorInfo(req *http.Request) *User {
 	return &User{Name: userpass[0], PswMd5: utils.StrMd5(userpass[1]), Psw: userpass[1]}
 }
 
-func (ser *ProxyServe) checkUserLogin(userInfo *User) bool {
+func (ser *ProxyServe) checkUserLogin(userInfo *User) bool {mydebug.INFO()
 	if userInfo == nil || ser.Users == nil {
 		return false
 	}
@@ -42,7 +43,7 @@ func (ser *ProxyServe) checkUserLogin(userInfo *User) bool {
 }
 
 //(ser.conf.AuthType == AuthType_Basic && !ser.CheckUserLogin(reqCtx.User))
-func (ser *ProxyServe) checkHTTPAuth(reqCtx *requestCtx) bool {
+func (ser *ProxyServe) checkHTTPAuth(reqCtx *requestCtx) bool {mydebug.INFO()
 	switch ser.conf.AuthType {
 	case authTypeNO:
 		return true

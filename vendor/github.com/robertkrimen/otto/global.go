@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"strconv"
@@ -41,7 +42,7 @@ var (
 	}
 )
 
-func newContext() *_runtime {
+func newContext() *_runtime {mydebug.INFO()
 
 	self := &_runtime{}
 
@@ -56,22 +57,22 @@ func newContext() *_runtime {
 	return self
 }
 
-func (runtime *_runtime) newBaseObject() *_object {
+func (runtime *_runtime) newBaseObject() *_object {mydebug.INFO()
 	self := newObject(runtime, "")
 	return self
 }
 
-func (runtime *_runtime) newClassObject(class string) *_object {
+func (runtime *_runtime) newClassObject(class string) *_object {mydebug.INFO()
 	return newObject(runtime, class)
 }
 
-func (runtime *_runtime) newPrimitiveObject(class string, value Value) *_object {
+func (runtime *_runtime) newPrimitiveObject(class string, value Value) *_object {mydebug.INFO()
 	self := runtime.newClassObject(class)
 	self.value = value
 	return self
 }
 
-func (self *_object) primitiveValue() Value {
+func (self *_object) primitiveValue() Value {mydebug.INFO()
 	switch value := self.value.(type) {
 	case Value:
 		return value
@@ -81,7 +82,7 @@ func (self *_object) primitiveValue() Value {
 	return Value{}
 }
 
-func (self *_object) hasPrimitive() bool {
+func (self *_object) hasPrimitive() bool {mydebug.INFO()
 	switch self.value.(type) {
 	case Value, _stringObject:
 		return true
@@ -89,19 +90,19 @@ func (self *_object) hasPrimitive() bool {
 	return false
 }
 
-func (runtime *_runtime) newObject() *_object {
+func (runtime *_runtime) newObject() *_object {mydebug.INFO()
 	self := runtime.newClassObject("Object")
 	self.prototype = runtime.global.ObjectPrototype
 	return self
 }
 
-func (runtime *_runtime) newArray(length uint32) *_object {
+func (runtime *_runtime) newArray(length uint32) *_object {mydebug.INFO()
 	self := runtime.newArrayObject(length)
 	self.prototype = runtime.global.ArrayPrototype
 	return self
 }
 
-func (runtime *_runtime) newArrayOf(valueArray []Value) *_object {
+func (runtime *_runtime) newArrayOf(valueArray []Value) *_object {mydebug.INFO()
 	self := runtime.newArray(uint32(len(valueArray)))
 	for index, value := range valueArray {
 		if value.isEmpty() {
@@ -112,25 +113,25 @@ func (runtime *_runtime) newArrayOf(valueArray []Value) *_object {
 	return self
 }
 
-func (runtime *_runtime) newString(value Value) *_object {
+func (runtime *_runtime) newString(value Value) *_object {mydebug.INFO()
 	self := runtime.newStringObject(value)
 	self.prototype = runtime.global.StringPrototype
 	return self
 }
 
-func (runtime *_runtime) newBoolean(value Value) *_object {
+func (runtime *_runtime) newBoolean(value Value) *_object {mydebug.INFO()
 	self := runtime.newBooleanObject(value)
 	self.prototype = runtime.global.BooleanPrototype
 	return self
 }
 
-func (runtime *_runtime) newNumber(value Value) *_object {
+func (runtime *_runtime) newNumber(value Value) *_object {mydebug.INFO()
 	self := runtime.newNumberObject(value)
 	self.prototype = runtime.global.NumberPrototype
 	return self
 }
 
-func (runtime *_runtime) newRegExp(patternValue Value, flagsValue Value) *_object {
+func (runtime *_runtime) newRegExp(patternValue Value, flagsValue Value) *_object {mydebug.INFO()
 
 	pattern := ""
 	flags := ""
@@ -153,20 +154,20 @@ func (runtime *_runtime) newRegExp(patternValue Value, flagsValue Value) *_objec
 	return runtime._newRegExp(pattern, flags)
 }
 
-func (runtime *_runtime) _newRegExp(pattern string, flags string) *_object {
+func (runtime *_runtime) _newRegExp(pattern string, flags string) *_object {mydebug.INFO()
 	self := runtime.newRegExpObject(pattern, flags)
 	self.prototype = runtime.global.RegExpPrototype
 	return self
 }
 
 // TODO Should (probably) be one argument, right? This is redundant
-func (runtime *_runtime) newDate(epoch float64) *_object {
+func (runtime *_runtime) newDate(epoch float64) *_object {mydebug.INFO()
 	self := runtime.newDateObject(epoch)
 	self.prototype = runtime.global.DatePrototype
 	return self
 }
 
-func (runtime *_runtime) newError(name string, message Value, stackFramesToPop int) *_object {
+func (runtime *_runtime) newError(name string, message Value, stackFramesToPop int) *_object {mydebug.INFO()
 	var self *_object
 	switch name {
 	case "EvalError":
@@ -191,7 +192,7 @@ func (runtime *_runtime) newError(name string, message Value, stackFramesToPop i
 	return self
 }
 
-func (runtime *_runtime) newNativeFunction(name, file string, line int, _nativeFunction _nativeFunction) *_object {
+func (runtime *_runtime) newNativeFunction(name, file string, line int, _nativeFunction _nativeFunction) *_object {mydebug.INFO()
 	self := runtime.newNativeFunctionObject(name, file, line, _nativeFunction, 0)
 	self.prototype = runtime.global.FunctionPrototype
 	prototype := runtime.newObject()
@@ -200,7 +201,7 @@ func (runtime *_runtime) newNativeFunction(name, file string, line int, _nativeF
 	return self
 }
 
-func (runtime *_runtime) newNodeFunction(node *_nodeFunctionLiteral, scopeEnvironment _stash) *_object {
+func (runtime *_runtime) newNodeFunction(node *_nodeFunctionLiteral, scopeEnvironment _stash) *_object {mydebug.INFO()
 	// TODO Implement 13.2 fully
 	self := runtime.newNodeFunctionObject(node, scopeEnvironment)
 	self.prototype = runtime.global.FunctionPrototype
@@ -211,7 +212,7 @@ func (runtime *_runtime) newNodeFunction(node *_nodeFunctionLiteral, scopeEnviro
 }
 
 // FIXME Only in one place...
-func (runtime *_runtime) newBoundFunction(target *_object, this Value, argumentList []Value) *_object {
+func (runtime *_runtime) newBoundFunction(target *_object, this Value, argumentList []Value) *_object {mydebug.INFO()
 	self := runtime.newBoundFunctionObject(target, this, argumentList)
 	self.prototype = runtime.global.FunctionPrototype
 	prototype := runtime.newObject()

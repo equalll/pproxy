@@ -1,5 +1,6 @@
 // extension to goproxy that will allow you to easily filter web browser related content.
 package goproxy_html
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -9,9 +10,9 @@ import (
 	"net/http"
 	"strings"
 
-	"code.google.com/p/go-charset/charset"
-	_ "code.google.com/p/go-charset/data"
 	"github.com/elazarl/goproxy"
+	"github.com/rogpeppe/go-charset/charset"
+	_ "github.com/rogpeppe/go-charset/data"
 )
 
 var IsHtml goproxy.RespCondition = goproxy.ContentTypeIs("text/html")
@@ -31,11 +32,11 @@ var IsWebRelatedText goproxy.RespCondition = goproxy.ContentTypeIs("text/html",
 	"text/xml",
 	"text/json")
 
-// HandleString will recieve a function that filters a string, and will convert the
+// HandleString will receive a function that filters a string, and will convert the
 // request body to a utf8 string, according to the charset specified in the Content-Type
 // header.
 // guessing Html charset encoding from the <META> tags is not yet implemented.
-func HandleString(f func(s string, ctx *goproxy.ProxyCtx) string) goproxy.RespHandler {
+func HandleString(f func(s string, ctx *goproxy.ProxyCtx) string) goproxy.RespHandler {mydebug.INFO()
 	return HandleStringReader(func(r io.Reader, ctx *goproxy.ProxyCtx) io.Reader {
 		b, err := ioutil.ReadAll(r)
 		if err != nil {
@@ -46,9 +47,9 @@ func HandleString(f func(s string, ctx *goproxy.ProxyCtx) string) goproxy.RespHa
 	})
 }
 
-// Will recieve an input stream which would convert the response to utf-8
+// Will receive an input stream which would convert the response to utf-8
 // The given function must close the reader r, in order to close the response body.
-func HandleStringReader(f func(r io.Reader, ctx *goproxy.ProxyCtx) io.Reader) goproxy.RespHandler {
+func HandleStringReader(f func(r io.Reader, ctx *goproxy.ProxyCtx) io.Reader) goproxy.RespHandler {mydebug.INFO()
 	return goproxy.FuncRespHandler(func(resp *http.Response, ctx *goproxy.ProxyCtx) *http.Response {
 		if ctx.Error != nil {
 			return nil
@@ -88,10 +89,10 @@ type readFirstCloseBoth struct {
 	c io.Closer
 }
 
-func (rfcb *readFirstCloseBoth) Read(b []byte) (nr int, err error) {
+func (rfcb *readFirstCloseBoth) Read(b []byte) (nr int, err error) {mydebug.INFO()
 	return rfcb.r.Read(b)
 }
-func (rfcb *readFirstCloseBoth) Close() error {
+func (rfcb *readFirstCloseBoth) Close() error {mydebug.INFO()
 	err1 := rfcb.r.Close()
 	err2 := rfcb.c.Close()
 	if err1 != nil && err2 != nil {

@@ -11,6 +11,7 @@
 // syscall_bsd.go or syscall_unix.go.
 
 package unix
+import "github.com/equalll/mydebug"
 
 import "unsafe"
 
@@ -29,7 +30,7 @@ type SockaddrDatalink struct {
 }
 
 // Translate "kern.hostname" to []_C_int{0,1,2,3}.
-func nametomib(name string) (mib []_C_int, err error) {
+func nametomib(name string) (mib []_C_int, err error) {mydebug.INFO()
 	const siz = unsafe.Sizeof(mib[0])
 
 	// NOTE(rsc): It seems strange to set the buffer to have
@@ -60,7 +61,7 @@ func nametomib(name string) (mib []_C_int, err error) {
 // appending the names to names.  It returns the number
 // bytes consumed from buf, the number of entries added
 // to names, and the new names slice.
-func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {
+func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {mydebug.INFO()
 	origlen := len(buf)
 	for max != 0 && len(buf) > 0 {
 		dirent := (*Dirent)(unsafe.Pointer(&buf[0]))
@@ -83,7 +84,7 @@ func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, 
 
 //sysnb pipe() (r int, w int, err error)
 
-func Pipe(p []int) (err error) {
+func Pipe(p []int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -92,16 +93,16 @@ func Pipe(p []int) (err error) {
 }
 
 //sys	extpread(fd int, p []byte, flags int, offset int64) (n int, err error)
-func Pread(fd int, p []byte, offset int64) (n int, err error) {
+func Pread(fd int, p []byte, offset int64) (n int, err error) {mydebug.INFO()
 	return extpread(fd, p, 0, offset)
 }
 
 //sys	extpwrite(fd int, p []byte, flags int, offset int64) (n int, err error)
-func Pwrite(fd int, p []byte, offset int64) (n int, err error) {
+func Pwrite(fd int, p []byte, offset int64) (n int, err error) {mydebug.INFO()
 	return extpwrite(fd, p, 0, offset)
 }
 
-func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
+func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {mydebug.INFO()
 	var _p0 unsafe.Pointer
 	var bufsize uintptr
 	if len(buf) > 0 {

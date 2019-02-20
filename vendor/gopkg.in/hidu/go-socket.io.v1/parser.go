@@ -1,4 +1,5 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -18,7 +19,7 @@ type Event struct {
 	Args json.RawMessage `json:"args"`
 }
 
-func encodePacket(endpoint string, packet Packet) []byte {
+func encodePacket(endpoint string, packet Packet) []byte {mydebug.INFO()
 	buf := &bytes.Buffer{}
 	buf.WriteString(strconv.Itoa(int(packet.Type())))
 	buf.WriteByte(':')
@@ -64,7 +65,7 @@ func encodePacket(endpoint string, packet Packet) []byte {
 	return buf.Bytes()
 }
 
-func encodePayload(payloads [][]byte) []byte {
+func encodePayload(payloads [][]byte) []byte {mydebug.INFO()
 	if len(payloads) == 1 {
 		return payloads[0]
 	}
@@ -78,7 +79,7 @@ func encodePayload(payloads [][]byte) []byte {
 	return buf.Bytes()
 }
 
-func decodePacket(b []byte) (packet Packet, err error) {
+func decodePacket(b []byte) (packet Packet, err error) {mydebug.INFO()
 	b = bytes.Trim(b, "\n \r\t")
 	pieces := packetRegexp.FindSubmatch(b)
 	if pieces == nil {
@@ -177,7 +178,7 @@ func decodePacket(b []byte) (packet Packet, err error) {
 	return
 }
 
-func decodePayload(data []byte) (packets []Packet, err error) {
+func decodePayload(data []byte) (packets []Packet, err error) {mydebug.INFO()
 	if len(data) >= 2 && bytes.Equal(data[0:2], packetSep) {
 		for {
 			if len(data) == 0 {

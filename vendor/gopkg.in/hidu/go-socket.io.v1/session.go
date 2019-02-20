@@ -1,4 +1,5 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 import (
 	"crypto/rand"
@@ -35,7 +36,7 @@ type Session struct {
 
 }
 
-func NewSessionID() string {
+func NewSessionID() string {mydebug.INFO()
 	b := make([]byte, SessionIDLength)
 
 	if _, err := io.ReadFull(rand.Reader, b); err != nil {
@@ -49,7 +50,7 @@ func NewSessionID() string {
 	return string(b)
 }
 
-func NewSession(emitters map[string]*EventEmitter, sessionId string, timeout int, sendHeartbeat bool, r *http.Request) *Session {
+func NewSession(emitters map[string]*EventEmitter, sessionId string, timeout int, sendHeartbeat bool, r *http.Request) *Session {mydebug.INFO()
 	ret := &Session{
 		emitters:          emitters,
 		SessionId:         sessionId,
@@ -64,7 +65,7 @@ func NewSession(emitters map[string]*EventEmitter, sessionId string, timeout int
 	return ret
 }
 
-func (ss *Session) Of(name string) (nameSpace *NameSpace) {
+func (ss *Session) Of(name string) (nameSpace *NameSpace) {mydebug.INFO()
 	ss.mutex.Lock()
 	defer ss.mutex.Unlock()
 	if nameSpace = ss.nameSpaces[name]; nameSpace == nil {
@@ -79,7 +80,7 @@ func (ss *Session) Of(name string) (nameSpace *NameSpace) {
 	return
 }
 
-func (ss *Session) loop() {
+func (ss *Session) loop() {mydebug.INFO()
 	err := ss.onOpen()
 	if err != nil {
 		return
@@ -117,7 +118,7 @@ func (ss *Session) loop() {
 	}
 }
 
-func (ss *Session) checkConnection() error {
+func (ss *Session) checkConnection() error {mydebug.INFO()
 	now := time.Now()
 	if ss.sendHeartBeat && now.Sub(ss.lastCheck) > ss.heartbeatTimeout {
 		hb := new(heartbeatPacket)
@@ -132,7 +133,7 @@ func (ss *Session) checkConnection() error {
 	return nil
 }
 
-func (ss *Session) getPacket() (Packet, error) {
+func (ss *Session) getPacket() (Packet, error) {mydebug.INFO()
 	reader, err := ss.transport.Read()
 	if e, ok := err.(net.Error); ok && e.Timeout() {
 		return nil, nil
@@ -148,7 +149,7 @@ func (ss *Session) getPacket() (Packet, error) {
 	return decodePacket(b)
 }
 
-func (ss *Session) onPacket(packet Packet) error {
+func (ss *Session) onPacket(packet Packet) error {mydebug.INFO()
 	switch packet.(type) {
 	case *heartbeatPacket:
 		ss.peerLast = time.Now()
@@ -166,7 +167,7 @@ func (ss *Session) onPacket(packet Packet) error {
 	return nil
 }
 
-func (ss *Session) onOpen() error {
+func (ss *Session) onOpen() error {mydebug.INFO()
 	packet := new(connectPacket)
 	ss.defaultNS.connected = true
 	err := ss.defaultNS.sendPacket(packet)

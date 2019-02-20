@@ -1,4 +1,5 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 import (
 	"encoding/json"
@@ -19,7 +20,7 @@ type EventEmitter struct {
 	events map[string][]*eventHandler
 }
 
-func NewEventEmitter() *EventEmitter {
+func NewEventEmitter() *EventEmitter {mydebug.INFO()
 	return &EventEmitter{events: make(map[string][]*eventHandler)}
 }
 
@@ -29,7 +30,7 @@ var eventHandlerCache = &struct {
 	cache map[uintptr]*eventHandler
 }{cache: make(map[uintptr]*eventHandler)}
 
-func genEventHandler(fn interface{}) (handler *eventHandler, err error) {
+func genEventHandler(fn interface{}) (handler *eventHandler, err error) {mydebug.INFO()
 	// if a handler have been generated before, use it first
 	fnValue := reflect.ValueOf(fn)
 	eventHandlerCache.RLock()
@@ -66,7 +67,7 @@ func genEventHandler(fn interface{}) (handler *eventHandler, err error) {
 	return
 }
 
-func (ee *EventEmitter) On(name string, fn interface{}) error {
+func (ee *EventEmitter) On(name string, fn interface{}) error {mydebug.INFO()
 	handler, err := genEventHandler(fn)
 	if err != nil {
 		return err
@@ -77,7 +78,7 @@ func (ee *EventEmitter) On(name string, fn interface{}) error {
 	return nil
 }
 
-func (ee *EventEmitter) RemoveListener(name string, fn interface{}) {
+func (ee *EventEmitter) RemoveListener(name string, fn interface{}) {mydebug.INFO()
 	ee.mutex.Lock()
 	defer ee.mutex.Unlock()
 	for i, handler := range ee.events[name] {
@@ -91,21 +92,21 @@ func (ee *EventEmitter) RemoveListener(name string, fn interface{}) {
 	}
 }
 
-func (ee *EventEmitter) RemoveAllListeners(name string) {
+func (ee *EventEmitter) RemoveAllListeners(name string) {mydebug.INFO()
 	ee.mutex.Lock()
 	defer ee.mutex.Unlock()
 	// assign nil?
 	delete(ee.events, name)
 }
 
-func (ee *EventEmitter) fetchHandlers(name string) (handlers []*eventHandler) {
+func (ee *EventEmitter) fetchHandlers(name string) (handlers []*eventHandler) {mydebug.INFO()
 	ee.mutex.Lock()
 	defer ee.mutex.Unlock()
 	handlers = ee.events[name]
 	return
 }
 
-func (ee *EventEmitter) emit(name string, ns *NameSpace, callback func([]interface{}), args ...interface{}) {
+func (ee *EventEmitter) emit(name string, ns *NameSpace, callback func([]interface{}), args ...interface{}) {mydebug.INFO()
 	handlers := ee.fetchHandlers(name)
 	callArgs := make([]reflect.Value, len(args)+1)
 	callArgs[0] = reflect.ValueOf(ns)
@@ -117,7 +118,7 @@ func (ee *EventEmitter) emit(name string, ns *NameSpace, callback func([]interfa
 	}
 }
 
-func genAckCallback(ns *NameSpace, eventPacketCommon packetCommon) reflect.Value {
+func genAckCallback(ns *NameSpace, eventPacketCommon packetCommon) reflect.Value {mydebug.INFO()
 	return reflect.ValueOf(func(args ...interface{}) {
 		p := new(ackPacket)
 		p.ackId = eventPacketCommon.id
@@ -135,7 +136,7 @@ func genAckCallback(ns *NameSpace, eventPacketCommon packetCommon) reflect.Value
 	})
 }
 
-func (ee *EventEmitter) emitRaw(name string, ns *NameSpace, callback func([]interface{}), data []byte, eventPacketCommon packetCommon) error {
+func (ee *EventEmitter) emitRaw(name string, ns *NameSpace, callback func([]interface{}), data []byte, eventPacketCommon packetCommon) error {mydebug.INFO()
 	handlers := ee.fetchHandlers(name)
 	var callArgs []reflect.Value
 	if len(handlers) != 0 {
@@ -182,7 +183,7 @@ func (ee *EventEmitter) emitRaw(name string, ns *NameSpace, callback func([]inte
 	return nil
 }
 
-func safeCall(fn reflect.Value, args []reflect.Value, callback func([]interface{})) {
+func safeCall(fn reflect.Value, args []reflect.Value, callback func([]interface{})) {mydebug.INFO()
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println(r)

@@ -1,4 +1,5 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"flag"
@@ -15,7 +16,7 @@ var showConf = flag.Bool("demo_conf", false, "show default conf")
 
 var version = flag.Bool("v", false, "show version")
 
-func init() {
+func init() {mydebug.INFO()
 	df := flag.Usage
 
 	flag.Usage = func() {
@@ -24,7 +25,7 @@ func init() {
 	}
 }
 
-func main() {
+func main() {mydebug.INFO()
 	flag.Parse()
 
 	if *showConf {

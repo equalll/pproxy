@@ -11,6 +11,7 @@
 // syscall_bsd.go or syscall_unix.go.
 
 package unix
+import "github.com/equalll/mydebug"
 
 import (
 	"syscall"
@@ -31,7 +32,7 @@ type SockaddrDatalink struct {
 
 func Syscall9(trap, a1, a2, a3, a4, a5, a6, a7, a8, a9 uintptr) (r1, r2 uintptr, err syscall.Errno)
 
-func nametomib(name string) (mib []_C_int, err error) {
+func nametomib(name string) (mib []_C_int, err error) {mydebug.INFO()
 
 	// Perform lookup via a binary search
 	left := 0
@@ -57,7 +58,7 @@ func nametomib(name string) (mib []_C_int, err error) {
 // appending the names to names. It returns the number
 // bytes consumed from buf, the number of entries added
 // to names, and the new names slice.
-func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {
+func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {mydebug.INFO()
 	origlen := len(buf)
 	for max != 0 && len(buf) > 0 {
 		dirent := (*Dirent)(unsafe.Pointer(&buf[0]))
@@ -82,7 +83,7 @@ func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, 
 }
 
 //sysnb pipe(p *[2]_C_int) (err error)
-func Pipe(p []int) (err error) {
+func Pipe(p []int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -94,16 +95,16 @@ func Pipe(p []int) (err error) {
 }
 
 //sys getdents(fd int, buf []byte) (n int, err error)
-func Getdirentries(fd int, buf []byte, basep *uintptr) (n int, err error) {
+func Getdirentries(fd int, buf []byte, basep *uintptr) (n int, err error) {mydebug.INFO()
 	return getdents(fd, buf)
 }
 
 // TODO
-func sendfile(outfd int, infd int, offset *int64, count int) (written int, err error) {
+func sendfile(outfd int, infd int, offset *int64, count int) (written int, err error) {mydebug.INFO()
 	return -1, ENOSYS
 }
 
-func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
+func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {mydebug.INFO()
 	var _p0 unsafe.Pointer
 	var bufsize uintptr
 	if len(buf) > 0 {

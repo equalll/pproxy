@@ -6,6 +6,7 @@
 // +build ppc64 ppc64le
 
 package unix
+import "github.com/equalll/mydebug"
 
 //sys	EpollWait(epfd int, events []EpollEvent, msec int) (n int, err error)
 //sys	Dup2(oldfd int, newfd int) (err error)
@@ -70,13 +71,13 @@ func Getpagesize() int { return 65536 }
 
 func TimespecToNsec(ts Timespec) int64 { return int64(ts.Sec)*1e9 + int64(ts.Nsec) }
 
-func NsecToTimespec(nsec int64) (ts Timespec) {
+func NsecToTimespec(nsec int64) (ts Timespec) {mydebug.INFO()
 	ts.Sec = nsec / 1e9
 	ts.Nsec = nsec % 1e9
 	return
 }
 
-func NsecToTimeval(nsec int64) (tv Timeval) {
+func NsecToTimeval(nsec int64) (tv Timeval) {mydebug.INFO()
 	nsec += 999 // round up to microsecond
 	tv.Sec = nsec / 1e9
 	tv.Usec = nsec % 1e9 / 1e3
@@ -87,21 +88,21 @@ func (r *PtraceRegs) PC() uint64 { return r.Nip }
 
 func (r *PtraceRegs) SetPC(pc uint64) { r.Nip = pc }
 
-func (iov *Iovec) SetLen(length int) {
+func (iov *Iovec) SetLen(length int) {mydebug.INFO()
 	iov.Len = uint64(length)
 }
 
-func (msghdr *Msghdr) SetControllen(length int) {
+func (msghdr *Msghdr) SetControllen(length int) {mydebug.INFO()
 	msghdr.Controllen = uint64(length)
 }
 
-func (cmsg *Cmsghdr) SetLen(length int) {
+func (cmsg *Cmsghdr) SetLen(length int) {mydebug.INFO()
 	cmsg.Len = uint64(length)
 }
 
 //sysnb pipe(p *[2]_C_int) (err error)
 
-func Pipe(p []int) (err error) {
+func Pipe(p []int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -114,7 +115,7 @@ func Pipe(p []int) (err error) {
 
 //sysnb pipe2(p *[2]_C_int, flags int) (err error)
 
-func Pipe2(p []int, flags int) (err error) {
+func Pipe2(p []int, flags int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -127,7 +128,7 @@ func Pipe2(p []int, flags int) (err error) {
 
 //sys	poll(fds *PollFd, nfds int, timeout int) (n int, err error)
 
-func Poll(fds []PollFd, timeout int) (n int, err error) {
+func Poll(fds []PollFd, timeout int) (n int, err error) {mydebug.INFO()
 	if len(fds) == 0 {
 		return poll(nil, 0, timeout)
 	}

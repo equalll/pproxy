@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -10,7 +11,7 @@ import (
 
 var stringToNumberParseInteger = regexp.MustCompile(`^(?:0[xX])`)
 
-func parseNumber(value string) float64 {
+func parseNumber(value string) float64 {mydebug.INFO()
 	value = strings.TrimSpace(value)
 
 	if value == "" {
@@ -41,7 +42,7 @@ func parseNumber(value string) float64 {
 	return float64(number)
 }
 
-func (value Value) float64() float64 {
+func (value Value) float64() float64 {mydebug.INFO()
 	switch value.kind {
 	case valueUndefined:
 		return math.NaN()
@@ -137,7 +138,7 @@ const (
 	float_minInt64  float64 = math.MinInt64
 )
 
-func toIntegerFloat(value Value) float64 {
+func toIntegerFloat(value Value) float64 {mydebug.INFO()
 	float := value.float64()
 	if math.IsInf(float, 0) {
 	} else if math.IsNaN(float) {
@@ -168,7 +169,7 @@ type _number struct {
 // FIXME
 // http://www.goinggo.net/2013/08/gustavos-ieee-754-brain-teaser.html
 // http://bazaar.launchpad.net/~niemeyer/strepr/trunk/view/6/strepr.go#L160
-func (value Value) number() (number _number) {
+func (value Value) number() (number _number) {mydebug.INFO()
 	switch value := value.value.(type) {
 	case int8:
 		number.int64 = int64(value)
@@ -235,7 +236,7 @@ func (value Value) number() (number _number) {
 }
 
 // ECMA 262: 9.5
-func toInt32(value Value) int32 {
+func toInt32(value Value) int32 {mydebug.INFO()
 	{
 		switch value := value.value.(type) {
 		case int8:
@@ -265,7 +266,7 @@ func toInt32(value Value) int32 {
 	return int32(remainder)
 }
 
-func toUint32(value Value) uint32 {
+func toUint32(value Value) uint32 {mydebug.INFO()
 	{
 		switch value := value.value.(type) {
 		case int8:
@@ -296,7 +297,7 @@ func toUint32(value Value) uint32 {
 	return uint32(remainder)
 }
 
-func toUint16(value Value) uint16 {
+func toUint16(value Value) uint16 {mydebug.INFO()
 	{
 		switch value := value.value.(type) {
 		case int8:

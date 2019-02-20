@@ -11,6 +11,7 @@
 // syscall_bsd.go or syscall_unix.go.
 
 package unix
+import "github.com/equalll/mydebug"
 
 import (
 	errorspkg "errors"
@@ -20,7 +21,7 @@ import (
 
 const ImplementsGetwd = true
 
-func Getwd() (string, error) {
+func Getwd() (string, error) {mydebug.INFO()
 	buf := make([]byte, 2048)
 	attrs, err := getAttrList(".", attrList{CommonAttr: attrCmnFullpath}, buf, 0)
 	if err == nil && len(attrs) == 1 && len(attrs[0]) >= 2 {
@@ -49,7 +50,7 @@ type SockaddrDatalink struct {
 }
 
 // Translate "kern.hostname" to []_C_int{0,1,2,3}.
-func nametomib(name string) (mib []_C_int, err error) {
+func nametomib(name string) (mib []_C_int, err error) {mydebug.INFO()
 	const siz = unsafe.Sizeof(mib[0])
 
 	// NOTE(rsc): It seems strange to set the buffer to have
@@ -80,7 +81,7 @@ func nametomib(name string) (mib []_C_int, err error) {
 // appending the names to names.  It returns the number
 // bytes consumed from buf, the number of entries added
 // to names, and the new names slice.
-func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {
+func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {mydebug.INFO()
 	origlen := len(buf)
 	for max != 0 && len(buf) > 0 {
 		dirent := (*Dirent)(unsafe.Pointer(&buf[0]))
@@ -123,7 +124,7 @@ type attrList struct {
 	Forkattr    uint32
 }
 
-func getAttrList(path string, attrList attrList, attrBuf []byte, options uint) (attrs [][]byte, err error) {
+func getAttrList(path string, attrList attrList, attrBuf []byte, options uint) (attrs [][]byte, err error) {mydebug.INFO()
 	if len(attrBuf) < 4 {
 		return nil, errorspkg.New("attrBuf too small")
 	}
@@ -181,7 +182,7 @@ func getAttrList(path string, attrList attrList, attrBuf []byte, options uint) (
 
 //sysnb pipe() (r int, w int, err error)
 
-func Pipe(p []int) (err error) {
+func Pipe(p []int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -189,7 +190,7 @@ func Pipe(p []int) (err error) {
 	return
 }
 
-func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
+func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {mydebug.INFO()
 	var _p0 unsafe.Pointer
 	var bufsize uintptr
 	if len(buf) > 0 {

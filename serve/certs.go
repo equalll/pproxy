@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"crypto/tls"
@@ -7,7 +8,7 @@ import (
 	"log"
 )
 
-func newCaCert(caCert []byte, caKey []byte) (tls.Certificate, error) {
+func newCaCert(caCert []byte, caKey []byte) (tls.Certificate, error) {mydebug.INFO()
 	ca, err := tls.X509KeyPair(caCert, caKey)
 	if err != nil {
 		log.Println("NewCaCert error:", err)
@@ -22,7 +23,7 @@ func newCaCert(caCert []byte, caKey []byte) (tls.Certificate, error) {
 }
 
 // getSslCert get user's caCert or use the default buildin
-func getSslCert(caCertPath string, caKeyPath string) (ca tls.Certificate, err error) {
+func getSslCert(caCertPath string, caKeyPath string) (ca tls.Certificate, err error) {mydebug.INFO()
 	if caCertPath == "" {
 		caCert := Assest.GetContent("/res/private/client_cert.pem")
 		caKey := Assest.GetContent("/res/private/server_key.pem")

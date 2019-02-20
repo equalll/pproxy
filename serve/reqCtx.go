@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"encoding/base64"
@@ -40,7 +41,7 @@ type requestCtx struct {
 }
 
 // NewRequestCtx 构建一个新的请求
-func NewRequestCtx(ser *ProxyServe, rw http.ResponseWriter, req *http.Request) *requestCtx {
+func NewRequestCtx(ser *ProxyServe, rw http.ResponseWriter, req *http.Request) *requestCtx {mydebug.INFO()
 	ctx := &requestCtx{}
 	ctx.Req = req
 	ctx.ser = ser
@@ -56,7 +57,7 @@ func NewRequestCtx(ser *ProxyServe, rw http.ResponseWriter, req *http.Request) *
 	return ctx
 }
 
-func (ctx *requestCtx) init() {
+func (ctx *requestCtx) init() {mydebug.INFO()
 	if ctx.Req == nil {
 		return
 	}
@@ -83,7 +84,7 @@ func (ctx *requestCtx) init() {
 	ctx.ser.regirestReq(ctx)
 }
 
-func fixRequest(req *http.Request) {
+func fixRequest(req *http.Request) {mydebug.INFO()
 	if req.Method != "CONNECT" && !req.URL.IsAbs() {
 		urlOrigin := req.URL.String()
 		urlStr := "http://" + req.Host + req.URL.Path
@@ -99,7 +100,7 @@ func fixRequest(req *http.Request) {
 	}
 }
 
-func (ctx *requestCtx) IsLocalRequest() bool {
+func (ctx *requestCtx) IsLocalRequest() bool {mydebug.INFO()
 	isLocalReq := ctx.Port == ctx.ser.conf.Port
 	if isLocalReq {
 		isLocalReq = IsLocalIP(ctx.Host)
@@ -107,12 +108,12 @@ func (ctx *requestCtx) IsLocalRequest() bool {
 	return isLocalReq
 }
 
-func (ctx *requestCtx) GetIp() string {
+func (ctx *requestCtx) GetIp() string {mydebug.INFO()
 	hostInfo := strings.Split(ctx.RemoteAddr, ":")
 	return hostInfo[0]
 }
 
-func (ctx *requestCtx) PrintLog() {
+func (ctx *requestCtx) PrintLog() {mydebug.INFO()
 	reqID := 0
 	if ctx.ClientSession != nil {
 		reqID = ctx.ClientSession.RequestNum
@@ -131,7 +132,7 @@ func (ctx *requestCtx) PrintLog() {
 	)
 }
 
-func (ctx *requestCtx) RoundTrip() {
+func (ctx *requestCtx) RoundTrip() {mydebug.INFO()
 	defer func() {
 		ctx.hasPrint = true
 		ctx.SetLog("logType", "defer")
@@ -165,17 +166,17 @@ func (ctx *requestCtx) RoundTrip() {
 	}
 	ctx.ser.proxy.RoundTrip(ctx)
 }
-func (ctx *requestCtx) badGateway(err error) {
+func (ctx *requestCtx) badGateway(err error) {mydebug.INFO()
 	ctx.SetLog("errMsg", fmt.Sprintf("%s", err))
 	ctx.Rw.WriteHeader(http.StatusBadGateway)
 	ctx.Rw.Write([]byte("pproxy error"))
 }
 
-func (ctx *requestCtx) DestAddr() string {
+func (ctx *requestCtx) DestAddr() string {mydebug.INFO()
 	return fmt.Sprintf("%s:%d", ctx.Host, ctx.Port)
 }
 
-func (ctx *requestCtx) saveRequestData() {
+func (ctx *requestCtx) saveRequestData() {mydebug.INFO()
 	if ctx.ser.conf.ResponseSave == responseSaveAll ||
 		(ctx.ser.conf.ResponseSave == responseSaveHasBroad && ctx.HasBroadcast) {
 		logdata := KvType{}
@@ -220,7 +221,7 @@ func (ctx *requestCtx) saveRequestData() {
 	}
 }
 
-func (ctx *requestCtx) saveResponse(res *http.Response) {
+func (ctx *requestCtx) saveResponse(res *http.Response) {mydebug.INFO()
 	if ctx.Docid < 1 || res == nil {
 		return
 	}
@@ -262,14 +263,14 @@ func (ctx *requestCtx) saveResponse(res *http.Response) {
 	log.Println("save_res", ctx.SessionID, "docid=", ctx.Docid, "body_len=", len(data["body"].(string)), err)
 }
 
-func (ctx *requestCtx) SetLog(k, v interface{}) {
+func (ctx *requestCtx) SetLog(k, v interface{}) {mydebug.INFO()
 	ctx.logData[k] = v
 }
-func (ctx *requestCtx) SetTimePoint(key string) {
+func (ctx *requestCtx) SetTimePoint(key string) {mydebug.INFO()
 	ctx.timeDurations[key] = time.Now().Sub(ctx.startTime)
 }
 
-func (ctx *requestCtx) getNewDocid() int {
+func (ctx *requestCtx) getNewDocid() int {mydebug.INFO()
 	idStr := fmt.Sprintf("%s%d", time.Now().Format("200601021504"), ctx.ser.reqNum)
 	id, err := parseDocID(idStr)
 	if err == nil {

@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -23,7 +24,7 @@ type webFileInfo struct {
 	subFileInfos []*webFileInfo
 }
 
-func newWebFileInfo(rootDir, name string) (*webFileInfo, error) {
+func newWebFileInfo(rootDir, name string) (*webFileInfo, error) {mydebug.INFO()
 	rootDir = filepath.Clean(rootDir + "/")
 	fullPath := filepath.Clean(fmt.Sprintf("%s/%s", rootDir, name))
 	if !strings.HasPrefix(fullPath, rootDir) {
@@ -49,10 +50,10 @@ func newWebFileInfo(rootDir, name string) (*webFileInfo, error) {
 	return info, nil
 }
 
-func (f *webFileInfo) String() string {
+func (f *webFileInfo) String() string {mydebug.INFO()
 	return fmt.Sprintf("Name:%s\nRootDir:%s\nisDir:%v\nSize:%d\nfullPath:%s\n", f.Name, f.RootDir, f.IsDir, f.Size, f.fullPath)
 }
-func (f *webFileInfo) link() string {
+func (f *webFileInfo) link() string {mydebug.INFO()
 	values := make(url.Values)
 	values.Set("name", f.Name)
 	if !f.IsDir {
@@ -60,7 +61,7 @@ func (f *webFileInfo) link() string {
 	}
 	return "/file?" + values.Encode()
 }
-func (f *webFileInfo) getContent() string {
+func (f *webFileInfo) getContent() string {mydebug.INFO()
 	if f.IsDir {
 		return ""
 	}
@@ -72,7 +73,7 @@ func (f *webFileInfo) getContent() string {
 	return string(data)
 }
 
-func (f *webFileInfo) Close() {
+func (f *webFileInfo) Close() {mydebug.INFO()
 	f.file.Close()
 	if f.subFileInfos != nil {
 		for _, info := range f.subFileInfos {
@@ -81,7 +82,7 @@ func (f *webFileInfo) Close() {
 	}
 }
 
-func (f *webFileInfo) subFiles() ([]*webFileInfo, error) {
+func (f *webFileInfo) subFiles() ([]*webFileInfo, error) {mydebug.INFO()
 	names, err := f.file.Readdirnames(0)
 	if err != nil {
 		return nil, err
@@ -101,7 +102,7 @@ func (f *webFileInfo) subFiles() ([]*webFileInfo, error) {
 
 }
 
-func (ser *ProxyServe) getWebFilePath(name string) (fullPath string, nameNew string, err error) {
+func (ser *ProxyServe) getWebFilePath(name string) (fullPath string, nameNew string, err error) {mydebug.INFO()
 	rootDir := filepath.Clean(ser.conf.FileDir + "/")
 	fullPath = filepath.Clean(fmt.Sprintf("%s/%s", rootDir, name))
 	if !strings.HasPrefix(fullPath, rootDir) {
@@ -115,7 +116,7 @@ func (ser *ProxyServe) getWebFilePath(name string) (fullPath string, nameNew str
 	return fullPath, nameNew, err
 }
 
-func (ctx *webRequestCtx) handle_file() {
+func (ctx *webRequestCtx) handle_file() {mydebug.INFO()
 	if !ctx.isLogin {
 		ctx.showError("need login")
 		return
@@ -167,7 +168,7 @@ func (ctx *webRequestCtx) handle_file() {
 	ctx.render("file.html", true)
 }
 
-func (ctx *webRequestCtx) handle_file_edit() {
+func (ctx *webRequestCtx) handle_file_edit() {mydebug.INFO()
 	name := ctx.req.FormValue("name")
 	if name == "" {
 		ctx.showError("params wrong")
@@ -190,11 +191,11 @@ func (ctx *webRequestCtx) handle_file_edit() {
 	ctx.render("file_edit.html", true)
 }
 
-func (ctx *webRequestCtx) handle_file_del() {
+func (ctx *webRequestCtx) handle_file_del() {mydebug.INFO()
 
 }
 
-func (ctx *webRequestCtx) handle_file_new() {
+func (ctx *webRequestCtx) handle_file_new() {mydebug.INFO()
 	dirFullPath, dirNew, err := ctx.ser.getWebFilePath(ctx.req.FormValue("dir"))
 	if err != nil {
 		ctx.showErrorOrAlert("params err:" + err.Error())
@@ -262,7 +263,7 @@ func (ctx *webRequestCtx) handle_file_new() {
 		ctx.jsAlertJump("save suc", finfo.link())
 	}
 }
-func (ctx *webRequestCtx) handle_file_save() {
+func (ctx *webRequestCtx) handle_file_save() {mydebug.INFO()
 	nameOrigin := ctx.req.PostFormValue("nameOrigin")
 	name := ctx.req.PostFormValue("name")
 	content := ctx.req.PostFormValue("content")

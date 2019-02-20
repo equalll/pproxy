@@ -20,13 +20,14 @@
 // err represents an operating system error describing the failure and
 // holds a value of type syscall.Errno.
 package unix
+import "github.com/equalll/mydebug"
 
 import "unsafe"
 
 // ByteSliceFromString returns a NUL-terminated slice of bytes
 // containing the text of s. If s contains a NUL byte at any
 // location, it returns (nil, EINVAL).
-func ByteSliceFromString(s string) ([]byte, error) {
+func ByteSliceFromString(s string) ([]byte, error) {mydebug.INFO()
 	for i := 0; i < len(s); i++ {
 		if s[i] == 0 {
 			return nil, EINVAL
@@ -40,7 +41,7 @@ func ByteSliceFromString(s string) ([]byte, error) {
 // BytePtrFromString returns a pointer to a NUL-terminated array of
 // bytes containing the text of s. If s contains a NUL byte at any
 // location, it returns (nil, EINVAL).
-func BytePtrFromString(s string) (*byte, error) {
+func BytePtrFromString(s string) (*byte, error) {mydebug.INFO()
 	a, err := ByteSliceFromString(s)
 	if err != nil {
 		return nil, err
@@ -52,19 +53,19 @@ func BytePtrFromString(s string) (*byte, error) {
 // See mkunix.pl.
 var _zero uintptr
 
-func (ts *Timespec) Unix() (sec int64, nsec int64) {
+func (ts *Timespec) Unix() (sec int64, nsec int64) {mydebug.INFO()
 	return int64(ts.Sec), int64(ts.Nsec)
 }
 
-func (tv *Timeval) Unix() (sec int64, nsec int64) {
+func (tv *Timeval) Unix() (sec int64, nsec int64) {mydebug.INFO()
 	return int64(tv.Sec), int64(tv.Usec) * 1000
 }
 
-func (ts *Timespec) Nano() int64 {
+func (ts *Timespec) Nano() int64 {mydebug.INFO()
 	return int64(ts.Sec)*1e9 + int64(ts.Nsec)
 }
 
-func (tv *Timeval) Nano() int64 {
+func (tv *Timeval) Nano() int64 {mydebug.INFO()
 	return int64(tv.Sec)*1e9 + int64(tv.Usec)*1000
 }
 

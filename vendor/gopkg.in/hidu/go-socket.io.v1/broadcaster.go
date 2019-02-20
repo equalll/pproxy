@@ -1,16 +1,17 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 type Broadcaster struct {
 	Namespaces []*NameSpace
 }
 
-func (b *Broadcaster) Broadcast(name string, args ...interface{}) {
+func (b *Broadcaster) Broadcast(name string, args ...interface{}) {mydebug.INFO()
 	for _, ns := range b.Namespaces {
 		go ns.Emit(name, args...)
 	}
 }
 
-func (b *Broadcaster) Except(namespace *NameSpace) *Broadcaster {
+func (b *Broadcaster) Except(namespace *NameSpace) *Broadcaster {mydebug.INFO()
 	for i, ns := range b.Namespaces {
 		if ns == namespace {
 			b.Namespaces = append(b.Namespaces[:i], b.Namespaces[i+1:]...)

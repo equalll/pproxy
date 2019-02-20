@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -41,7 +42,7 @@ type Tx struct {
 }
 
 // init initializes the transaction.
-func (tx *Tx) init(db *DB) {
+func (tx *Tx) init(db *DB) {mydebug.INFO()
 	tx.db = db
 	tx.pages = nil
 
@@ -62,22 +63,22 @@ func (tx *Tx) init(db *DB) {
 }
 
 // ID returns the transaction id.
-func (tx *Tx) ID() int {
+func (tx *Tx) ID() int {mydebug.INFO()
 	return int(tx.meta.txid)
 }
 
 // DB returns a reference to the database that created the transaction.
-func (tx *Tx) DB() *DB {
+func (tx *Tx) DB() *DB {mydebug.INFO()
 	return tx.db
 }
 
 // Size returns current database size in bytes as seen by this transaction.
-func (tx *Tx) Size() int64 {
+func (tx *Tx) Size() int64 {mydebug.INFO()
 	return int64(tx.meta.pgid) * int64(tx.db.pageSize)
 }
 
 // Writable returns whether the transaction can perform write operations.
-func (tx *Tx) Writable() bool {
+func (tx *Tx) Writable() bool {mydebug.INFO()
 	return tx.writable
 }
 
@@ -85,46 +86,46 @@ func (tx *Tx) Writable() bool {
 // All items in the cursor will return a nil value because all root bucket keys point to buckets.
 // The cursor is only valid as long as the transaction is open.
 // Do not use a cursor after the transaction is closed.
-func (tx *Tx) Cursor() *Cursor {
+func (tx *Tx) Cursor() *Cursor {mydebug.INFO()
 	return tx.root.Cursor()
 }
 
 // Stats retrieves a copy of the current transaction statistics.
-func (tx *Tx) Stats() TxStats {
+func (tx *Tx) Stats() TxStats {mydebug.INFO()
 	return tx.stats
 }
 
 // Bucket retrieves a bucket by name.
 // Returns nil if the bucket does not exist.
 // The bucket instance is only valid for the lifetime of the transaction.
-func (tx *Tx) Bucket(name []byte) *Bucket {
+func (tx *Tx) Bucket(name []byte) *Bucket {mydebug.INFO()
 	return tx.root.Bucket(name)
 }
 
 // CreateBucket creates a new bucket.
 // Returns an error if the bucket already exists, if the bucket name is blank, or if the bucket name is too long.
 // The bucket instance is only valid for the lifetime of the transaction.
-func (tx *Tx) CreateBucket(name []byte) (*Bucket, error) {
+func (tx *Tx) CreateBucket(name []byte) (*Bucket, error) {mydebug.INFO()
 	return tx.root.CreateBucket(name)
 }
 
 // CreateBucketIfNotExists creates a new bucket if it doesn't already exist.
 // Returns an error if the bucket name is blank, or if the bucket name is too long.
 // The bucket instance is only valid for the lifetime of the transaction.
-func (tx *Tx) CreateBucketIfNotExists(name []byte) (*Bucket, error) {
+func (tx *Tx) CreateBucketIfNotExists(name []byte) (*Bucket, error) {mydebug.INFO()
 	return tx.root.CreateBucketIfNotExists(name)
 }
 
 // DeleteBucket deletes a bucket.
 // Returns an error if the bucket cannot be found or if the key represents a non-bucket value.
-func (tx *Tx) DeleteBucket(name []byte) error {
+func (tx *Tx) DeleteBucket(name []byte) error {mydebug.INFO()
 	return tx.root.DeleteBucket(name)
 }
 
 // ForEach executes a function for each bucket in the root.
 // If the provided function returns an error then the iteration is stopped and
 // the error is returned to the caller.
-func (tx *Tx) ForEach(fn func(name []byte, b *Bucket) error) error {
+func (tx *Tx) ForEach(fn func(name []byte, b *Bucket) error) error {mydebug.INFO()
 	return tx.root.ForEach(func(k, v []byte) error {
 		if err := fn(k, tx.root.Bucket(k)); err != nil {
 			return err
@@ -134,14 +135,14 @@ func (tx *Tx) ForEach(fn func(name []byte, b *Bucket) error) error {
 }
 
 // OnCommit adds a handler function to be executed after the transaction successfully commits.
-func (tx *Tx) OnCommit(fn func()) {
+func (tx *Tx) OnCommit(fn func()) {mydebug.INFO()
 	tx.commitHandlers = append(tx.commitHandlers, fn)
 }
 
 // Commit writes all changes to disk and updates the meta page.
 // Returns an error if a disk write error occurs, or if Commit is
 // called on a read-only transaction.
-func (tx *Tx) Commit() error {
+func (tx *Tx) Commit() error {mydebug.INFO()
 	_assert(!tx.managed, "managed tx commit not allowed")
 	if tx.db == nil {
 		return ErrTxClosed
@@ -237,7 +238,7 @@ func (tx *Tx) Commit() error {
 
 // Rollback closes the transaction and ignores all previous updates. Read-only
 // transactions must be rolled back and not committed.
-func (tx *Tx) Rollback() error {
+func (tx *Tx) Rollback() error {mydebug.INFO()
 	_assert(!tx.managed, "managed tx rollback not allowed")
 	if tx.db == nil {
 		return ErrTxClosed
@@ -246,7 +247,7 @@ func (tx *Tx) Rollback() error {
 	return nil
 }
 
-func (tx *Tx) rollback() {
+func (tx *Tx) rollback() {mydebug.INFO()
 	if tx.db == nil {
 		return
 	}
@@ -257,7 +258,7 @@ func (tx *Tx) rollback() {
 	tx.close()
 }
 
-func (tx *Tx) close() {
+func (tx *Tx) close() {mydebug.INFO()
 	if tx.db == nil {
 		return
 	}
@@ -292,14 +293,14 @@ func (tx *Tx) close() {
 
 // Copy writes the entire database to a writer.
 // This function exists for backwards compatibility. Use WriteTo() instead.
-func (tx *Tx) Copy(w io.Writer) error {
+func (tx *Tx) Copy(w io.Writer) error {mydebug.INFO()
 	_, err := tx.WriteTo(w)
 	return err
 }
 
 // WriteTo writes the entire database to a writer.
 // If err == nil then exactly tx.Size() bytes will be written into the writer.
-func (tx *Tx) WriteTo(w io.Writer) (n int64, err error) {
+func (tx *Tx) WriteTo(w io.Writer) (n int64, err error) {mydebug.INFO()
 	// Attempt to open reader with WriteFlag
 	f, err := os.OpenFile(tx.db.path, os.O_RDONLY|tx.WriteFlag, 0)
 	if err != nil {
@@ -350,7 +351,7 @@ func (tx *Tx) WriteTo(w io.Writer) (n int64, err error) {
 // CopyFile copies the entire database to file at the given path.
 // A reader transaction is maintained during the copy so it is safe to continue
 // using the database while a copy is in progress.
-func (tx *Tx) CopyFile(path string, mode os.FileMode) error {
+func (tx *Tx) CopyFile(path string, mode os.FileMode) error {mydebug.INFO()
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, mode)
 	if err != nil {
 		return err
@@ -372,13 +373,13 @@ func (tx *Tx) CopyFile(path string, mode os.FileMode) error {
 // because of caching. This overhead can be removed if running on a read-only
 // transaction, however, it is not safe to execute other writer transactions at
 // the same time.
-func (tx *Tx) Check() <-chan error {
+func (tx *Tx) Check() <-chan error {mydebug.INFO()
 	ch := make(chan error)
 	go tx.check(ch)
 	return ch
 }
 
-func (tx *Tx) check(ch chan error) {
+func (tx *Tx) check(ch chan error) {mydebug.INFO()
 	// Check if any pages are double freed.
 	freed := make(map[pgid]bool)
 	for _, id := range tx.db.freelist.all() {
@@ -411,7 +412,7 @@ func (tx *Tx) check(ch chan error) {
 	close(ch)
 }
 
-func (tx *Tx) checkBucket(b *Bucket, reachable map[pgid]*page, freed map[pgid]bool, ch chan error) {
+func (tx *Tx) checkBucket(b *Bucket, reachable map[pgid]*page, freed map[pgid]bool, ch chan error) {mydebug.INFO()
 	// Ignore inline buckets.
 	if b.root == 0 {
 		return
@@ -450,7 +451,7 @@ func (tx *Tx) checkBucket(b *Bucket, reachable map[pgid]*page, freed map[pgid]bo
 }
 
 // allocate returns a contiguous block of memory starting at a given page.
-func (tx *Tx) allocate(count int) (*page, error) {
+func (tx *Tx) allocate(count int) (*page, error) {mydebug.INFO()
 	p, err := tx.db.allocate(count)
 	if err != nil {
 		return nil, err
@@ -467,7 +468,7 @@ func (tx *Tx) allocate(count int) (*page, error) {
 }
 
 // write writes any dirty pages to disk.
-func (tx *Tx) write() error {
+func (tx *Tx) write() error {mydebug.INFO()
 	// Sort pages by id.
 	pages := make(pages, 0, len(tx.pages))
 	for _, p := range tx.pages {
@@ -540,7 +541,7 @@ func (tx *Tx) write() error {
 }
 
 // writeMeta writes the meta to the disk.
-func (tx *Tx) writeMeta() error {
+func (tx *Tx) writeMeta() error {mydebug.INFO()
 	// Create a temporary buffer for the meta page.
 	buf := make([]byte, tx.db.pageSize)
 	p := tx.db.pageInBuffer(buf, 0)
@@ -564,7 +565,7 @@ func (tx *Tx) writeMeta() error {
 
 // page returns a reference to the page with a given id.
 // If page has been written to then a temporary buffered page is returned.
-func (tx *Tx) page(id pgid) *page {
+func (tx *Tx) page(id pgid) *page {mydebug.INFO()
 	// Check the dirty pages first.
 	if tx.pages != nil {
 		if p, ok := tx.pages[id]; ok {
@@ -577,7 +578,7 @@ func (tx *Tx) page(id pgid) *page {
 }
 
 // forEachPage iterates over every page within a given page and executes a function.
-func (tx *Tx) forEachPage(pgid pgid, depth int, fn func(*page, int)) {
+func (tx *Tx) forEachPage(pgid pgid, depth int, fn func(*page, int)) {mydebug.INFO()
 	p := tx.page(pgid)
 
 	// Execute function.
@@ -594,7 +595,7 @@ func (tx *Tx) forEachPage(pgid pgid, depth int, fn func(*page, int)) {
 
 // Page returns page information for a given page number.
 // This is only safe for concurrent use when used by a writable transaction.
-func (tx *Tx) Page(id int) (*PageInfo, error) {
+func (tx *Tx) Page(id int) (*PageInfo, error) {mydebug.INFO()
 	if tx.db == nil {
 		return nil, ErrTxClosed
 	} else if pgid(id) >= tx.meta.pgid {
@@ -646,7 +647,7 @@ type TxStats struct {
 	WriteTime time.Duration // total time spent writing to disk
 }
 
-func (s *TxStats) add(other *TxStats) {
+func (s *TxStats) add(other *TxStats) {mydebug.INFO()
 	s.PageCount += other.PageCount
 	s.PageAlloc += other.PageAlloc
 	s.CursorCount += other.CursorCount
@@ -664,7 +665,7 @@ func (s *TxStats) add(other *TxStats) {
 // Sub calculates and returns the difference between two sets of transaction stats.
 // This is useful when obtaining stats at two different points and time and
 // you need the performance counters that occurred within that time span.
-func (s *TxStats) Sub(other *TxStats) TxStats {
+func (s *TxStats) Sub(other *TxStats) TxStats {mydebug.INFO()
 	var diff TxStats
 	diff.PageCount = s.PageCount - other.PageCount
 	diff.PageAlloc = s.PageAlloc - other.PageAlloc

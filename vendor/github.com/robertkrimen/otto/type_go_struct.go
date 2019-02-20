@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"encoding/json"
@@ -13,7 +14,7 @@ import (
 // 1. Creating a new struct every time
 // 2. Creating an addressable? struct in the constructor
 
-func (runtime *_runtime) newGoStructObject(value reflect.Value) *_object {
+func (runtime *_runtime) newGoStructObject(value reflect.Value) *_object {mydebug.INFO()
 	self := runtime.newObject()
 	self.class = "Object" // TODO Should this be something else?
 	self.objectClass = _classGoStruct
@@ -25,7 +26,7 @@ type _goStructObject struct {
 	value reflect.Value
 }
 
-func _newGoStructObject(value reflect.Value) *_goStructObject {
+func _newGoStructObject(value reflect.Value) *_goStructObject {mydebug.INFO()
 	if reflect.Indirect(value).Kind() != reflect.Struct {
 		dbgf("%/panic//%@: %v != reflect.Struct", value.Kind())
 	}
@@ -35,7 +36,7 @@ func _newGoStructObject(value reflect.Value) *_goStructObject {
 	return self
 }
 
-func (self _goStructObject) getValue(name string) reflect.Value {
+func (self _goStructObject) getValue(name string) reflect.Value {mydebug.INFO()
 	if validGoStructName(name) {
 		// Do not reveal hidden or unexported fields
 		if field := reflect.Indirect(self.value).FieldByName(name); (field != reflect.Value{}) {
@@ -50,15 +51,15 @@ func (self _goStructObject) getValue(name string) reflect.Value {
 	return reflect.Value{}
 }
 
-func (self _goStructObject) field(name string) (reflect.StructField, bool) {
+func (self _goStructObject) field(name string) (reflect.StructField, bool) {mydebug.INFO()
 	return reflect.Indirect(self.value).Type().FieldByName(name)
 }
 
-func (self _goStructObject) method(name string) (reflect.Method, bool) {
+func (self _goStructObject) method(name string) (reflect.Method, bool) {mydebug.INFO()
 	return reflect.Indirect(self.value).Type().MethodByName(name)
 }
 
-func (self _goStructObject) setValue(name string, value Value) bool {
+func (self _goStructObject) setValue(name string, value Value) bool {mydebug.INFO()
 	field, exists := self.field(name)
 	if !exists {
 		return false
@@ -73,7 +74,7 @@ func (self _goStructObject) setValue(name string, value Value) bool {
 	return true
 }
 
-func goStructGetOwnProperty(self *_object, name string) *_property {
+func goStructGetOwnProperty(self *_object, name string) *_property {mydebug.INFO()
 	object := self.value.(*_goStructObject)
 	value := object.getValue(name)
 	if value.IsValid() {
@@ -83,14 +84,14 @@ func goStructGetOwnProperty(self *_object, name string) *_property {
 	return objectGetOwnProperty(self, name)
 }
 
-func validGoStructName(name string) bool {
+func validGoStructName(name string) bool {mydebug.INFO()
 	if name == "" {
 		return false
 	}
 	return 'A' <= name[0] && name[0] <= 'Z' // TODO What about Unicode?
 }
 
-func goStructEnumerate(self *_object, all bool, each func(string) bool) {
+func goStructEnumerate(self *_object, all bool, each func(string) bool) {mydebug.INFO()
 	object := self.value.(*_goStructObject)
 
 	// Enumerate fields
@@ -116,7 +117,7 @@ func goStructEnumerate(self *_object, all bool, each func(string) bool) {
 	objectEnumerate(self, all, each)
 }
 
-func goStructCanPut(self *_object, name string) bool {
+func goStructCanPut(self *_object, name string) bool {mydebug.INFO()
 	object := self.value.(*_goStructObject)
 	value := object.getValue(name)
 	if value.IsValid() {
@@ -126,7 +127,7 @@ func goStructCanPut(self *_object, name string) bool {
 	return objectCanPut(self, name)
 }
 
-func goStructPut(self *_object, name string, value Value, throw bool) {
+func goStructPut(self *_object, name string, value Value, throw bool) {mydebug.INFO()
 	object := self.value.(*_goStructObject)
 	if object.setValue(name, value) {
 		return
@@ -135,7 +136,7 @@ func goStructPut(self *_object, name string, value Value, throw bool) {
 	objectPut(self, name, value, throw)
 }
 
-func goStructMarshalJSON(self *_object) json.Marshaler {
+func goStructMarshalJSON(self *_object) json.Marshaler {mydebug.INFO()
 	object := self.value.(*_goStructObject)
 	goValue := reflect.Indirect(object.value).Interface()
 	switch marshaler := goValue.(type) {

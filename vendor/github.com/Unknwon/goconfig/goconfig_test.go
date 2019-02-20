@@ -13,6 +13,7 @@
 // under the License.
 
 package goconfig
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -21,7 +22,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestLoadConfigFile(t *testing.T) {
+func TestLoadConfigFile(t *testing.T) {mydebug.INFO()
 	Convey("Load a single configuration file that does exist", t, func() {
 		c, err := LoadConfigFile("testdata/conf.ini")
 		So(err, ShouldBeNil)
@@ -173,7 +174,7 @@ func TestLoadConfigFile(t *testing.T) {
 	})
 }
 
-func TestGetKeyList(t *testing.T) {
+func TestGetKeyList(t *testing.T) {mydebug.INFO()
 	Convey("Get key list", t, func() {
 		c, err := LoadConfigFile("testdata/conf.ini")
 		So(err, ShouldBeNil)
@@ -192,7 +193,7 @@ func TestGetKeyList(t *testing.T) {
 	})
 }
 
-func TestSaveConfigFile(t *testing.T) {
+func TestSaveConfigFile(t *testing.T) {mydebug.INFO()
 	Convey("Save a ConfigFile to file system", t, func() {
 		c, err := LoadConfigFile("testdata/conf.ini", "testdata/conf2.ini")
 		So(err, ShouldBeNil)
@@ -204,7 +205,7 @@ func TestSaveConfigFile(t *testing.T) {
 	})
 }
 
-func TestReload(t *testing.T) {
+func TestReload(t *testing.T) {mydebug.INFO()
 	Convey("Reload a configuration file", t, func() {
 		c, err := LoadConfigFile("testdata/conf.ini", "testdata/conf2.ini")
 		So(err, ShouldBeNil)
@@ -214,7 +215,7 @@ func TestReload(t *testing.T) {
 	})
 }
 
-func TestAppendFiles(t *testing.T) {
+func TestAppendFiles(t *testing.T) {mydebug.INFO()
 	Convey("Reload a configuration file", t, func() {
 		c, err := LoadConfigFile("testdata/conf.ini")
 		So(err, ShouldBeNil)
@@ -224,7 +225,7 @@ func TestAppendFiles(t *testing.T) {
 	})
 }
 
-func TestTypes(t *testing.T) {
+func TestTypes(t *testing.T) {mydebug.INFO()
 	Convey("Return with types", t, func() {
 		c, err := LoadConfigFile("testdata/conf.ini")
 		So(err, ShouldBeNil)
@@ -268,7 +269,7 @@ func TestTypes(t *testing.T) {
 	})
 }
 
-func TestMust(t *testing.T) {
+func TestMust(t *testing.T) {mydebug.INFO()
 	Convey("Must return with type", t, func() {
 		c, err := LoadConfigFile("testdata/conf.ini")
 		So(err, ShouldBeNil)
@@ -315,7 +316,7 @@ func TestMust(t *testing.T) {
 	})
 }
 
-func TestRange(t *testing.T) {
+func TestRange(t *testing.T) {mydebug.INFO()
 	Convey("Must return with range", t, func() {
 		c, err := LoadConfigFile("testdata/conf.ini")
 		So(err, ShouldBeNil)
@@ -328,7 +329,7 @@ func TestRange(t *testing.T) {
 	})
 }
 
-func TestArray(t *testing.T) {
+func TestArray(t *testing.T) {mydebug.INFO()
 	Convey("Must return with string array", t, func() {
 		c, err := LoadConfigFile("testdata/conf.ini")
 		So(err, ShouldBeNil)
@@ -339,7 +340,7 @@ func TestArray(t *testing.T) {
 	})
 }
 
-func TestLoadFromData(t *testing.T) {
+func TestLoadFromData(t *testing.T) {mydebug.INFO()
 	Convey("Load config file from data", t, func() {
 		c, err := LoadFromData([]byte(""))
 		So(err, ShouldBeNil)
@@ -347,7 +348,7 @@ func TestLoadFromData(t *testing.T) {
 	})
 }
 
-func Benchmark_GetValue(b *testing.B) {
+func Benchmark_GetValue(b *testing.B) {mydebug.INFO()
 	c, _ := LoadConfigFile("testdata/conf.ini")
 	c.BlockMode = false
 	for i := 0; i < b.N; i++ {
@@ -355,7 +356,7 @@ func Benchmark_GetValue(b *testing.B) {
 	}
 }
 
-func Benchmark_SetValue(b *testing.B) {
+func Benchmark_SetValue(b *testing.B) {mydebug.INFO()
 	c, _ := LoadConfigFile("testdata/conf.ini")
 	for i := 0; i < b.N; i++ {
 		c.SetValue("parent", "money", "10")

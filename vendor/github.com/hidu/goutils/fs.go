@@ -1,4 +1,5 @@
 package utils
+import "github.com/equalll/mydebug"
 
 import (
 	"crypto/md5"
@@ -12,7 +13,7 @@ const (
 	FILE_APPEND = os.O_APPEND
 )
 
-func File_get_contents(file_path string) (data []byte, err error) {
+func File_get_contents(file_path string) (data []byte, err error) {mydebug.INFO()
 	f, err := os.Open(file_path)
 	defer f.Close()
 	if err != nil {
@@ -25,7 +26,7 @@ func File_get_contents(file_path string) (data []byte, err error) {
 	return bf, nil
 }
 
-func File_put_contents(file_path string, data []byte, def ...int) error {
+func File_put_contents(file_path string, data []byte, def ...int) error {mydebug.INFO()
 	flags := os.O_RDWR | os.O_CREATE
 	is_append := false
 	if len(def) > 0 && def[0] == FILE_APPEND {
@@ -47,7 +48,7 @@ func File_put_contents(file_path string, data []byte, def ...int) error {
 	return nil
 }
 
-func File_exists(file_path string) bool {
+func File_exists(file_path string) bool {mydebug.INFO()
 	_, err := os.Stat(file_path)
 	if err == nil {
 		return true
@@ -55,7 +56,7 @@ func File_exists(file_path string) bool {
 	return os.IsExist(err)
 }
 
-func File_Md5(file_path string) (string, error) {
+func File_Md5(file_path string) (string, error) {mydebug.INFO()
 	file, err := os.Open(file_path)
 	if err == nil {
 		h := md5.New()

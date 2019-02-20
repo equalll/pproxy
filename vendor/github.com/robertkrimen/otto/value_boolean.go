@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -6,7 +7,7 @@ import (
 	"reflect"
 )
 
-func (value Value) bool() bool {
+func (value Value) bool() bool {mydebug.INFO()
 	if value.kind == valueBoolean {
 		return value.value.(bool)
 	}

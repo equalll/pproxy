@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -28,7 +29,7 @@ type webRequestCtx struct {
 
 var cookieName = "pproxy"
 
-func (ser *ProxyServe) handleLocalReq(w http.ResponseWriter, req *http.Request) {
+func (ser *ProxyServe) handleLocalReq(w http.ResponseWriter, req *http.Request) {mydebug.INFO()
 	accessLogStr := "web_access " + req.Method + " " + req.URL.String() + " " + req.RemoteAddr + " refer:" + req.Referer()
 	defer (func() {
 		log.Println(accessLogStr)
@@ -90,7 +91,7 @@ func (ser *ProxyServe) handleLocalReq(w http.ResponseWriter, req *http.Request) 
 	}
 }
 
-func (ser *ProxyServe) web_checkLogin(req *http.Request) (user *User, isLogin bool) {
+func (ser *ProxyServe) web_checkLogin(req *http.Request) (user *User, isLogin bool) {mydebug.INFO()
 	if req == nil {
 		return
 	}
@@ -110,7 +111,7 @@ func (ser *ProxyServe) web_checkLogin(req *http.Request) (user *User, isLogin bo
 	return
 }
 
-func (ctx *webRequestCtx) checkLogin() {
+func (ctx *webRequestCtx) checkLogin() {mydebug.INFO()
 	user, isLogin := ctx.ser.web_checkLogin(ctx.req)
 	if isLogin {
 		ctx.user = user
@@ -122,15 +123,15 @@ func (ctx *webRequestCtx) checkLogin() {
 	ctx.values["isAdmin"] = ctx.isAdmin
 }
 
-func (ctx *webRequestCtx) handle_index() {
+func (ctx *webRequestCtx) handle_index() {mydebug.INFO()
 	ctx.render("network.html", true)
 }
 
-func (ctx *webRequestCtx) handle_useage() {
+func (ctx *webRequestCtx) handle_useage() {mydebug.INFO()
 	ctx.render("useage.html", true)
 }
 
-func (ctx *webRequestCtx) getRewriteJsInfo(name string, title string) map[string]interface{} {
+func (ctx *webRequestCtx) getRewriteJsInfo(name string, title string) map[string]interface{} {mydebug.INFO()
 	info := make(map[string]interface{})
 	jsStr, _ := ctx.ser.reqMod.getJsContent(name)
 
@@ -179,7 +180,7 @@ func (ctx *webRequestCtx) getRewriteJsInfo(name string, title string) map[string
 	return info
 }
 
-func (ctx *webRequestCtx) handleConfig() {
+func (ctx *webRequestCtx) handleConfig() {mydebug.INFO()
 	if ctx.req.Method == "GET" {
 		jsDataArr := make([]interface{}, 0, 2)
 		jsDataArr = append(jsDataArr, ctx.getRewriteJsInfo("", "global config"))
@@ -228,7 +229,7 @@ func (ctx *webRequestCtx) handleConfig() {
 	}
 
 }
-func (ctx *webRequestCtx) handle_response() {
+func (ctx *webRequestCtx) handle_response() {mydebug.INFO()
 	docid, uintParseErr := parseDocID(ctx.req.FormValue("id"))
 	if uintParseErr == nil {
 		responseData, _ := ctx.ser.getResponseByDocid(docid)
@@ -275,24 +276,24 @@ func (ctx *webRequestCtx) handle_response() {
 	}
 }
 
-func (ctx *webRequestCtx) jsAlert(msg string) {
+func (ctx *webRequestCtx) jsAlert(msg string) {mydebug.INFO()
 	ctx.w.Write([]byte(fmt.Sprintf("<script>alert('%s')</script>", html.EscapeString(msg))))
 }
-func (ctx *webRequestCtx) jsAlertJump(msg string, urlStr string) {
+func (ctx *webRequestCtx) jsAlertJump(msg string, urlStr string) {mydebug.INFO()
 	ctx.w.Write([]byte(fmt.Sprintf("<script>alert('%s');top.location.href='%s'</script>", html.EscapeString(msg), urlStr)))
 }
 
-func (ctx *webRequestCtx) handle_about() {
+func (ctx *webRequestCtx) handle_about() {mydebug.INFO()
 	ctx.render("about.html", true)
 }
 
-func (ctx *webRequestCtx) handle_logout() {
+func (ctx *webRequestCtx) handle_logout() {mydebug.INFO()
 	cookie := &http.Cookie{Name: cookieName, Value: "", Path: "/"}
 	http.SetCookie(ctx.w, cookie)
 	http.Redirect(ctx.w, ctx.req, "/", 302)
 }
 
-func (ctx *webRequestCtx) handle_login() {
+func (ctx *webRequestCtx) handle_login() {mydebug.INFO()
 	if ctx.req.Method == "GET" {
 		ctx.render("login.html", true)
 	} else {
@@ -324,18 +325,18 @@ func (ctx *webRequestCtx) handle_login() {
 	}
 }
 
-func (ctx *webRequestCtx) render(name string, layout bool) {
+func (ctx *webRequestCtx) render(name string, layout bool) {mydebug.INFO()
 	html := render_html(name, ctx.values, layout)
 	ctx.w.Write([]byte(html))
 }
 
-func (ctx *webRequestCtx) showError(msg string) {
+func (ctx *webRequestCtx) showError(msg string) {mydebug.INFO()
 	ctx.values["error"] = msg
 	ctx.values["subTitle"] = "Error Page |"
 	ctx.render("error.html", true)
 }
 
-func (ctx *webRequestCtx) showErrorOrAlert(msg string) {
+func (ctx *webRequestCtx) showErrorOrAlert(msg string) {mydebug.INFO()
 	if ctx.req.Method == "POST" {
 		ctx.jsAlert(msg)
 	} else {
@@ -343,7 +344,7 @@ func (ctx *webRequestCtx) showErrorOrAlert(msg string) {
 	}
 }
 
-func reader_html_include(fileName string) string {
+func reader_html_include(fileName string) string {mydebug.INFO()
 	html := Assest.GetContent("/res/tpl/" + fileName)
 	myfn := template.FuncMap{
 		"my_include": func(name string) string {
@@ -358,7 +359,7 @@ func reader_html_include(fileName string) string {
 	return body
 }
 
-func render_html(fileName string, values map[string]interface{}, layout bool) string {
+func render_html(fileName string, values map[string]interface{}, layout bool) string {mydebug.INFO()
 	html := reader_html_include(fileName)
 	funcs := template.FuncMap{
 		"escape": func(str string) string {
@@ -380,7 +381,7 @@ func render_html(fileName string, values map[string]interface{}, layout bool) st
 	return utils.Html_reduceSpace(body)
 }
 
-func (ser *ProxyServe) handleUserInfo(w http.ResponseWriter, req *http.Request) {
+func (ser *ProxyServe) handleUserInfo(w http.ResponseWriter, req *http.Request) {mydebug.INFO()
 	host, _, _ := net.SplitHostPort(req.RemoteAddr)
 	data := "client ip:" + host
 	w.Write([]byte(data))

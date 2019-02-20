@@ -1,4 +1,5 @@
 package goproxy
+import "github.com/equalll/mydebug"
 
 import "net/http"
 
@@ -15,7 +16,7 @@ type ReqHandler interface {
 type FuncReqHandler func(req *http.Request, ctx *ProxyCtx) (*http.Request, *http.Response)
 
 // FuncReqHandler.Handle(req,ctx) <=> FuncReqHandler(req,ctx)
-func (f FuncReqHandler) Handle(req *http.Request, ctx *ProxyCtx) (*http.Request, *http.Response) {
+func (f FuncReqHandler) Handle(req *http.Request, ctx *ProxyCtx) (*http.Request, *http.Response) {mydebug.INFO()
 	return f(req, ctx)
 }
 
@@ -31,7 +32,7 @@ type RespHandler interface {
 type FuncRespHandler func(resp *http.Response, ctx *ProxyCtx) *http.Response
 
 // FuncRespHandler.Handle(req,ctx) <=> FuncRespHandler(req,ctx)
-func (f FuncRespHandler) Handle(resp *http.Response, ctx *ProxyCtx) *http.Response {
+func (f FuncRespHandler) Handle(resp *http.Response, ctx *ProxyCtx) *http.Response {mydebug.INFO()
 	return f(resp, ctx)
 }
 
@@ -52,6 +53,6 @@ type HttpsHandler interface {
 type FuncHttpsHandler func(host string, ctx *ProxyCtx) (*ConnectAction, string)
 
 // FuncHttpsHandler should implement the RespHandler interface
-func (f FuncHttpsHandler) HandleConnect(host string, ctx *ProxyCtx) (*ConnectAction, string) {
+func (f FuncHttpsHandler) HandleConnect(host string, ctx *ProxyCtx) (*ConnectAction, string) {mydebug.INFO()
 	return f(host, ctx)
 }

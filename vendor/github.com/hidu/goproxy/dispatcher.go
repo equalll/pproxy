@@ -1,4 +1,5 @@
 package goproxy
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -29,28 +30,28 @@ type ReqConditionFunc func(req *http.Request, ctx *ProxyCtx) bool
 // RespConditionFunc.HandleResp(resp,ctx) <=> RespConditionFunc(resp,ctx)
 type RespConditionFunc func(resp *http.Response, ctx *ProxyCtx) bool
 
-func (c ReqConditionFunc) HandleReq(req *http.Request, ctx *ProxyCtx) bool {
+func (c ReqConditionFunc) HandleReq(req *http.Request, ctx *ProxyCtx) bool {mydebug.INFO()
 	return c(req, ctx)
 }
 
 // ReqConditionFunc cannot test responses. It only satisfies RespCondition interface so that
 // to be usable as RespCondition.
-func (c ReqConditionFunc) HandleResp(resp *http.Response, ctx *ProxyCtx) bool {
+func (c ReqConditionFunc) HandleResp(resp *http.Response, ctx *ProxyCtx) bool {mydebug.INFO()
 	return c(ctx.Req, ctx)
 }
 
-func (c RespConditionFunc) HandleResp(resp *http.Response, ctx *ProxyCtx) bool {
+func (c RespConditionFunc) HandleResp(resp *http.Response, ctx *ProxyCtx) bool {mydebug.INFO()
 	return c(resp, ctx)
 }
 
-// UrlHasPrefix returns a ReqCondtion checking wether the destination URL the proxy client has requested
+// UrlHasPrefix returns a ReqCondition checking wether the destination URL the proxy client has requested
 // has the given prefix, with or without the host.
 // For example UrlHasPrefix("host/x") will match requests of the form 'GET host/x', and will match
 // requests to url 'http://host/x'
-func UrlHasPrefix(prefix string) ReqConditionFunc {
+func UrlHasPrefix(prefix string) ReqConditionFunc {mydebug.INFO()
 	return func(req *http.Request, ctx *ProxyCtx) bool {
 		return strings.HasPrefix(req.URL.Path, prefix) ||
-			strings.HasPrefix(req.URL.Host+"/"+req.URL.Path, prefix) ||
+			strings.HasPrefix(req.URL.Host+req.URL.Path, prefix) ||
 			strings.HasPrefix(req.URL.Scheme+req.URL.Host+req.URL.Path, prefix)
 	}
 }
@@ -59,7 +60,7 @@ func UrlHasPrefix(prefix string) ReqConditionFunc {
 // with or without the host prefix.
 // UrlIs("google.com/","foo") will match requests 'GET /' to 'google.com', requests `'GET google.com/' to
 // any host, and requests of the form 'GET foo'.
-func UrlIs(urls ...string) ReqConditionFunc {
+func UrlIs(urls ...string) ReqConditionFunc {mydebug.INFO()
 	urlSet := make(map[string]bool)
 	for _, u := range urls {
 		urlSet[u] = true
@@ -73,7 +74,7 @@ func UrlIs(urls ...string) ReqConditionFunc {
 
 // ReqHostMatches returns a ReqCondition, testing whether the host to which the request was directed to matches
 // any of the given regular expressions.
-func ReqHostMatches(regexps ...*regexp.Regexp) ReqConditionFunc {
+func ReqHostMatches(regexps ...*regexp.Regexp) ReqConditionFunc {mydebug.INFO()
 	return func(req *http.Request, ctx *ProxyCtx) bool {
 		for _, re := range regexps {
 			if re.MatchString(req.Host) {
@@ -86,7 +87,7 @@ func ReqHostMatches(regexps ...*regexp.Regexp) ReqConditionFunc {
 
 // ReqHostIs returns a ReqCondition, testing whether the host to which the request is directed to equal
 // to one of the given strings
-func ReqHostIs(hosts ...string) ReqConditionFunc {
+func ReqHostIs(hosts ...string) ReqConditionFunc {mydebug.INFO()
 	hostSet := make(map[string]bool)
 	for _, h := range hosts {
 		hostSet[h] = true
@@ -110,29 +111,34 @@ var IsLocalHost ReqConditionFunc = func(req *http.Request, ctx *ProxyCtx) bool {
 
 // UrlMatches returns a ReqCondition testing whether the destination URL
 // of the request matches the given regexp, with or without prefix
-func UrlMatches(re *regexp.Regexp) ReqConditionFunc {
+func UrlMatches(re *regexp.Regexp) ReqConditionFunc {mydebug.INFO()
 	return func(req *http.Request, ctx *ProxyCtx) bool {
 		return re.MatchString(req.URL.Path) ||
 			re.MatchString(req.URL.Host+req.URL.Path)
 	}
 }
 
-// DstHostIs returns a ReqCondtion testing wether the host in the request url is the given string
-func DstHostIs(host string) ReqConditionFunc {
+// DstHostIs returns a ReqCondition testing wether the host in the request url is the given string
+func DstHostIs(host string) ReqConditionFunc {mydebug.INFO()
 	return func(req *http.Request, ctx *ProxyCtx) bool {
 		return req.URL.Host == host
 	}
 }
 
-// SrcIpIs returns a ReqCondtion testing wether the source IP of the request is the given string
-func SrcIpIs(ip string) ReqCondition {
+// SrcIpIs returns a ReqCondition testing whether the source IP of the request is one of the given strings
+func SrcIpIs(ips ...string) ReqCondition {mydebug.INFO()
 	return ReqConditionFunc(func(req *http.Request, ctx *ProxyCtx) bool {
-		return strings.HasPrefix(req.RemoteAddr, ip+":")
+		for _, ip := range ips {
+			if strings.HasPrefix(req.RemoteAddr, ip+":") {
+				return true
+			}
+		}
+		return false
 	})
 }
 
-// Not returns a ReqCondtion negating the given ReqCondition
-func Not(r ReqCondition) ReqConditionFunc {
+// Not returns a ReqCondition negating the given ReqCondition
+func Not(r ReqCondition) ReqConditionFunc {mydebug.INFO()
 	return func(req *http.Request, ctx *ProxyCtx) bool {
 		return !r.HandleReq(req, ctx)
 	}
@@ -140,7 +146,7 @@ func Not(r ReqCondition) ReqConditionFunc {
 
 // ContentTypeIs returns a RespCondition testing whether the HTTP response has Content-Type header equal
 // to one of the given strings.
-func ContentTypeIs(typ string, types ...string) RespCondition {
+func ContentTypeIs(typ string, types ...string) RespCondition {mydebug.INFO()
 	types = append(types, typ)
 	return RespConditionFunc(func(resp *http.Response, ctx *ProxyCtx) bool {
 		if resp == nil {
@@ -161,7 +167,7 @@ func ContentTypeIs(typ string, types ...string) RespCondition {
 // the request, only if all the given ReqCondition matched.
 // Typical usage:
 //	proxy.OnRequest(UrlIs("example.com/foo"),UrlMatches(regexp.MustParse(`.*\.exampl.\com\./.*`)).Do(...)
-func (proxy *ProxyHttpServer) OnRequest(conds ...ReqCondition) *ReqProxyConds {
+func (proxy *ProxyHttpServer) OnRequest(conds ...ReqCondition) *ReqProxyConds {mydebug.INFO()
 	return &ReqProxyConds{proxy, conds}
 }
 
@@ -173,7 +179,7 @@ type ReqProxyConds struct {
 }
 
 // DoFunc is equivalent to proxy.OnRequest().Do(FuncReqHandler(f))
-func (pcond *ReqProxyConds) DoFunc(f func(req *http.Request, ctx *ProxyCtx) (*http.Request, *http.Response)) {
+func (pcond *ReqProxyConds) DoFunc(f func(req *http.Request, ctx *ProxyCtx) (*http.Request, *http.Response)) {mydebug.INFO()
 	pcond.Do(FuncReqHandler(f))
 }
 
@@ -184,7 +190,7 @@ func (pcond *ReqProxyConds) DoFunc(f func(req *http.Request, ctx *ProxyCtx) (*ht
 //	proxy.OnRequest(cond1,cond2).Do(handler)
 //	// given request to the proxy, will test if cond1.HandleReq(req,ctx) && cond2.HandleReq(req,ctx) are true
 //	// if they are, will call handler.Handle(req,ctx)
-func (pcond *ReqProxyConds) Do(h ReqHandler) {
+func (pcond *ReqProxyConds) Do(h ReqHandler) {mydebug.INFO()
 	pcond.proxy.reqHandlers = append(pcond.proxy.reqHandlers,
 		FuncReqHandler(func(r *http.Request, ctx *ProxyCtx) (*http.Request, *http.Response) {
 			for _, cond := range pcond.reqConds {
@@ -207,7 +213,7 @@ func (pcond *ReqProxyConds) Do(h ReqHandler) {
 // The ConnectAction struct contains possible tlsConfig that will be used for eavesdropping. If nil, the proxy
 // will use the default tls configuration.
 //	proxy.OnRequest().HandleConnect(goproxy.AlwaysReject) // rejects all CONNECT requests
-func (pcond *ReqProxyConds) HandleConnect(h HttpsHandler) {
+func (pcond *ReqProxyConds) HandleConnect(h HttpsHandler) {mydebug.INFO()
 	pcond.proxy.httpsHandlers = append(pcond.proxy.httpsHandlers,
 		FuncHttpsHandler(func(host string, ctx *ProxyCtx) (*ConnectAction, string) {
 			for _, cond := range pcond.reqConds {
@@ -231,11 +237,11 @@ func (pcond *ReqProxyConds) HandleConnect(h HttpsHandler) {
 //		}
 //		return RejectConnect, host
 //	})
-func (pcond *ReqProxyConds) HandleConnectFunc(f func(host string, ctx *ProxyCtx) (*ConnectAction, string)) {
+func (pcond *ReqProxyConds) HandleConnectFunc(f func(host string, ctx *ProxyCtx) (*ConnectAction, string)) {mydebug.INFO()
 	pcond.HandleConnect(FuncHttpsHandler(f))
 }
 
-func (pcond *ReqProxyConds) HijackConnect(f func(req *http.Request, client net.Conn, ctx *ProxyCtx)) {
+func (pcond *ReqProxyConds) HijackConnect(f func(req *http.Request, client net.Conn, ctx *ProxyCtx)) {mydebug.INFO()
 	pcond.proxy.httpsHandlers = append(pcond.proxy.httpsHandlers,
 		FuncHttpsHandler(func(host string, ctx *ProxyCtx) (*ConnectAction, string) {
 			for _, cond := range pcond.reqConds {
@@ -257,13 +263,13 @@ type ProxyConds struct {
 }
 
 // ProxyConds.DoFunc is equivalent to proxy.OnResponse().Do(FuncRespHandler(f))
-func (pcond *ProxyConds) DoFunc(f func(resp *http.Response, ctx *ProxyCtx) *http.Response) {
+func (pcond *ProxyConds) DoFunc(f func(resp *http.Response, ctx *ProxyCtx) *http.Response) {mydebug.INFO()
 	pcond.Do(FuncRespHandler(f))
 }
 
 // ProxyConds.Do will register the RespHandler on the proxy, h.Handle(resp,ctx) will be called on every
 // request that matches the conditions aggregated in pcond.
-func (pcond *ProxyConds) Do(h RespHandler) {
+func (pcond *ProxyConds) Do(h RespHandler) {mydebug.INFO()
 	pcond.proxy.respHandlers = append(pcond.proxy.respHandlers,
 		FuncRespHandler(func(resp *http.Response, ctx *ProxyCtx) *http.Response {
 			for _, cond := range pcond.reqConds {
@@ -283,7 +289,7 @@ func (pcond *ProxyConds) Do(h RespHandler) {
 // OnResponse is used when adding a response-filter to the HTTP proxy, usual pattern is
 //	proxy.OnResponse(cond1,cond2).Do(handler) // handler.Handle(resp,ctx) will be used
 //				// if cond1.HandleResp(resp) && cond2.HandleResp(resp)
-func (proxy *ProxyHttpServer) OnResponse(conds ...RespCondition) *ProxyConds {
+func (proxy *ProxyHttpServer) OnResponse(conds ...RespCondition) *ProxyConds {mydebug.INFO()
 	return &ProxyConds{proxy, make([]ReqCondition, 0), conds}
 }
 
@@ -305,7 +311,7 @@ var AlwaysReject FuncHttpsHandler = func(host string, ctx *ProxyCtx) (*ConnectAc
 // HandleBytes will return a RespHandler that read the entire body of the request
 // to a byte array in memory, would run the user supplied f function on the byte arra,
 // and will replace the body of the original response with the resulting byte array.
-func HandleBytes(f func(b []byte, ctx *ProxyCtx) []byte) RespHandler {
+func HandleBytes(f func(b []byte, ctx *ProxyCtx) []byte) RespHandler {mydebug.INFO()
 	return FuncRespHandler(func(resp *http.Response, ctx *ProxyCtx) *http.Response {
 		b, err := ioutil.ReadAll(resp.Body)
 		if err != nil {

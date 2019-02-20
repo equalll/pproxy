@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -8,12 +9,12 @@ import (
 	"github.com/robertkrimen/otto/token"
 )
 
-func (self *_runtime) evaluateMultiply(left float64, right float64) Value {
+func (self *_runtime) evaluateMultiply(left float64, right float64) Value {mydebug.INFO()
 	// TODO 11.5.1
 	return Value{}
 }
 
-func (self *_runtime) evaluateDivide(left float64, right float64) Value {
+func (self *_runtime) evaluateDivide(left float64, right float64) Value {mydebug.INFO()
 	if math.IsNaN(left) || math.IsNaN(right) {
 		return NaNValue()
 	}
@@ -47,12 +48,12 @@ func (self *_runtime) evaluateDivide(left float64, right float64) Value {
 	return toValue_float64(left / right)
 }
 
-func (self *_runtime) evaluateModulo(left float64, right float64) Value {
+func (self *_runtime) evaluateModulo(left float64, right float64) Value {mydebug.INFO()
 	// TODO 11.5.3
 	return Value{}
 }
 
-func (self *_runtime) calculateBinaryExpression(operator token.Token, left Value, right Value) Value {
+func (self *_runtime) calculateBinaryExpression(operator token.Token, left Value, right Value) Value {mydebug.INFO()
 
 	leftValue := left.resolve()
 
@@ -140,13 +141,13 @@ func (self *_runtime) calculateBinaryExpression(operator token.Token, left Value
 	panic(hereBeDragons(operator))
 }
 
-func valueKindDispatchKey(left _valueKind, right _valueKind) int {
+func valueKindDispatchKey(left _valueKind, right _valueKind) int {mydebug.INFO()
 	return (int(left) << 2) + int(right)
 }
 
 var equalDispatch map[int](func(Value, Value) bool) = makeEqualDispatch()
 
-func makeEqualDispatch() map[int](func(Value, Value) bool) {
+func makeEqualDispatch() map[int](func(Value, Value) bool) {mydebug.INFO()
 	key := valueKindDispatchKey
 	return map[int](func(Value, Value) bool){
 
@@ -165,7 +166,7 @@ const (
 	lessThanUndefined
 )
 
-func calculateLessThan(left Value, right Value, leftFirst bool) _lessThanResult {
+func calculateLessThan(left Value, right Value, leftFirst bool) _lessThanResult {mydebug.INFO()
 
 	x := Value{}
 	y := x
@@ -228,7 +229,7 @@ var lessThanTable [4](map[_lessThanResult]bool) = [4](map[_lessThanResult]bool){
 	},
 }
 
-func (self *_runtime) calculateComparison(comparator token.Token, left Value, right Value) bool {
+func (self *_runtime) calculateComparison(comparator token.Token, left Value, right Value) bool {mydebug.INFO()
 
 	// FIXME Use strictEqualityComparison?
 	// TODO This might be redundant now (with regards to evaluateComparison)

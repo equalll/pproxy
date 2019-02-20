@@ -5,13 +5,14 @@
 // +build gccgo,linux,amd64
 
 package unix
+import "github.com/equalll/mydebug"
 
 import "syscall"
 
 //extern gettimeofday
 func realGettimeofday(*Timeval, *byte) int32
 
-func gettimeofday(tv *Timeval) (err syscall.Errno) {
+func gettimeofday(tv *Timeval) (err syscall.Errno) {mydebug.INFO()
 	r := realGettimeofday(tv, nil)
 	if r < 0 {
 		return syscall.GetErrno()

@@ -3,14 +3,16 @@
 // license that can be found in the LICENSE file.
 
 // HTTP client implementation. See RFC 2616.
-// 
+//
 // This is the low-level Transport implementation of RoundTripper.
 // The high-level interface is in client.go.
 
+// This file is DEPRECATED and keep solely for backward compatibility.
+
 package transport
+import "github.com/equalll/mydebug"
 
 import (
-	"net/http"
 	"bufio"
 	"compress/gzip"
 	"crypto/tls"
@@ -21,6 +23,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"net/http"
 	"net/url"
 	"os"
 	"strings"
@@ -80,7 +83,7 @@ type Transport struct {
 // An error is returned if the proxy environment is invalid.
 // A nil URL and nil error are returned if no proxy is defined in the
 // environment, or a proxy should not be used for the given request.
-func ProxyFromEnvironment(req *http.Request) (*url.URL, error) {
+func ProxyFromEnvironment(req *http.Request) (*url.URL, error) {mydebug.INFO()
 	proxy := getenvEitherCase("HTTP_PROXY")
 	if proxy == "" {
 		return nil, nil
@@ -103,7 +106,7 @@ func ProxyFromEnvironment(req *http.Request) (*url.URL, error) {
 
 // ProxyURL returns a proxy function (for use in a Transport)
 // that always returns the same URL.
-func ProxyURL(fixedURL *url.URL) func(*http.Request) (*url.URL, error) {
+func ProxyURL(fixedURL *url.URL) func(*http.Request) (*url.URL, error) {mydebug.INFO()
 	return func(*http.Request) (*url.URL, error) {
 		return fixedURL, nil
 	}
@@ -112,11 +115,11 @@ func ProxyURL(fixedURL *url.URL) func(*http.Request) (*url.URL, error) {
 // transportRequest is a wrapper around a *Request that adds
 // optional extra headers to write.
 type transportRequest struct {
-	*http.Request        // original request, not to be mutated
-	extra    http.Header // extra headers to write, or nil
+	*http.Request             // original request, not to be mutated
+	extra         http.Header // extra headers to write, or nil
 }
 
-func (tr *transportRequest) extraHeaders() http.Header {
+func (tr *transportRequest) extraHeaders() http.Header {mydebug.INFO()
 	if tr.extra == nil {
 		tr.extra = make(http.Header)
 	}
@@ -124,13 +127,13 @@ func (tr *transportRequest) extraHeaders() http.Header {
 }
 
 type RoundTripDetails struct {
-	Host string
+	Host    string
 	TCPAddr *net.TCPAddr
 	IsProxy bool
-	Error error
+	Error   error
 }
 
-func (t *Transport) DetailedRoundTrip(req *http.Request) (details *RoundTripDetails, resp *http.Response, err error) {
+func (t *Transport) DetailedRoundTrip(req *http.Request) (details *RoundTripDetails, resp *http.Response, err error) {mydebug.INFO()
 	if req.URL == nil {
 		return nil, nil, errors.New("http: nil Request.URL")
 	}
@@ -169,7 +172,7 @@ func (t *Transport) DetailedRoundTrip(req *http.Request) (details *RoundTripDeta
 }
 
 // RoundTrip implements the RoundTripper interface.
-func (t *Transport) RoundTrip(req *http.Request) (resp *http.Response, err error) {
+func (t *Transport) RoundTrip(req *http.Request) (resp *http.Response, err error) {mydebug.INFO()
 	_, resp, err = t.DetailedRoundTrip(req)
 	return
 }
@@ -180,7 +183,7 @@ func (t *Transport) RoundTrip(req *http.Request) (resp *http.Response, err error
 //
 // RegisterProtocol can be used by other packages to provide
 // implementations of protocol schemes like "ftp" or "file".
-func (t *Transport) RegisterProtocol(scheme string, rt RoundTripper) {
+func (t *Transport) RegisterProtocol(scheme string, rt RoundTripper) {mydebug.INFO()
 	if scheme == "http" || scheme == "https" {
 		panic("protocol " + scheme + " already registered")
 	}
@@ -199,7 +202,7 @@ func (t *Transport) RegisterProtocol(scheme string, rt RoundTripper) {
 // connected from previous requests but are now sitting idle in
 // a "keep-alive" state. It does not interrupt any connections currently
 // in use.
-func (t *Transport) CloseIdleConnections() {
+func (t *Transport) CloseIdleConnections() {mydebug.INFO()
 	t.lk.Lock()
 	defer t.lk.Unlock()
 	if t.idleConn == nil {
@@ -217,14 +220,14 @@ func (t *Transport) CloseIdleConnections() {
 // Private implementation past this point.
 //
 
-func getenvEitherCase(k string) string {
+func getenvEitherCase(k string) string {mydebug.INFO()
 	if v := os.Getenv(strings.ToUpper(k)); v != "" {
 		return v
 	}
 	return os.Getenv(strings.ToLower(k))
 }
 
-func (t *Transport) connectMethodForRequest(treq *transportRequest) (*connectMethod, error) {
+func (t *Transport) connectMethodForRequest(treq *transportRequest) (*connectMethod, error) {mydebug.INFO()
 	cm := &connectMethod{
 		targetScheme: treq.URL.Scheme,
 		targetAddr:   canonicalAddr(treq.URL),
@@ -241,7 +244,7 @@ func (t *Transport) connectMethodForRequest(treq *transportRequest) (*connectMet
 
 // proxyAuth returns the Proxy-Authorization header to set
 // on requests, if applicable.
-func (cm *connectMethod) proxyAuth() string {
+func (cm *connectMethod) proxyAuth() string {mydebug.INFO()
 	if cm.proxyURL == nil {
 		return ""
 	}
@@ -255,7 +258,7 @@ func (cm *connectMethod) proxyAuth() string {
 // a new request.
 // If pconn is no longer needed or not in a good state, putIdleConn
 // returns false.
-func (t *Transport) putIdleConn(pconn *persistConn) bool {
+func (t *Transport) putIdleConn(pconn *persistConn) bool {mydebug.INFO()
 	t.lk.Lock()
 	defer t.lk.Unlock()
 	if t.DisableKeepAlives || t.MaxIdleConnsPerHost < 0 {
@@ -278,7 +281,7 @@ func (t *Transport) putIdleConn(pconn *persistConn) bool {
 	return true
 }
 
-func (t *Transport) getIdleConn(cm *connectMethod) (pconn *persistConn) {
+func (t *Transport) getIdleConn(cm *connectMethod) (pconn *persistConn) {mydebug.INFO()
 	t.lk.Lock()
 	defer t.lk.Unlock()
 	if t.idleConn == nil {
@@ -303,13 +306,12 @@ func (t *Transport) getIdleConn(cm *connectMethod) (pconn *persistConn) {
 			return
 		}
 	}
-	return
 }
 
-func (t *Transport) dial(network, addr string) (c net.Conn, raddr string, ip *net.TCPAddr, err error) {
+func (t *Transport) dial(network, addr string) (c net.Conn, raddr string, ip *net.TCPAddr, err error) {mydebug.INFO()
 	if t.Dial != nil {
 		ip, err = net.ResolveTCPAddr("tcp", addr)
-		if err!=nil {
+		if err != nil {
 			return
 		}
 		c, err = t.Dial(network, addr)
@@ -317,7 +319,7 @@ func (t *Transport) dial(network, addr string) (c net.Conn, raddr string, ip *ne
 		return
 	}
 	addri, err := net.ResolveTCPAddr("tcp", addr)
-	if err!=nil {
+	if err != nil {
 		return
 	}
 	c, err = net.DialTCP("tcp", nil, addri)
@@ -330,7 +332,7 @@ func (t *Transport) dial(network, addr string) (c net.Conn, raddr string, ip *ne
 // specified in the connectMethod.  This includes doing a proxy CONNECT
 // and/or setting up TLS.  If this doesn't return an error, the persistConn
 // is ready to write requests to.
-func (t *Transport) getConn(cm *connectMethod) (*persistConn, error) {
+func (t *Transport) getConn(cm *connectMethod) (*persistConn, error) {mydebug.INFO()
 	if pc := t.getIdleConn(cm); pc != nil {
 		return pc, nil
 	}
@@ -350,8 +352,8 @@ func (t *Transport) getConn(cm *connectMethod) (*persistConn, error) {
 		cacheKey: cm.String(),
 		conn:     conn,
 		reqch:    make(chan requestAndChan, 50),
-		host: raddr,
-		ip: ip,
+		host:     raddr,
+		ip:       ip,
 	}
 
 	switch {
@@ -415,7 +417,7 @@ func (t *Transport) getConn(cm *connectMethod) (*persistConn, error) {
 // useProxy returns true if requests to addr should use a proxy,
 // according to the NO_PROXY or no_proxy environment variable.
 // addr is always a canonicalAddr with a host and port.
-func useProxy(addr string) bool {
+func useProxy(addr string) bool {mydebug.INFO()
 	if len(addr) == 0 {
 		return true
 	}
@@ -477,16 +479,16 @@ type connectMethod struct {
 	targetAddr   string   // Not used if proxy + http targetScheme (4th example in table)
 }
 
-func (ck *connectMethod) String() string {
+func (cm *connectMethod) String() string {mydebug.INFO()
 	proxyStr := ""
-	if ck.proxyURL != nil {
-		proxyStr = ck.proxyURL.String()
+	if cm.proxyURL != nil {
+		proxyStr = cm.proxyURL.String()
 	}
-	return strings.Join([]string{proxyStr, ck.targetScheme, ck.targetAddr}, "|")
+	return strings.Join([]string{proxyStr, cm.targetScheme, cm.targetAddr}, "|")
 }
 
 // addr returns the first hop "host:port" to which we need to TCP connect.
-func (cm *connectMethod) addr() string {
+func (cm *connectMethod) addr() string {mydebug.INFO()
 	if cm.proxyURL != nil {
 		return canonicalAddr(cm.proxyURL)
 	}
@@ -495,7 +497,7 @@ func (cm *connectMethod) addr() string {
 
 // tlsHost returns the host name to match against the peer's
 // TLS certificate.
-func (cm *connectMethod) tlsHost() string {
+func (cm *connectMethod) tlsHost() string {mydebug.INFO()
 	h := cm.targetAddr
 	if hasPort(h) {
 		h = h[:strings.LastIndex(h, ":")]
@@ -524,10 +526,10 @@ type persistConn struct {
 	broken               bool // an error has happened on this connection; marked broken so it's not reused.
 
 	host string
-	ip *net.TCPAddr
+	ip   *net.TCPAddr
 }
 
-func (pc *persistConn) isBroken() bool {
+func (pc *persistConn) isBroken() bool {mydebug.INFO()
 	pc.lk.Lock()
 	defer pc.lk.Unlock()
 	return pc.broken
@@ -535,7 +537,7 @@ func (pc *persistConn) isBroken() bool {
 
 var remoteSideClosedFunc func(error) bool // or nil to use default
 
-func remoteSideClosed(err error) bool {
+func remoteSideClosed(err error) bool {mydebug.INFO()
 	if err == io.EOF {
 		return true
 	}
@@ -545,7 +547,7 @@ func remoteSideClosed(err error) bool {
 	return false
 }
 
-func (pc *persistConn) readLoop() {
+func (pc *persistConn) readLoop() {mydebug.INFO()
 	alive := true
 	var lastbody io.ReadCloser // last response body, if any, read on this connection
 
@@ -650,10 +652,9 @@ type requestAndChan struct {
 	addedGzip bool
 }
 
-func (pc *persistConn) roundTrip(req *transportRequest) (resp *http.Response, err error) {
+func (pc *persistConn) roundTrip(req *transportRequest) (resp *http.Response, err error) {mydebug.INFO()
 	if pc.mutateHeaderFunc != nil {
 		panic("mutateHeaderFunc not supported in modified Transport")
-		pc.mutateHeaderFunc(req.extraHeaders())
 	}
 
 	// Ask for a compressed version if the caller didn't set their
@@ -662,7 +663,7 @@ func (pc *persistConn) roundTrip(req *transportRequest) (resp *http.Response, er
 	// requested it.
 	requestedGzip := false
 	if !pc.t.DisableCompression && req.Header.Get("Accept-Encoding") == "" {
-		// Request gzip only, not deflate. Deflate is ambiguous and 
+		// Request gzip only, not deflate. Deflate is ambiguous and
 		// not as universally supported anyway.
 		// See: http://www.gzip.org/zlib/zlib_faq.html#faq38
 		requestedGzip = true
@@ -695,13 +696,13 @@ func (pc *persistConn) roundTrip(req *transportRequest) (resp *http.Response, er
 	return re.res, re.err
 }
 
-func (pc *persistConn) close() {
+func (pc *persistConn) close() {mydebug.INFO()
 	pc.lk.Lock()
 	defer pc.lk.Unlock()
 	pc.closeLocked()
 }
 
-func (pc *persistConn) closeLocked() {
+func (pc *persistConn) closeLocked() {mydebug.INFO()
 	pc.broken = true
 	pc.conn.Close()
 	pc.mutateHeaderFunc = nil
@@ -713,7 +714,7 @@ var portMap = map[string]string{
 }
 
 // canonicalAddr returns url.Host but always with a ":port" suffix
-func canonicalAddr(url *url.URL) string {
+func canonicalAddr(url *url.URL) string {mydebug.INFO()
 	addr := url.Host
 	if !hasPort(addr) {
 		return addr + ":" + portMap[url.Scheme]
@@ -721,7 +722,7 @@ func canonicalAddr(url *url.URL) string {
 	return addr
 }
 
-func responseIsKeepAlive(res *http.Response) bool {
+func responseIsKeepAlive(res *http.Response) bool {mydebug.INFO()
 	// TODO: implement.  for now just always shutting down the connection.
 	return false
 }
@@ -735,7 +736,7 @@ type bodyEOFSignal struct {
 	isClosed bool
 }
 
-func (es *bodyEOFSignal) Read(p []byte) (n int, err error) {
+func (es *bodyEOFSignal) Read(p []byte) (n int, err error) {mydebug.INFO()
 	n, err = es.body.Read(p)
 	if es.isClosed && n > 0 {
 		panic("http: unexpected bodyEOFSignal Read after Close; see issue 1725")
@@ -747,7 +748,7 @@ func (es *bodyEOFSignal) Read(p []byte) (n int, err error) {
 	return
 }
 
-func (es *bodyEOFSignal) Close() (err error) {
+func (es *bodyEOFSignal) Close() (err error) {mydebug.INFO()
 	if es.isClosed {
 		return nil
 	}
@@ -765,7 +766,7 @@ type readFirstCloseBoth struct {
 	io.Closer
 }
 
-func (r *readFirstCloseBoth) Close() error {
+func (r *readFirstCloseBoth) Close() error {mydebug.INFO()
 	if err := r.ReadCloser.Close(); err != nil {
 		r.Closer.Close()
 		return err
@@ -781,7 +782,7 @@ type discardOnCloseReadCloser struct {
 	io.ReadCloser
 }
 
-func (d *discardOnCloseReadCloser) Close() error {
+func (d *discardOnCloseReadCloser) Close() error {mydebug.INFO()
 	io.Copy(ioutil.Discard, d.ReadCloser) // ignore errors; likely invalid or already closed
 	return d.ReadCloser.Close()
 }

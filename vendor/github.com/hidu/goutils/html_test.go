@@ -1,4 +1,5 @@
 package utils
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -9,7 +10,7 @@ import (
 
 var html_print bool = false
 
-func TestHtml_input_text(t *testing.T) {
+func TestHtml_input_text(t *testing.T) {mydebug.INFO()
 	test := Html_input_text("a", "b", "style='color:red'", "class='c'")
 	if html_print {
 		fmt.Println(test)

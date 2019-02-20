@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -21,7 +22,7 @@ type node struct {
 }
 
 // root returns the top-level node this node is attached to.
-func (n *node) root() *node {
+func (n *node) root() *node {mydebug.INFO()
 	if n.parent == nil {
 		return n
 	}
@@ -29,7 +30,7 @@ func (n *node) root() *node {
 }
 
 // minKeys returns the minimum number of inodes this node should have.
-func (n *node) minKeys() int {
+func (n *node) minKeys() int {mydebug.INFO()
 	if n.isLeaf {
 		return 1
 	}
@@ -37,7 +38,7 @@ func (n *node) minKeys() int {
 }
 
 // size returns the size of the node after serialization.
-func (n *node) size() int {
+func (n *node) size() int {mydebug.INFO()
 	sz, elsz := pageHeaderSize, n.pageElementSize()
 	for i := 0; i < len(n.inodes); i++ {
 		item := &n.inodes[i]
@@ -49,7 +50,7 @@ func (n *node) size() int {
 // sizeLessThan returns true if the node is less than a given size.
 // This is an optimization to avoid calculating a large node when we only need
 // to know if it fits inside a certain page size.
-func (n *node) sizeLessThan(v int) bool {
+func (n *node) sizeLessThan(v int) bool {mydebug.INFO()
 	sz, elsz := pageHeaderSize, n.pageElementSize()
 	for i := 0; i < len(n.inodes); i++ {
 		item := &n.inodes[i]
@@ -62,7 +63,7 @@ func (n *node) sizeLessThan(v int) bool {
 }
 
 // pageElementSize returns the size of each page element based on the type of node.
-func (n *node) pageElementSize() int {
+func (n *node) pageElementSize() int {mydebug.INFO()
 	if n.isLeaf {
 		return leafPageElementSize
 	}
@@ -70,7 +71,7 @@ func (n *node) pageElementSize() int {
 }
 
 // childAt returns the child node at a given index.
-func (n *node) childAt(index int) *node {
+func (n *node) childAt(index int) *node {mydebug.INFO()
 	if n.isLeaf {
 		panic(fmt.Sprintf("invalid childAt(%d) on a leaf node", index))
 	}
@@ -78,18 +79,18 @@ func (n *node) childAt(index int) *node {
 }
 
 // childIndex returns the index of a given child node.
-func (n *node) childIndex(child *node) int {
+func (n *node) childIndex(child *node) int {mydebug.INFO()
 	index := sort.Search(len(n.inodes), func(i int) bool { return bytes.Compare(n.inodes[i].key, child.key) != -1 })
 	return index
 }
 
 // numChildren returns the number of children.
-func (n *node) numChildren() int {
+func (n *node) numChildren() int {mydebug.INFO()
 	return len(n.inodes)
 }
 
 // nextSibling returns the next node with the same parent.
-func (n *node) nextSibling() *node {
+func (n *node) nextSibling() *node {mydebug.INFO()
 	if n.parent == nil {
 		return nil
 	}
@@ -101,7 +102,7 @@ func (n *node) nextSibling() *node {
 }
 
 // prevSibling returns the previous node with the same parent.
-func (n *node) prevSibling() *node {
+func (n *node) prevSibling() *node {mydebug.INFO()
 	if n.parent == nil {
 		return nil
 	}
@@ -113,7 +114,7 @@ func (n *node) prevSibling() *node {
 }
 
 // put inserts a key/value.
-func (n *node) put(oldKey, newKey, value []byte, pgid pgid, flags uint32) {
+func (n *node) put(oldKey, newKey, value []byte, pgid pgid, flags uint32) {mydebug.INFO()
 	if pgid >= n.bucket.tx.meta.pgid {
 		panic(fmt.Sprintf("pgid (%d) above high water mark (%d)", pgid, n.bucket.tx.meta.pgid))
 	} else if len(oldKey) <= 0 {
@@ -141,7 +142,7 @@ func (n *node) put(oldKey, newKey, value []byte, pgid pgid, flags uint32) {
 }
 
 // del removes a key from the node.
-func (n *node) del(key []byte) {
+func (n *node) del(key []byte) {mydebug.INFO()
 	// Find index of key.
 	index := sort.Search(len(n.inodes), func(i int) bool { return bytes.Compare(n.inodes[i].key, key) != -1 })
 
@@ -158,7 +159,7 @@ func (n *node) del(key []byte) {
 }
 
 // read initializes the node from a page.
-func (n *node) read(p *page) {
+func (n *node) read(p *page) {mydebug.INFO()
 	n.pgid = p.id
 	n.isLeaf = ((p.flags & leafPageFlag) != 0)
 	n.inodes = make(inodes, int(p.count))
@@ -188,7 +189,7 @@ func (n *node) read(p *page) {
 }
 
 // write writes the items onto one or more pages.
-func (n *node) write(p *page) {
+func (n *node) write(p *page) {mydebug.INFO()
 	// Initialize page.
 	if n.isLeaf {
 		p.flags |= leafPageFlag
@@ -247,7 +248,7 @@ func (n *node) write(p *page) {
 
 // split breaks up a node into multiple smaller nodes, if appropriate.
 // This should only be called from the spill() function.
-func (n *node) split(pageSize int) []*node {
+func (n *node) split(pageSize int) []*node {mydebug.INFO()
 	var nodes []*node
 
 	node := n
@@ -270,7 +271,7 @@ func (n *node) split(pageSize int) []*node {
 
 // splitTwo breaks up a node into two smaller nodes, if appropriate.
 // This should only be called from the split() function.
-func (n *node) splitTwo(pageSize int) (*node, *node) {
+func (n *node) splitTwo(pageSize int) (*node, *node) {mydebug.INFO()
 	// Ignore the split if the page doesn't have at least enough nodes for
 	// two pages or if the nodes can fit in a single page.
 	if len(n.inodes) <= (minKeysPerPage*2) || n.sizeLessThan(pageSize) {
@@ -312,7 +313,7 @@ func (n *node) splitTwo(pageSize int) (*node, *node) {
 // splitIndex finds the position where a page will fill a given threshold.
 // It returns the index as well as the size of the first page.
 // This is only be called from split().
-func (n *node) splitIndex(threshold int) (index, sz int) {
+func (n *node) splitIndex(threshold int) (index, sz int) {mydebug.INFO()
 	sz = pageHeaderSize
 
 	// Loop until we only have the minimum number of keys required for the second page.
@@ -336,7 +337,7 @@ func (n *node) splitIndex(threshold int) (index, sz int) {
 
 // spill writes the nodes to dirty pages and splits nodes as it goes.
 // Returns an error if dirty pages cannot be allocated.
-func (n *node) spill() error {
+func (n *node) spill() error {mydebug.INFO()
 	var tx = n.bucket.tx
 	if n.spilled {
 		return nil
@@ -406,7 +407,7 @@ func (n *node) spill() error {
 
 // rebalance attempts to combine the node with sibling nodes if the node fill
 // size is below a threshold or if there are not enough keys.
-func (n *node) rebalance() {
+func (n *node) rebalance() {mydebug.INFO()
 	if !n.unbalanced {
 		return
 	}
@@ -509,7 +510,7 @@ func (n *node) rebalance() {
 
 // removes a node from the list of in-memory children.
 // This does not affect the inodes.
-func (n *node) removeChild(target *node) {
+func (n *node) removeChild(target *node) {mydebug.INFO()
 	for i, child := range n.children {
 		if child == target {
 			n.children = append(n.children[:i], n.children[i+1:]...)
@@ -520,7 +521,7 @@ func (n *node) removeChild(target *node) {
 
 // dereference causes the node to copy all its inode key/value references to heap memory.
 // This is required when the mmap is reallocated so inodes are not pointing to stale data.
-func (n *node) dereference() {
+func (n *node) dereference() {mydebug.INFO()
 	if n.key != nil {
 		key := make([]byte, len(n.key))
 		copy(key, n.key)
@@ -551,7 +552,7 @@ func (n *node) dereference() {
 }
 
 // free adds the node's underlying page to the freelist.
-func (n *node) free() {
+func (n *node) free() {mydebug.INFO()
 	if n.pgid != 0 {
 		n.bucket.tx.db.freelist.free(n.bucket.tx.meta.txid, n.bucket.tx.page(n.pgid))
 		n.pgid = 0
@@ -560,7 +561,7 @@ func (n *node) free() {
 
 // dump writes the contents of the node to STDERR for debugging purposes.
 /*
-func (n *node) dump() {
+func (n *node) dump() {mydebug.INFO()
 	// Write node header.
 	var typ = "branch"
 	if n.isLeaf {

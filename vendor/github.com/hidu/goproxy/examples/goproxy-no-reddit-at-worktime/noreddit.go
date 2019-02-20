@@ -1,4 +1,5 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"github.com/elazarl/goproxy"
@@ -7,14 +8,17 @@ import (
 	"time"
 )
 
-func main() {
+func main() {mydebug.INFO()
 	proxy := goproxy.NewProxyHttpServer()
 	proxy.OnRequest(goproxy.DstHostIs("www.reddit.com")).DoFunc(
 		func(r *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
-			if h, _, _ := time.Now().Clock(); h >= 8 && h <= 17 {
+			h, _, _ := time.Now().Clock()
+			if h >= 8 && h <= 17 {
 				return r, goproxy.NewResponse(r,
 					goproxy.ContentTypeText, http.StatusForbidden,
 					"Don't waste your time!")
+			} else {
+				ctx.Warnf("clock: %d, you can waste your time...", h)
 			}
 			return r, nil
 		})

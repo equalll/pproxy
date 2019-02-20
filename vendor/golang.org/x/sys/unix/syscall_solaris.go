@@ -11,6 +11,7 @@
 // syscall_solaris.go or syscall_unix.go.
 
 package unix
+import "github.com/equalll/mydebug"
 
 import (
 	"sync/atomic"
@@ -35,7 +36,7 @@ type SockaddrDatalink struct {
 	raw    RawSockaddrDatalink
 }
 
-func clen(n []byte) int {
+func clen(n []byte) int {mydebug.INFO()
 	for i := 0; i < len(n); i++ {
 		if n[i] == 0 {
 			return i
@@ -48,7 +49,7 @@ func clen(n []byte) int {
 // appending the names to names.  It returns the number
 // bytes consumed from buf, the number of entries added
 // to names, and the new names slice.
-func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {
+func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {mydebug.INFO()
 	origlen := len(buf)
 	for max != 0 && len(buf) > 0 {
 		dirent := (*Dirent)(unsafe.Pointer(&buf[0]))
@@ -74,7 +75,7 @@ func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, 
 
 //sysnb	pipe(p *[2]_C_int) (n int, err error)
 
-func Pipe(p []int) (err error) {
+func Pipe(p []int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -88,7 +89,7 @@ func Pipe(p []int) (err error) {
 	return nil
 }
 
-func (sa *SockaddrInet4) sockaddr() (unsafe.Pointer, _Socklen, error) {
+func (sa *SockaddrInet4) sockaddr() (unsafe.Pointer, _Socklen, error) {mydebug.INFO()
 	if sa.Port < 0 || sa.Port > 0xFFFF {
 		return nil, 0, EINVAL
 	}
@@ -102,7 +103,7 @@ func (sa *SockaddrInet4) sockaddr() (unsafe.Pointer, _Socklen, error) {
 	return unsafe.Pointer(&sa.raw), SizeofSockaddrInet4, nil
 }
 
-func (sa *SockaddrInet6) sockaddr() (unsafe.Pointer, _Socklen, error) {
+func (sa *SockaddrInet6) sockaddr() (unsafe.Pointer, _Socklen, error) {mydebug.INFO()
 	if sa.Port < 0 || sa.Port > 0xFFFF {
 		return nil, 0, EINVAL
 	}
@@ -117,7 +118,7 @@ func (sa *SockaddrInet6) sockaddr() (unsafe.Pointer, _Socklen, error) {
 	return unsafe.Pointer(&sa.raw), SizeofSockaddrInet6, nil
 }
 
-func (sa *SockaddrUnix) sockaddr() (unsafe.Pointer, _Socklen, error) {
+func (sa *SockaddrUnix) sockaddr() (unsafe.Pointer, _Socklen, error) {mydebug.INFO()
 	name := sa.Name
 	n := len(name)
 	if n >= len(sa.raw.Path) {
@@ -143,7 +144,7 @@ func (sa *SockaddrUnix) sockaddr() (unsafe.Pointer, _Socklen, error) {
 
 //sys	getsockname(fd int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) = libsocket.getsockname
 
-func Getsockname(fd int) (sa Sockaddr, err error) {
+func Getsockname(fd int) (sa Sockaddr, err error) {mydebug.INFO()
 	var rsa RawSockaddrAny
 	var len _Socklen = SizeofSockaddrAny
 	if err = getsockname(fd, &rsa, &len); err != nil {
@@ -156,7 +157,7 @@ const ImplementsGetwd = true
 
 //sys	Getcwd(buf []byte) (n int, err error)
 
-func Getwd() (wd string, err error) {
+func Getwd() (wd string, err error) {mydebug.INFO()
 	var buf [PathMax]byte
 	// Getcwd will return an error if it failed for any reason.
 	_, err = Getcwd(buf[0:])
@@ -177,7 +178,7 @@ func Getwd() (wd string, err error) {
 //sysnb	getgroups(ngid int, gid *_Gid_t) (n int, err error)
 //sysnb	setgroups(ngid int, gid *_Gid_t) (err error)
 
-func Getgroups() (gids []int, err error) {
+func Getgroups() (gids []int, err error) {mydebug.INFO()
 	n, err := getgroups(0, nil)
 	// Check for error and sanity check group count.  Newer versions of
 	// Solaris allow up to 1024 (NGROUPS_MAX).
@@ -202,7 +203,7 @@ func Getgroups() (gids []int, err error) {
 	return
 }
 
-func Setgroups(gids []int) (err error) {
+func Setgroups(gids []int) (err error) {mydebug.INFO()
 	if len(gids) == 0 {
 		return setgroups(0, nil)
 	}
@@ -214,7 +215,7 @@ func Setgroups(gids []int) (err error) {
 	return setgroups(len(a), &a[0])
 }
 
-func ReadDirent(fd int, buf []byte) (n int, err error) {
+func ReadDirent(fd int, buf []byte) (n int, err error) {mydebug.INFO()
 	// Final argument is (basep *uintptr) and the syscall doesn't take nil.
 	// TODO(rsc): Can we use a single global basep for all calls?
 	return Getdents(fd, buf, new(uintptr))
@@ -239,7 +240,7 @@ const (
 
 func (w WaitStatus) Exited() bool { return w&mask == exited }
 
-func (w WaitStatus) ExitStatus() int {
+func (w WaitStatus) ExitStatus() int {mydebug.INFO()
 	if w&mask != exited {
 		return -1
 	}
@@ -248,7 +249,7 @@ func (w WaitStatus) ExitStatus() int {
 
 func (w WaitStatus) Signaled() bool { return w&mask != stopped && w&mask != 0 }
 
-func (w WaitStatus) Signal() syscall.Signal {
+func (w WaitStatus) Signal() syscall.Signal {mydebug.INFO()
 	sig := syscall.Signal(w & mask)
 	if sig == stopped || sig == 0 {
 		return -1
@@ -262,7 +263,7 @@ func (w WaitStatus) Stopped() bool { return w&mask == stopped && syscall.Signal(
 
 func (w WaitStatus) Continued() bool { return w&mask == stopped && syscall.Signal(w>>shift) == SIGSTOP }
 
-func (w WaitStatus) StopSignal() syscall.Signal {
+func (w WaitStatus) StopSignal() syscall.Signal {mydebug.INFO()
 	if !w.Stopped() {
 		return -1
 	}
@@ -273,7 +274,7 @@ func (w WaitStatus) TrapCause() int { return -1 }
 
 //sys	wait4(pid int32, statusp *_C_int, options int, rusage *Rusage) (wpid int32, err error)
 
-func Wait4(pid int, wstatus *WaitStatus, options int, rusage *Rusage) (int, error) {
+func Wait4(pid int, wstatus *WaitStatus, options int, rusage *Rusage) (int, error) {mydebug.INFO()
 	var status _C_int
 	rpid, err := wait4(int32(pid), &status, options, rusage)
 	wpid := int(rpid)
@@ -288,7 +289,7 @@ func Wait4(pid int, wstatus *WaitStatus, options int, rusage *Rusage) (int, erro
 
 //sys	gethostname(buf []byte) (n int, err error)
 
-func Gethostname() (name string, err error) {
+func Gethostname() (name string, err error) {mydebug.INFO()
 	var buf [MaxHostNameLen]byte
 	n, err := gethostname(buf[:])
 	if n != 0 {
@@ -303,7 +304,7 @@ func Gethostname() (name string, err error) {
 
 //sys	utimes(path string, times *[2]Timeval) (err error)
 
-func Utimes(path string, tv []Timeval) (err error) {
+func Utimes(path string, tv []Timeval) (err error) {mydebug.INFO()
 	if tv == nil {
 		return utimes(path, nil)
 	}
@@ -315,7 +316,7 @@ func Utimes(path string, tv []Timeval) (err error) {
 
 //sys	utimensat(fd int, path string, times *[2]Timespec, flag int) (err error)
 
-func UtimesNano(path string, ts []Timespec) error {
+func UtimesNano(path string, ts []Timespec) error {mydebug.INFO()
 	if ts == nil {
 		return utimensat(AT_FDCWD, path, nil, 0)
 	}
@@ -325,7 +326,7 @@ func UtimesNano(path string, ts []Timespec) error {
 	return utimensat(AT_FDCWD, path, (*[2]Timespec)(unsafe.Pointer(&ts[0])), 0)
 }
 
-func UtimesNanoAt(dirfd int, path string, ts []Timespec, flags int) error {
+func UtimesNanoAt(dirfd int, path string, ts []Timespec, flags int) error {mydebug.INFO()
 	if ts == nil {
 		return utimensat(dirfd, path, nil, flags)
 	}
@@ -338,7 +339,7 @@ func UtimesNanoAt(dirfd int, path string, ts []Timespec, flags int) error {
 //sys	fcntl(fd int, cmd int, arg int) (val int, err error)
 
 // FcntlFlock performs a fcntl syscall for the F_GETLK, F_SETLK or F_SETLKW command.
-func FcntlFlock(fd uintptr, cmd int, lk *Flock_t) error {
+func FcntlFlock(fd uintptr, cmd int, lk *Flock_t) error {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procfcntl)), 3, uintptr(fd), uintptr(cmd), uintptr(unsafe.Pointer(lk)), 0, 0, 0)
 	if e1 != 0 {
 		return e1
@@ -348,7 +349,7 @@ func FcntlFlock(fd uintptr, cmd int, lk *Flock_t) error {
 
 //sys	futimesat(fildes int, path *byte, times *[2]Timeval) (err error)
 
-func Futimesat(dirfd int, path string, tv []Timeval) error {
+func Futimesat(dirfd int, path string, tv []Timeval) error {mydebug.INFO()
 	pathp, err := BytePtrFromString(path)
 	if err != nil {
 		return err
@@ -365,7 +366,7 @@ func Futimesat(dirfd int, path string, tv []Timeval) error {
 // Solaris doesn't have an futimes function because it allows NULL to be
 // specified as the path for futimesat.  However, Go doesn't like
 // NULL-style string interfaces, so this simple wrapper is provided.
-func Futimes(fd int, tv []Timeval) error {
+func Futimes(fd int, tv []Timeval) error {mydebug.INFO()
 	if tv == nil {
 		return futimesat(fd, nil, nil)
 	}
@@ -375,7 +376,7 @@ func Futimes(fd int, tv []Timeval) error {
 	return futimesat(fd, nil, (*[2]Timeval)(unsafe.Pointer(&tv[0])))
 }
 
-func anyToSockaddr(rsa *RawSockaddrAny) (Sockaddr, error) {
+func anyToSockaddr(rsa *RawSockaddrAny) (Sockaddr, error) {mydebug.INFO()
 	switch rsa.Addr.Family {
 	case AF_UNIX:
 		pp := (*RawSockaddrUnix)(unsafe.Pointer(rsa))
@@ -419,7 +420,7 @@ func anyToSockaddr(rsa *RawSockaddrAny) (Sockaddr, error) {
 
 //sys	accept(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (fd int, err error) = libsocket.accept
 
-func Accept(fd int) (nfd int, sa Sockaddr, err error) {
+func Accept(fd int) (nfd int, sa Sockaddr, err error) {mydebug.INFO()
 	var rsa RawSockaddrAny
 	var len _Socklen = SizeofSockaddrAny
 	nfd, err = accept(fd, &rsa, &len)
@@ -436,7 +437,7 @@ func Accept(fd int) (nfd int, sa Sockaddr, err error) {
 
 //sys	recvmsg(s int, msg *Msghdr, flags int) (n int, err error) = libsocket.recvmsg
 
-func Recvmsg(fd int, p, oob []byte, flags int) (n, oobn int, recvflags int, from Sockaddr, err error) {
+func Recvmsg(fd int, p, oob []byte, flags int) (n, oobn int, recvflags int, from Sockaddr, err error) {mydebug.INFO()
 	var msg Msghdr
 	var rsa RawSockaddrAny
 	msg.Name = (*byte)(unsafe.Pointer(&rsa))
@@ -468,14 +469,14 @@ func Recvmsg(fd int, p, oob []byte, flags int) (n, oobn int, recvflags int, from
 	return
 }
 
-func Sendmsg(fd int, p, oob []byte, to Sockaddr, flags int) (err error) {
+func Sendmsg(fd int, p, oob []byte, to Sockaddr, flags int) (err error) {mydebug.INFO()
 	_, err = SendmsgN(fd, p, oob, to, flags)
 	return
 }
 
 //sys	sendmsg(s int, msg *Msghdr, flags int) (n int, err error) = libsocket.sendmsg
 
-func SendmsgN(fd int, p, oob []byte, to Sockaddr, flags int) (n int, err error) {
+func SendmsgN(fd int, p, oob []byte, to Sockaddr, flags int) (n int, err error) {mydebug.INFO()
 	var ptr unsafe.Pointer
 	var salen _Socklen
 	if to != nil {
@@ -514,7 +515,7 @@ func SendmsgN(fd int, p, oob []byte, to Sockaddr, flags int) (n int, err error) 
 
 //sys	acct(path *byte) (err error)
 
-func Acct(path string) (err error) {
+func Acct(path string) (err error) {mydebug.INFO()
 	if len(path) == 0 {
 		// Assume caller wants to disable accounting.
 		return acct(nil)
@@ -533,41 +534,41 @@ func Acct(path string) (err error) {
 
 //sys	ioctl(fd int, req int, arg uintptr) (err error)
 
-func IoctlSetInt(fd int, req int, value int) (err error) {
+func IoctlSetInt(fd int, req int, value int) (err error) {mydebug.INFO()
 	return ioctl(fd, req, uintptr(value))
 }
 
-func IoctlSetWinsize(fd int, req int, value *Winsize) (err error) {
+func IoctlSetWinsize(fd int, req int, value *Winsize) (err error) {mydebug.INFO()
 	return ioctl(fd, req, uintptr(unsafe.Pointer(value)))
 }
 
-func IoctlSetTermios(fd int, req int, value *Termios) (err error) {
+func IoctlSetTermios(fd int, req int, value *Termios) (err error) {mydebug.INFO()
 	return ioctl(fd, req, uintptr(unsafe.Pointer(value)))
 }
 
-func IoctlSetTermio(fd int, req int, value *Termio) (err error) {
+func IoctlSetTermio(fd int, req int, value *Termio) (err error) {mydebug.INFO()
 	return ioctl(fd, req, uintptr(unsafe.Pointer(value)))
 }
 
-func IoctlGetInt(fd int, req int) (int, error) {
+func IoctlGetInt(fd int, req int) (int, error) {mydebug.INFO()
 	var value int
 	err := ioctl(fd, req, uintptr(unsafe.Pointer(&value)))
 	return value, err
 }
 
-func IoctlGetWinsize(fd int, req int) (*Winsize, error) {
+func IoctlGetWinsize(fd int, req int) (*Winsize, error) {mydebug.INFO()
 	var value Winsize
 	err := ioctl(fd, req, uintptr(unsafe.Pointer(&value)))
 	return &value, err
 }
 
-func IoctlGetTermios(fd int, req int) (*Termios, error) {
+func IoctlGetTermios(fd int, req int) (*Termios, error) {mydebug.INFO()
 	var value Termios
 	err := ioctl(fd, req, uintptr(unsafe.Pointer(&value)))
 	return &value, err
 }
 
-func IoctlGetTermio(fd int, req int) (*Termio, error) {
+func IoctlGetTermio(fd int, req int) (*Termio, error) {mydebug.INFO()
 	var value Termio
 	err := ioctl(fd, req, uintptr(unsafe.Pointer(&value)))
 	return &value, err
@@ -677,7 +678,7 @@ func IoctlGetTermio(fd int, req int) (*Termio, error) {
 //sys	setsockopt(s int, level int, name int, val unsafe.Pointer, vallen uintptr) (err error) = libsocket.setsockopt
 //sys	recvfrom(fd int, p []byte, flags int, from *RawSockaddrAny, fromlen *_Socklen) (n int, err error) = libsocket.recvfrom
 
-func readlen(fd int, buf *byte, nbuf int) (n int, err error) {
+func readlen(fd int, buf *byte, nbuf int) (n int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procread)), 3, uintptr(fd), uintptr(unsafe.Pointer(buf)), uintptr(nbuf), 0, 0, 0)
 	n = int(r0)
 	if e1 != 0 {
@@ -686,7 +687,7 @@ func readlen(fd int, buf *byte, nbuf int) (n int, err error) {
 	return
 }
 
-func writelen(fd int, buf *byte, nbuf int) (n int, err error) {
+func writelen(fd int, buf *byte, nbuf int) (n int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procwrite)), 3, uintptr(fd), uintptr(unsafe.Pointer(buf)), uintptr(nbuf), 0, 0, 0)
 	n = int(r0)
 	if e1 != 0 {
@@ -701,11 +702,11 @@ var mapper = &mmapper{
 	munmap: munmap,
 }
 
-func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {
+func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {mydebug.INFO()
 	return mapper.Mmap(fd, offset, length, prot, flags)
 }
 
-func Munmap(b []byte) (err error) {
+func Munmap(b []byte) (err error) {mydebug.INFO()
 	return mapper.Munmap(b)
 }
 
@@ -715,7 +716,7 @@ func Munmap(b []byte) (err error) {
 // once the system is booted.
 var pageSize int64 // accessed atomically
 
-func Getpagesize() int {
+func Getpagesize() int {mydebug.INFO()
 	n := atomic.LoadInt64(&pageSize)
 	if n == 0 {
 		n, _ = sysconf(_SC_PAGESIZE)

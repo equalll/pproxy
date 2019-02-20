@@ -1,4 +1,5 @@
 package utils
+import "github.com/equalll/mydebug"
 
 /**
 *toolkit for the interface{}
@@ -17,11 +18,11 @@ type Object struct {
 	paths []string
 }
 
-func NewInterfaceWalker(obj interface{}) *Object {
+func NewInterfaceWalker(obj interface{}) *Object {mydebug.INFO()
 	return &Object{data: obj, paths: []string{"/"}}
 }
 
-func (obj *Object) GetObject(path interface{}) (val *Object, has bool) {
+func (obj *Object) GetObject(path interface{}) (val *Object, has bool) {mydebug.INFO()
 	tmp, has := obj.GetInterface(path)
 	if has {
 		val = NewInterfaceWalker(tmp)
@@ -29,7 +30,7 @@ func (obj *Object) GetObject(path interface{}) (val *Object, has bool) {
 	return
 }
 
-func (obj *Object) GoInto(path interface{}) {
+func (obj *Object) GoInto(path interface{}) {mydebug.INFO()
 	path_orign := fmt.Sprint(path)
 	path_str := path_orign
 	if len(path_orign) == 0 || path_orign[0] != '/' {
@@ -38,7 +39,7 @@ func (obj *Object) GoInto(path interface{}) {
 	obj.paths = strings.Split(os_path.Clean(path_str), "/")
 }
 
-func (obj *Object) GetInterface(path interface{}) (val interface{}, has bool) {
+func (obj *Object) GetInterface(path interface{}) (val interface{}, has bool) {mydebug.INFO()
 	path_str := fmt.Sprint(path)
 	if len(path_str) > 0 && path_str[0] != '/' {
 		path_str = strings.Join(obj.paths, "/") + "/" + path_str
@@ -47,7 +48,7 @@ func (obj *Object) GetInterface(path interface{}) (val interface{}, has bool) {
 	return
 }
 
-func (obj *Object) GetInterfaceSlice(path interface{}, def ...[]interface{}) (val []interface{}, has bool) {
+func (obj *Object) GetInterfaceSlice(path interface{}, def ...[]interface{}) (val []interface{}, has bool) {mydebug.INFO()
 	tmp, has := obj.GetInterface(path)
 	if has {
 		_type := reflect.TypeOf(tmp).String()
@@ -73,7 +74,7 @@ func (obj *Object) GetInterfaceSlice(path interface{}, def ...[]interface{}) (va
 /*
 *读取指定项的值
  */
-func (obj *Object) GetString(path interface{}, def ...string) (val string, has bool) {
+func (obj *Object) GetString(path interface{}, def ...string) (val string, has bool) {mydebug.INFO()
 	tmp, has := obj.GetInterface(path)
 	if has {
 		return fmt.Sprint(tmp), true
@@ -85,7 +86,7 @@ func (obj *Object) GetString(path interface{}, def ...string) (val string, has b
 	}
 }
 
-func (obj *Object) GetStringSlice(path interface{}, def ...[]string) (val []string, has bool) {
+func (obj *Object) GetStringSlice(path interface{}, def ...[]string) (val []string, has bool) {mydebug.INFO()
 	interface_array, has := obj.GetInterfaceSlice(path)
 	if has {
 		result := make([]string, len(interface_array))
@@ -102,7 +103,7 @@ func (obj *Object) GetStringSlice(path interface{}, def ...[]string) (val []stri
 	}
 }
 
-func (obj *Object) GetInt(path interface{}, def ...int) (val int, has bool) {
+func (obj *Object) GetInt(path interface{}, def ...int) (val int, has bool) {mydebug.INFO()
 	tmp, has := obj.GetFloat(path)
 	if has {
 		return int(tmp), true
@@ -115,7 +116,7 @@ func (obj *Object) GetInt(path interface{}, def ...int) (val int, has bool) {
 	}
 }
 
-func (obj *Object) GetIntSlice(path interface{}, def ...[]int) (val []int, has bool) {
+func (obj *Object) GetIntSlice(path interface{}, def ...[]int) (val []int, has bool) {mydebug.INFO()
 	float_arr, has := obj.GetFloatSlice(path)
 	if has {
 		result := make([]int, len(float_arr))
@@ -132,7 +133,7 @@ func (obj *Object) GetIntSlice(path interface{}, def ...[]int) (val []int, has b
 	}
 }
 
-func (obj *Object) GetFloat(path interface{}, def ...float64) (val float64, has bool) {
+func (obj *Object) GetFloat(path interface{}, def ...float64) (val float64, has bool) {mydebug.INFO()
 	str, has := obj.GetString(path)
 	if has {
 		ret, err := strconv.ParseFloat(str, 64)
@@ -150,7 +151,7 @@ func (obj *Object) GetFloat(path interface{}, def ...float64) (val float64, has 
 	}
 }
 
-func (obj *Object) GetFloatSlice(path interface{}, def ...[]float64) (val []float64, has bool) {
+func (obj *Object) GetFloatSlice(path interface{}, def ...[]float64) (val []float64, has bool) {mydebug.INFO()
 	str_arr, has := obj.GetStringSlice(path)
 	if has {
 		result := make([]float64, len(str_arr))
@@ -168,7 +169,7 @@ func (obj *Object) GetFloatSlice(path interface{}, def ...[]float64) (val []floa
 	}
 }
 
-func (obj *Object) GetBool(path interface{}) bool {
+func (obj *Object) GetBool(path interface{}) bool {mydebug.INFO()
 	val, has := obj.GetString(path)
 	if !has {
 		return false
@@ -183,7 +184,7 @@ func (obj *Object) GetBool(path interface{}) bool {
 /**
 *quick get the val from a interface
  */
-func InterfaceWalk(obj interface{}, path interface{}) (val interface{}, has bool) {
+func InterfaceWalk(obj interface{}, path interface{}) (val interface{}, has bool) {mydebug.INFO()
 	path_orign := fmt.Sprint(path)
 	path_str := strings.TrimSpace(os_path.Clean(path_orign))
 	//    fmt.Println("path:",path_str)

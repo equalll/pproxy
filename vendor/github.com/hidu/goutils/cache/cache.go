@@ -1,4 +1,5 @@
 package cache
+import "github.com/equalll/mydebug"
 
 type Cache interface {
 	Set(key string, val []byte, life int64) (suc bool)
@@ -18,21 +19,21 @@ type Data struct {
 
 var defaultCache Cache = new(NoneCache)
 
-func SetDefaultCacheHandler(cache Cache) {
+func SetDefaultCacheHandler(cache Cache) {mydebug.INFO()
 	defaultCache = cache
 }
 
-func Set(key string, val []byte, life int64) (suc bool) {
+func Set(key string, val []byte, life int64) (suc bool) {mydebug.INFO()
 	return defaultCache.Set(key, val, life)
 }
 
-func Get(key string) (has bool, data []byte) {
+func Get(key string) (has bool, data []byte) {mydebug.INFO()
 	return defaultCache.Get(key)
 }
 
-func Delete(key string) (suc bool) {
+func Delete(key string) (suc bool) {mydebug.INFO()
 	return defaultCache.Delete(key)
 }
-func GC() {
+func GC() {mydebug.INFO()
 	defaultCache.GC()
 }

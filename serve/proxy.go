@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -21,7 +22,7 @@ type HttpProxy struct {
 	goproxyMitmConnect *goproxy.ConnectAction
 }
 
-func NewHttpProxy(ser *ProxyServe) *HttpProxy {
+func NewHttpProxy(ser *ProxyServe) *HttpProxy {mydebug.INFO()
 	proxy := new(HttpProxy)
 	proxy.ser = ser
 	proxy.GoProxy = goproxy.NewProxyHttpServer()
@@ -42,24 +43,24 @@ func NewHttpProxy(ser *ProxyServe) *HttpProxy {
 	return proxy
 }
 
-func my_requestHanderFunc(r *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
+func my_requestHanderFunc(r *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {mydebug.INFO()
 	log.Println("trace_my_requestHanderFunc call url:", r.URL.String())
 	return r, nil
 }
 
 const PROXY_CTX_NAME = "X-PPROXY-CTX-ID"
 
-func (proxy *HttpProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+func (proxy *HttpProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {mydebug.INFO()
 	//	fmt.Println("call url:",req.URL.String())
 	proxy.GoProxy.ServeHTTP(rw, req)
 }
 
-func (proxy *HttpProxy) httpsHandle(host string, ctx *goproxy.ProxyCtx) (*goproxy.ConnectAction, string) {
+func (proxy *HttpProxy) httpsHandle(host string, ctx *goproxy.ProxyCtx) (*goproxy.ConnectAction, string) {mydebug.INFO()
 	log.Println("https conn", host, ctx.Req.URL.String())
 	return proxy.goproxyMitmConnect, host
 }
 
-func (proxy *HttpProxy) RoundTrip(ctx *requestCtx) {
+func (proxy *HttpProxy) RoundTrip(ctx *requestCtx) {mydebug.INFO()
 	sid := fmt.Sprintf("%d", ctx.SessionID)
 	ctx.Req.Header.Set(PROXY_CTX_NAME, sid)
 	func() {
@@ -83,7 +84,7 @@ func (proxy *HttpProxy) RoundTrip(ctx *requestCtx) {
 	proxy.ServeHTTP(ctx.Rw, ctx.Req)
 }
 
-func (proxy *HttpProxy) getReqCtx(req *http.Request) *requestCtx {
+func (proxy *HttpProxy) getReqCtx(req *http.Request) *requestCtx {mydebug.INFO()
 	sid := req.Header.Get(PROXY_CTX_NAME)
 	if sid == "" {
 		return nil
@@ -96,7 +97,7 @@ func (proxy *HttpProxy) getReqCtx(req *http.Request) *requestCtx {
 	return nil
 }
 
-func (proxy *HttpProxy) onResponse(resp *http.Response, ctx *goproxy.ProxyCtx) *http.Response {
+func (proxy *HttpProxy) onResponse(resp *http.Response, ctx *goproxy.ProxyCtx) *http.Response {mydebug.INFO()
 	if resp == nil || resp.Request == nil {
 		return resp
 	}
@@ -108,7 +109,7 @@ func (proxy *HttpProxy) onResponse(resp *http.Response, ctx *goproxy.ProxyCtx) *
 	return resp
 }
 
-func (proxy *HttpProxy) roundTripUpgrade(ctx *requestCtx) (err error) {
+func (proxy *HttpProxy) roundTripUpgrade(ctx *requestCtx) (err error) {mydebug.INFO()
 	//save it,so we know it has been closed
 	defer func() {
 		resp := &http.Response{

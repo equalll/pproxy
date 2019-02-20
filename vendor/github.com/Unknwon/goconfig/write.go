@@ -13,6 +13,7 @@
 // under the License.
 
 package goconfig
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -24,7 +25,7 @@ import (
 var PrettyFormat = true
 
 // SaveConfigFile writes configuration file to local file system
-func SaveConfigFile(c *ConfigFile, filename string) (err error) {
+func SaveConfigFile(c *ConfigFile, filename string) (err error) {mydebug.INFO()
 	// Write configuration file by filename.
 	var f *os.File
 	if f, err = os.Create(filename); err != nil {

@@ -1,4 +1,5 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 import (
 	"encoding/json"
@@ -31,15 +32,15 @@ type packetCommon struct {
 	ack      bool
 }
 
-func (p *packetCommon) Id() int {
+func (p *packetCommon) Id() int {mydebug.INFO()
 	return p.id
 }
 
-func (p *packetCommon) EndPoint() string {
+func (p *packetCommon) EndPoint() string {mydebug.INFO()
 	return p.endPoint
 }
 
-func (p *packetCommon) Ack() bool {
+func (p *packetCommon) Ack() bool {mydebug.INFO()
 	return p.ack
 }
 
@@ -47,7 +48,7 @@ type disconnectPacket struct {
 	packetCommon
 }
 
-func (*disconnectPacket) Type() MessageType {
+func (*disconnectPacket) Type() MessageType {mydebug.INFO()
 	return PACKET_DISCONNECT
 }
 
@@ -56,7 +57,7 @@ type connectPacket struct {
 	query string
 }
 
-func (*connectPacket) Type() MessageType {
+func (*connectPacket) Type() MessageType {mydebug.INFO()
 	return PACKET_CONNECT
 }
 
@@ -64,7 +65,7 @@ type heartbeatPacket struct {
 	packetCommon
 }
 
-func (*heartbeatPacket) Type() MessageType {
+func (*heartbeatPacket) Type() MessageType {mydebug.INFO()
 	return PACKET_HEARTBEAT
 }
 
@@ -78,11 +79,11 @@ type messagePacket struct {
 	data []byte
 }
 
-func (*messagePacket) Type() MessageType {
+func (*messagePacket) Type() MessageType {mydebug.INFO()
 	return PACKET_MESSAGE
 }
 
-func (p *messagePacket) Data() []byte {
+func (p *messagePacket) Data() []byte {mydebug.INFO()
 	return p.data
 }
 
@@ -91,11 +92,11 @@ type jsonPacket struct {
 	data []byte
 }
 
-func (*jsonPacket) Type() MessageType {
+func (*jsonPacket) Type() MessageType {mydebug.INFO()
 	return PACKET_JSONMESSAGE
 }
 
-func (p *jsonPacket) Data() []byte {
+func (p *jsonPacket) Data() []byte {mydebug.INFO()
 	return p.data
 }
 
@@ -105,7 +106,7 @@ type eventPacket struct {
 	args json.RawMessage
 }
 
-func (*eventPacket) Type() MessageType {
+func (*eventPacket) Type() MessageType {mydebug.INFO()
 	return PACKET_EVENT
 }
 
@@ -115,7 +116,7 @@ type ackPacket struct {
 	args  json.RawMessage
 }
 
-func (*ackPacket) Type() MessageType {
+func (*ackPacket) Type() MessageType {mydebug.INFO()
 	return PACKET_ACK
 }
 
@@ -125,6 +126,6 @@ type errorPacket struct {
 	advice string
 }
 
-func (*errorPacket) Type() MessageType {
+func (*errorPacket) Type() MessageType {mydebug.INFO()
 	return PACKET_ERROR
 }

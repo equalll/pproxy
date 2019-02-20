@@ -1,4 +1,5 @@
 package resource
+import "github.com/equalll/mydebug"
 
 import (
 	"gopkg.in/cookieo9/resources-go.v2"
@@ -15,7 +16,7 @@ type Resource struct{}
 
 var DefaultResource *Resource = &Resource{}
 
-func (re *Resource) Load(path string) []byte {
+func (re *Resource) Load(path string) []byte {mydebug.INFO()
 	res, err := re.Get(path)
 	if err != nil {
 		return []byte{}
@@ -28,7 +29,7 @@ func (re *Resource) Load(path string) []byte {
 	return bf
 }
 
-func (re *Resource) Get(path string) (resources.Resource, error) {
+func (re *Resource) Get(path string) (resources.Resource, error) {mydebug.INFO()
 	path = strings.TrimLeft(path, "/")
 	res, err := resources.Find(path)
 	if err != nil {
@@ -38,7 +39,7 @@ func (re *Resource) Get(path string) (resources.Resource, error) {
 	return res, nil
 }
 
-func (re *Resource) HandleStatic(w http.ResponseWriter, r *http.Request, path string) {
+func (re *Resource) HandleStatic(w http.ResponseWriter, r *http.Request, path string) {mydebug.INFO()
 	res, err := re.Get(path)
 	if err != nil {
 		http.NotFound(w, r)
@@ -62,7 +63,7 @@ func (re *Resource) HandleStatic(w http.ResponseWriter, r *http.Request, path st
 	w.Write(re.Load(path))
 }
 
-func ResetDefaultBundle() {
+func ResetDefaultBundle() {mydebug.INFO()
 	resources.DefaultBundle = make(resources.BundleSequence, 1, 10)
 
 	var cwd, exe_dir, exe, cur_pkg resources.Bundle

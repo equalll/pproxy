@@ -1,15 +1,16 @@
 package goproxy_image
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
+	. "github.com/elazarl/goproxy"
+	"github.com/elazarl/goproxy/regretable"
 	"image"
 	_ "image/gif"
 	"image/jpeg"
 	"image/png"
 	"io/ioutil"
 	"net/http"
-	. "github.com/elazarl/goproxy"
-	"github.com/elazarl/goproxy/regretable"
 )
 
 var RespIsImage = ContentTypeIs("image/gif",
@@ -20,7 +21,7 @@ var RespIsImage = ContentTypeIs("image/gif",
 
 // "image/tiff" tiff support is in external package, and rarely used, so we omitted it
 
-func HandleImage(f func(img image.Image, ctx *ProxyCtx) image.Image) RespHandler {
+func HandleImage(f func(img image.Image, ctx *ProxyCtx) image.Image) RespHandler {mydebug.INFO()
 	return FuncRespHandler(func(resp *http.Response, ctx *ProxyCtx) *http.Response {
 		if !RespIsImage.HandleResp(resp, ctx) {
 			return resp

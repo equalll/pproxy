@@ -1,6 +1,7 @@
 // +build !windows,!plan9,!solaris
 
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -11,7 +12,7 @@ import (
 )
 
 // flock acquires an advisory lock on a file descriptor.
-func flock(db *DB, mode os.FileMode, exclusive bool, timeout time.Duration) error {
+func flock(db *DB, mode os.FileMode, exclusive bool, timeout time.Duration) error {mydebug.INFO()
 	var t time.Time
 	for {
 		// If we're beyond our timeout then return an error.
@@ -40,12 +41,12 @@ func flock(db *DB, mode os.FileMode, exclusive bool, timeout time.Duration) erro
 }
 
 // funlock releases an advisory lock on a file descriptor.
-func funlock(db *DB) error {
+func funlock(db *DB) error {mydebug.INFO()
 	return syscall.Flock(int(db.file.Fd()), syscall.LOCK_UN)
 }
 
 // mmap memory maps a DB's data file.
-func mmap(db *DB, sz int) error {
+func mmap(db *DB, sz int) error {mydebug.INFO()
 	// Map the data file to memory.
 	b, err := syscall.Mmap(int(db.file.Fd()), 0, sz, syscall.PROT_READ, syscall.MAP_SHARED|db.MmapFlags)
 	if err != nil {
@@ -65,7 +66,7 @@ func mmap(db *DB, sz int) error {
 }
 
 // munmap unmaps a DB's data file from memory.
-func munmap(db *DB) error {
+func munmap(db *DB) error {mydebug.INFO()
 	// Ignore the unmap if we have no mapped data.
 	if db.dataref == nil {
 		return nil
@@ -80,7 +81,7 @@ func munmap(db *DB) error {
 }
 
 // NOTE: This function is copied from stdlib because it is not available on darwin.
-func madvise(b []byte, advice int) (err error) {
+func madvise(b []byte, advice int) (err error) {mydebug.INFO()
 	_, _, e1 := syscall.Syscall(syscall.SYS_MADVISE, uintptr(unsafe.Pointer(&b[0])), uintptr(len(b)), uintptr(advice))
 	if e1 != 0 {
 		err = e1

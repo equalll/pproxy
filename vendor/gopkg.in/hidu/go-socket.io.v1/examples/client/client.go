@@ -1,11 +1,12 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"github.com/googollee/go-socket.io"
 	"log"
 )
 
-func pol() {
+func pol() {mydebug.INFO()
 	client, err := socketio.Dial("http://127.0.0.1:3000/pol")
 	if err != nil {
 		panic(err)
@@ -19,7 +20,7 @@ func pol() {
 	client.Run()
 }
 
-func main() {
+func main() {mydebug.INFO()
 	client, err := socketio.Dial("http://127.0.0.1:3000/")
 	if err != nil {
 		panic(err)

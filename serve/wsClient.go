@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"gopkg.in/hidu/go-socket.io.v1"
@@ -24,7 +25,7 @@ var extTypes = map[string][]string{
 	"image": {"jpg", "jpeg", "png", "gif", "bmp", "tiff", "jpe", "tif", "webp", "ico", "webp"},
 }
 
-func (client *wsClient) checkFilter(req *http.Request, reqCtx *requestCtx) bool {
+func (client *wsClient) checkFilter(req *http.Request, reqCtx *requestCtx) bool {mydebug.INFO()
 	if len(client.filterUser) > 0 {
 		userInList := false
 		for _, name := range client.filterUser {

@@ -1,4 +1,5 @@
 package cache
+import "github.com/equalll/mydebug"
 
 import (
 	"crypto/md5"
@@ -23,11 +24,11 @@ type FileCache struct {
 	mu sync.Mutex
 }
 
-func NewFileCache(data_dir string) *FileCache {
+func NewFileCache(data_dir string) *FileCache {mydebug.INFO()
 	cache := &FileCache{data_dir: data_dir, gc_interval: 3600}
 	return cache
 }
-func (cache *FileCache) Set(key string, data []byte, life int64) (suc bool) {
+func (cache *FileCache) Set(key string, data []byte, life int64) (suc bool) {mydebug.INFO()
 	//    log.Println("cache set ",key,data)
 	defer cache.mu.Unlock()
 	cache_path := cache.genCachePath(key)
@@ -49,13 +50,13 @@ func (cache *FileCache) Set(key string, data []byte, life int64) (suc bool) {
 	return true
 }
 
-func (cache *FileCache) Get(key string) (has bool, data []byte) {
+func (cache *FileCache) Get(key string) (has bool, data []byte) {mydebug.INFO()
 	//    log.Println("cache get ",key)
 	cache_path := cache.genCachePath(key)
 	return cache.getByPath(cache_path)
 }
 
-func (cache *FileCache) Delete(key string) bool {
+func (cache *FileCache) Delete(key string) bool {mydebug.INFO()
 	defer cache.mu.Unlock()
 	cache_path := cache.genCachePath(key)
 	cache.mu.Lock()
@@ -68,7 +69,7 @@ func (cache *FileCache) Delete(key string) bool {
 	return e1 == nil
 }
 
-func (cache *FileCache) DeleteAll() bool {
+func (cache *FileCache) DeleteAll() bool {mydebug.INFO()
 	err := os.RemoveAll(cache.data_dir)
 	if err != nil {
 		log.Println("delete all file cache err:", err)
@@ -76,7 +77,7 @@ func (cache *FileCache) DeleteAll() bool {
 	return true
 }
 
-func (cache *FileCache) genCachePath(key string) string {
+func (cache *FileCache) genCachePath(key string) string {mydebug.INFO()
 	h := md5.New()
 	h.Write([]byte(key))
 	md5_str := hex.EncodeToString(h.Sum(nil))
@@ -84,7 +85,7 @@ func (cache *FileCache) genCachePath(key string) string {
 	return file_path
 }
 
-func (cache *FileCache) getByPath(file_path string) (has bool, data []byte) {
+func (cache *FileCache) getByPath(file_path string) (has bool, data []byte) {mydebug.INFO()
 	defer cache.mu.Unlock()
 	cache.mu.Lock()
 	f, err := os.Open(file_path)
@@ -109,7 +110,7 @@ func (cache *FileCache) getByPath(file_path string) (has bool, data []byte) {
 	return true, cache_data.Data
 }
 
-func (cache *FileCache) GC() {
+func (cache *FileCache) GC() {mydebug.INFO()
 	info, err := os.Stat(cache.data_dir)
 	if err != nil || !info.IsDir() {
 		return
@@ -126,6 +127,6 @@ func (cache *FileCache) GC() {
 	})
 }
 
-func (cache *FileCache) StartGcTimer(sec int64) {
+func (cache *FileCache) StartGcTimer(sec int64) {mydebug.INFO()
 	utils.SetInterval(cache.GC, sec)
 }

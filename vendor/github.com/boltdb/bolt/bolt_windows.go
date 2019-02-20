@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -26,7 +27,7 @@ const (
 	errLockViolation syscall.Errno = 0x21
 )
 
-func lockFileEx(h syscall.Handle, flags, reserved, locklow, lockhigh uint32, ol *syscall.Overlapped) (err error) {
+func lockFileEx(h syscall.Handle, flags, reserved, locklow, lockhigh uint32, ol *syscall.Overlapped) (err error) {mydebug.INFO()
 	r, _, err := procLockFileEx.Call(uintptr(h), uintptr(flags), uintptr(reserved), uintptr(locklow), uintptr(lockhigh), uintptr(unsafe.Pointer(ol)))
 	if r == 0 {
 		return err
@@ -34,7 +35,7 @@ func lockFileEx(h syscall.Handle, flags, reserved, locklow, lockhigh uint32, ol 
 	return nil
 }
 
-func unlockFileEx(h syscall.Handle, reserved, locklow, lockhigh uint32, ol *syscall.Overlapped) (err error) {
+func unlockFileEx(h syscall.Handle, reserved, locklow, lockhigh uint32, ol *syscall.Overlapped) (err error) {mydebug.INFO()
 	r, _, err := procUnlockFileEx.Call(uintptr(h), uintptr(reserved), uintptr(locklow), uintptr(lockhigh), uintptr(unsafe.Pointer(ol)), 0)
 	if r == 0 {
 		return err
@@ -43,12 +44,12 @@ func unlockFileEx(h syscall.Handle, reserved, locklow, lockhigh uint32, ol *sysc
 }
 
 // fdatasync flushes written data to a file descriptor.
-func fdatasync(db *DB) error {
+func fdatasync(db *DB) error {mydebug.INFO()
 	return db.file.Sync()
 }
 
 // flock acquires an advisory lock on a file descriptor.
-func flock(db *DB, mode os.FileMode, exclusive bool, timeout time.Duration) error {
+func flock(db *DB, mode os.FileMode, exclusive bool, timeout time.Duration) error {mydebug.INFO()
 	// Create a separate lock file on windows because a process
 	// cannot share an exclusive lock on the same file. This is
 	// needed during Tx.WriteTo().
@@ -86,7 +87,7 @@ func flock(db *DB, mode os.FileMode, exclusive bool, timeout time.Duration) erro
 }
 
 // funlock releases an advisory lock on a file descriptor.
-func funlock(db *DB) error {
+func funlock(db *DB) error {mydebug.INFO()
 	err := unlockFileEx(syscall.Handle(db.lockfile.Fd()), 0, 1, 0, &syscall.Overlapped{})
 	db.lockfile.Close()
 	os.Remove(db.path+lockExt)
@@ -95,7 +96,7 @@ func funlock(db *DB) error {
 
 // mmap memory maps a DB's data file.
 // Based on: https://github.com/edsrzf/mmap-go
-func mmap(db *DB, sz int) error {
+func mmap(db *DB, sz int) error {mydebug.INFO()
 	if !db.readOnly {
 		// Truncate the database to the size of the mmap.
 		if err := db.file.Truncate(int64(sz)); err != nil {
@@ -131,7 +132,7 @@ func mmap(db *DB, sz int) error {
 
 // munmap unmaps a pointer from a file.
 // Based on: https://github.com/edsrzf/mmap-go
-func munmap(db *DB) error {
+func munmap(db *DB) error {mydebug.INFO()
 	if db.data == nil {
 		return nil
 	}

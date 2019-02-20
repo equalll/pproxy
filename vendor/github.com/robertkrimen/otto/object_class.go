@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"encoding/json"
@@ -19,7 +20,7 @@ type _objectClass struct {
 	marshalJSON       func(*_object) json.Marshaler
 }
 
-func objectEnumerate(self *_object, all bool, each func(string) bool) {
+func objectEnumerate(self *_object, all bool, each func(string) bool) {mydebug.INFO()
 	for _, name := range self.propertyOrder {
 		if all || self.property[name].enumerable() {
 			if !each(name) {
@@ -41,7 +42,7 @@ var (
 	_ *_objectClass
 )
 
-func init() {
+func init() {mydebug.INFO()
 	_classObject = &_objectClass{
 		objectGetOwnProperty,
 		objectGetProperty,
@@ -166,7 +167,7 @@ func init() {
 // Allons-y
 
 // 8.12.1
-func objectGetOwnProperty(self *_object, name string) *_property {
+func objectGetOwnProperty(self *_object, name string) *_property {mydebug.INFO()
 	// Return a _copy_ of the property
 	property, exists := self._read(name)
 	if !exists {
@@ -176,7 +177,7 @@ func objectGetOwnProperty(self *_object, name string) *_property {
 }
 
 // 8.12.2
-func objectGetProperty(self *_object, name string) *_property {
+func objectGetProperty(self *_object, name string) *_property {mydebug.INFO()
 	property := self.getOwnProperty(name)
 	if property != nil {
 		return property
@@ -188,7 +189,7 @@ func objectGetProperty(self *_object, name string) *_property {
 }
 
 // 8.12.3
-func objectGet(self *_object, name string) Value {
+func objectGet(self *_object, name string) Value {mydebug.INFO()
 	property := self.getProperty(name)
 	if property != nil {
 		return property.get(self)
@@ -197,12 +198,12 @@ func objectGet(self *_object, name string) Value {
 }
 
 // 8.12.4
-func objectCanPut(self *_object, name string) bool {
+func objectCanPut(self *_object, name string) bool {mydebug.INFO()
 	canPut, _, _ := _objectCanPut(self, name)
 	return canPut
 }
 
-func _objectCanPut(self *_object, name string) (canPut bool, property *_property, setter *_object) {
+func _objectCanPut(self *_object, name string) (canPut bool, property *_property, setter *_object) {mydebug.INFO()
 	property = self.getOwnProperty(name)
 	if property != nil {
 		switch propertyValue := property.value.(type) {
@@ -243,7 +244,7 @@ func _objectCanPut(self *_object, name string) (canPut bool, property *_property
 }
 
 // 8.12.5
-func objectPut(self *_object, name string, value Value, throw bool) {
+func objectPut(self *_object, name string, value Value, throw bool) {mydebug.INFO()
 
 	if true {
 		// Shortcut...
@@ -306,16 +307,16 @@ func objectPut(self *_object, name string, value Value, throw bool) {
 }
 
 // 8.12.6
-func objectHasProperty(self *_object, name string) bool {
+func objectHasProperty(self *_object, name string) bool {mydebug.INFO()
 	return self.getProperty(name) != nil
 }
 
-func objectHasOwnProperty(self *_object, name string) bool {
+func objectHasOwnProperty(self *_object, name string) bool {mydebug.INFO()
 	return self.getOwnProperty(name) != nil
 }
 
 // 8.12.9
-func objectDefineOwnProperty(self *_object, name string, descriptor _property, throw bool) bool {
+func objectDefineOwnProperty(self *_object, name string, descriptor _property, throw bool) bool {mydebug.INFO()
 	property, exists := self._read(name)
 	{
 		if !exists {
@@ -445,7 +446,7 @@ Reject:
 	return false
 }
 
-func objectDelete(self *_object, name string, throw bool) bool {
+func objectDelete(self *_object, name string, throw bool) bool {mydebug.INFO()
 	property_ := self.getOwnProperty(name)
 	if property_ == nil {
 		return true
@@ -457,7 +458,7 @@ func objectDelete(self *_object, name string, throw bool) bool {
 	return self.runtime.typeErrorResult(throw)
 }
 
-func objectClone(in *_object, out *_object, clone *_clone) *_object {
+func objectClone(in *_object, out *_object, clone *_clone) *_object {mydebug.INFO()
 	*out = *in
 
 	out.runtime = clone.runtime

@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -11,7 +12,7 @@ import (
 	"strings"
 )
 
-func (ser *ProxyServe) reqRewriteByjs(reqCtx *requestCtx) int {
+func (ser *ProxyServe) reqRewriteByjs(reqCtx *requestCtx) int {mydebug.INFO()
 	modifer := ser.reqMod
 	if !modifer.CanMod() {
 		return 304
@@ -207,7 +208,7 @@ func (ser *ProxyServe) reqRewriteByjs(reqCtx *requestCtx) int {
 	return 200
 }
 
-func (ser *ProxyServe) reqRewrite(reqCtx *requestCtx) int {
+func (ser *ProxyServe) reqRewrite(reqCtx *requestCtx) int {mydebug.INFO()
 
 	if !ser.conf.ModifyRequest {
 		return 304
@@ -236,7 +237,7 @@ func (ser *ProxyServe) reqRewrite(reqCtx *requestCtx) int {
 	return 304
 }
 
-func (ser *ProxyServe) reqRewriteByHosts(req *http.Request) int {
+func (ser *ProxyServe) reqRewriteByHosts(req *http.Request) int {mydebug.INFO()
 	if ser.hosts == nil {
 		return 304
 	}
@@ -272,7 +273,7 @@ func (ser *ProxyServe) reqRewriteByHosts(req *http.Request) int {
 /**
 *
  */
-func _reqMapToURLValue(values interface{}) url.Values {
+func _reqMapToURLValue(values interface{}) url.Values {mydebug.INFO()
 	uValues := make(url.Values)
 	if values == nil {
 		return uValues

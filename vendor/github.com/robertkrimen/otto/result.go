@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import ()
 
@@ -17,14 +18,14 @@ type _result struct {
 	target string
 }
 
-func newReturnResult(value Value) _result {
+func newReturnResult(value Value) _result {mydebug.INFO()
 	return _result{resultReturn, value, ""}
 }
 
-func newContinueResult(target string) _result {
+func newContinueResult(target string) _result {mydebug.INFO()
 	return _result{resultContinue, emptyValue, target}
 }
 
-func newBreakResult(target string) _result {
+func newBreakResult(target string) _result {mydebug.INFO()
 	return _result{resultBreak, emptyValue, target}
 }

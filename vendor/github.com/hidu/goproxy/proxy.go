@@ -1,4 +1,5 @@
 package goproxy
+import "github.com/equalll/mydebug"
 
 import (
 	"bufio"
@@ -16,6 +17,8 @@ type ProxyHttpServer struct {
 	// session variable must be aligned in i386
 	// see http://golang.org/src/pkg/sync/atomic/doc.go#L41
 	sess int64
+	// KeepDestinationHeaders indicates the proxy should retain any headers present in the http.Response before proxying
+	KeepDestinationHeaders bool
 	// setting Verbose to true will log information on each request sent to the proxy
 	Verbose         bool
 	Logger          *log.Logger
@@ -31,9 +34,11 @@ type ProxyHttpServer struct {
 
 var hasPort = regexp.MustCompile(`:\d+$`)
 
-func copyHeaders(dst, src http.Header) {
-	for k, _ := range dst {
-		dst.Del(k)
+func copyHeaders(dst, src http.Header, keepDestHeaders bool) {mydebug.INFO()
+	if !keepDestHeaders {
+		for k := range dst {
+			dst.Del(k)
+		}
 	}
 	for k, vs := range src {
 		for _, v := range vs {
@@ -42,7 +47,7 @@ func copyHeaders(dst, src http.Header) {
 	}
 }
 
-func isEof(r *bufio.Reader) bool {
+func isEof(r *bufio.Reader) bool {mydebug.INFO()
 	_, err := r.Peek(1)
 	if err == io.EOF {
 		return true
@@ -50,7 +55,7 @@ func isEof(r *bufio.Reader) bool {
 	return false
 }
 
-func (proxy *ProxyHttpServer) filterRequest(r *http.Request, ctx *ProxyCtx) (req *http.Request, resp *http.Response) {
+func (proxy *ProxyHttpServer) filterRequest(r *http.Request, ctx *ProxyCtx) (req *http.Request, resp *http.Response) {mydebug.INFO()
 	req = r
 	for _, h := range proxy.reqHandlers {
 		req, resp = h.Handle(r, ctx)
@@ -62,7 +67,7 @@ func (proxy *ProxyHttpServer) filterRequest(r *http.Request, ctx *ProxyCtx) (req
 	}
 	return
 }
-func (proxy *ProxyHttpServer) filterResponse(respOrig *http.Response, ctx *ProxyCtx) (resp *http.Response) {
+func (proxy *ProxyHttpServer) filterResponse(respOrig *http.Response, ctx *ProxyCtx) (resp *http.Response) {mydebug.INFO()
 	resp = respOrig
 	for _, h := range proxy.respHandlers {
 		ctx.Resp = resp
@@ -71,16 +76,18 @@ func (proxy *ProxyHttpServer) filterResponse(respOrig *http.Response, ctx *Proxy
 	return
 }
 
-func removeProxyHeaders(ctx *ProxyCtx, r *http.Request) {
+func removeProxyHeaders(ctx *ProxyCtx, r *http.Request) {mydebug.INFO()
 	r.RequestURI = "" // this must be reset when serving a request with the client
 	ctx.Logf("Sending request %v %v", r.Method, r.URL.String())
 	// If no Accept-Encoding header exists, Transport will add the headers it can accept
 	// and would wrap the response body with the relevant reader.
-//	r.Header.Del("Accept-Encoding")
+	r.Header.Del("Accept-Encoding")
 	// curl can add that, see
-	// http://homepage.ntlworld.com/jonathan.deboynepollard/FGA/web-proxy-connection-header.html
+	// https://jdebp.eu./FGA/web-proxy-connection-header.html
 	r.Header.Del("Proxy-Connection")
-	// Connection is single hop Header:
+	r.Header.Del("Proxy-Authenticate")
+	r.Header.Del("Proxy-Authorization")
+	// Connection, Authenticate and Authorization are single hop Header:
 	// http://www.w3.org/Protocols/rfc2616/rfc2616.txt
 	// 14.10 Connection
 	//   The Connection general-header field allows the sender to specify
@@ -90,7 +97,7 @@ func removeProxyHeaders(ctx *ProxyCtx, r *http.Request) {
 }
 
 // Standard net/http function. Shouldn't be used directly, http.Serve will use it.
-func (proxy *ProxyHttpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (proxy *ProxyHttpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {mydebug.INFO()
 	//r.Header["X-Forwarded-For"] = w.RemoteAddr()
 	if r.Method == "CONNECT" {
 		proxy.handleHttps(w, r)
@@ -121,7 +128,7 @@ func (proxy *ProxyHttpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		}
 		origBody := resp.Body
 		resp = proxy.filterResponse(resp, ctx)
-
+		defer origBody.Close()
 		ctx.Logf("Copying response to client %v [%d]", resp.Status, resp.StatusCode)
 		// http.ResponseWriter will take care of filling the correct response length
 		// Setting it now, might impose wrong value, contradicting the actual new
@@ -132,7 +139,7 @@ func (proxy *ProxyHttpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		if origBody != resp.Body {
 			resp.Header.Del("Content-Length")
 		}
-		copyHeaders(w.Header(), resp.Header)
+		copyHeaders(w.Header(), resp.Header, proxy.KeepDestinationHeaders)
 		w.WriteHeader(resp.StatusCode)
 		nr, err := io.Copy(w, resp.Body)
 		if err := resp.Body.Close(); err != nil {
@@ -142,19 +149,19 @@ func (proxy *ProxyHttpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// New proxy server, logs to StdErr by default
-func NewProxyHttpServer() *ProxyHttpServer {
+// NewProxyHttpServer creates and returns a proxy server, logging to stderr by default
+func NewProxyHttpServer() *ProxyHttpServer {mydebug.INFO()
 	proxy := ProxyHttpServer{
 		Logger:        log.New(os.Stderr, "", log.LstdFlags),
 		reqHandlers:   []ReqHandler{},
 		respHandlers:  []RespHandler{},
 		httpsHandlers: []HttpsHandler{},
 		NonproxyHandler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			http.Error(w, "This is a proxy server, does not response to non-proxy requests", 500)
+			http.Error(w, "This is a proxy server. Does not respond to non-proxy requests.", 500)
 		}),
-		Tr: &http.Transport{TLSClientConfig: tlsClientSkipVerify,
-			Proxy: http.ProxyFromEnvironment},
+		Tr: &http.Transport{TLSClientConfig: tlsClientSkipVerify, Proxy: http.ProxyFromEnvironment},
 	}
 	proxy.ConnectDial = dialerFromEnv(&proxy)
+
 	return &proxy
 }

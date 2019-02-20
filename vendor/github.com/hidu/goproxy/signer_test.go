@@ -1,4 +1,5 @@
 package goproxy
+import "github.com/equalll/mydebug"
 
 import (
 	"crypto/tls"
@@ -13,7 +14,7 @@ import (
 	"time"
 )
 
-func orFatal(msg string, err error, t *testing.T) {
+func orFatal(msg string, err error, t *testing.T) {mydebug.INFO()
 	if err != nil {
 		t.Fatal(msg, err)
 	}
@@ -21,11 +22,11 @@ func orFatal(msg string, err error, t *testing.T) {
 
 type ConstantHanlder string
 
-func (h ConstantHanlder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h ConstantHanlder) ServeHTTP(w http.ResponseWriter, r *http.Request) {mydebug.INFO()
 	w.Write([]byte(h))
 }
 
-func getBrowser(args []string) string {
+func getBrowser(args []string) string {mydebug.INFO()
 	for i, arg := range args {
 		if arg == "-browser" && i+1 < len(arg) {
 			return args[i+1]
@@ -37,7 +38,7 @@ func getBrowser(args []string) string {
 	return ""
 }
 
-func TestSingerTls(t *testing.T) {
+func TestSingerTls(t *testing.T) {mydebug.INFO()
 	cert, err := signHost(GoproxyCa, []string{"example.com", "1.1.1.1", "localhost"})
 	orFatal("singHost", err, t)
 	cert.Leaf, err = x509.ParseCertificate(cert.Certificate[0])
@@ -70,7 +71,7 @@ func TestSingerTls(t *testing.T) {
 	}
 }
 
-func TestSingerX509(t *testing.T) {
+func TestSingerX509(t *testing.T) {mydebug.INFO()
 	cert, err := signHost(GoproxyCa, []string{"example.com", "1.1.1.1", "localhost"})
 	orFatal("singHost", err, t)
 	cert.Leaf, err = x509.ParseCertificate(cert.Certificate[0])

@@ -1,11 +1,12 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"reflect"
 	"strconv"
 )
 
-func (runtime *_runtime) newGoArrayObject(value reflect.Value) *_object {
+func (runtime *_runtime) newGoArrayObject(value reflect.Value) *_object {mydebug.INFO()
 	self := runtime.newObject()
 	self.class = "GoArray"
 	self.objectClass = _classGoArray
@@ -19,7 +20,7 @@ type _goArrayObject struct {
 	propertyMode _propertyMode
 }
 
-func _newGoArrayObject(value reflect.Value) *_goArrayObject {
+func _newGoArrayObject(value reflect.Value) *_goArrayObject {mydebug.INFO()
 	writable := value.Kind() == reflect.Ptr // The Array is addressable (like a Slice)
 	mode := _propertyMode(0010)
 	if writable {
@@ -33,7 +34,7 @@ func _newGoArrayObject(value reflect.Value) *_goArrayObject {
 	return self
 }
 
-func (self _goArrayObject) getValue(index int64) (reflect.Value, bool) {
+func (self _goArrayObject) getValue(index int64) (reflect.Value, bool) {mydebug.INFO()
 	value := reflect.Indirect(self.value)
 	if index < int64(value.Len()) {
 		return value.Index(int(index)), true
@@ -41,7 +42,7 @@ func (self _goArrayObject) getValue(index int64) (reflect.Value, bool) {
 	return reflect.Value{}, false
 }
 
-func (self _goArrayObject) setValue(index int64, value Value) bool {
+func (self _goArrayObject) setValue(index int64, value Value) bool {mydebug.INFO()
 	indexValue, exists := self.getValue(index)
 	if !exists {
 		return false
@@ -54,7 +55,7 @@ func (self _goArrayObject) setValue(index int64, value Value) bool {
 	return true
 }
 
-func goArrayGetOwnProperty(self *_object, name string) *_property {
+func goArrayGetOwnProperty(self *_object, name string) *_property {mydebug.INFO()
 	// length
 	if name == "length" {
 		return &_property{
@@ -81,7 +82,7 @@ func goArrayGetOwnProperty(self *_object, name string) *_property {
 	return objectGetOwnProperty(self, name)
 }
 
-func goArrayEnumerate(self *_object, all bool, each func(string) bool) {
+func goArrayEnumerate(self *_object, all bool, each func(string) bool) {mydebug.INFO()
 	object := self.value.(*_goArrayObject)
 	// .0, .1, .2, ...
 
@@ -95,7 +96,7 @@ func goArrayEnumerate(self *_object, all bool, each func(string) bool) {
 	objectEnumerate(self, all, each)
 }
 
-func goArrayDefineOwnProperty(self *_object, name string, descriptor _property, throw bool) bool {
+func goArrayDefineOwnProperty(self *_object, name string, descriptor _property, throw bool) bool {mydebug.INFO()
 	if name == "length" {
 		return self.runtime.typeErrorResult(throw)
 	} else if index := stringToArrayIndex(name); index >= 0 {
@@ -110,7 +111,7 @@ func goArrayDefineOwnProperty(self *_object, name string, descriptor _property, 
 	return objectDefineOwnProperty(self, name, descriptor, throw)
 }
 
-func goArrayDelete(self *_object, name string, throw bool) bool {
+func goArrayDelete(self *_object, name string, throw bool) bool {mydebug.INFO()
 	// length
 	if name == "length" {
 		return self.runtime.typeErrorResult(throw)

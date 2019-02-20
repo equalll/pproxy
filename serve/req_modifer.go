@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -24,7 +25,7 @@ type requestModifier struct {
 	ser    *ProxyServe
 }
 
-func NewRequestModifier(ser *ProxyServe) *requestModifier {
+func NewRequestModifier(ser *ProxyServe) *requestModifier {mydebug.INFO()
 	reqMod := &requestModifier{
 		jsVm:  otto.New(),
 		jsFns: make(map[string]*otto.Value),
@@ -32,7 +33,7 @@ func NewRequestModifier(ser *ProxyServe) *requestModifier {
 	}
 	return reqMod
 }
-func (reqMod *requestModifier) getJsPath(name string) string {
+func (reqMod *requestModifier) getJsPath(name string) string {mydebug.INFO()
 	baseName := fmt.Sprintf("%s/req_rewrite_%d", reqMod.ser.configDir, reqMod.ser.conf.Port)
 	if name == "" {
 		return fmt.Sprintf("%s.js", baseName)
@@ -41,7 +42,7 @@ func (reqMod *requestModifier) getJsPath(name string) string {
 	}
 }
 
-func (reqMod *requestModifier) tryLoadJs(name string) (err error) {
+func (reqMod *requestModifier) tryLoadJs(name string) (err error) {mydebug.INFO()
 	jsContent, err := reqMod.getJsContent(name)
 	if jsContent != "" && err == nil {
 		err = reqMod.parseJs(jsContent, name, false)
@@ -54,7 +55,7 @@ func (reqMod *requestModifier) tryLoadJs(name string) (err error) {
 	return nil
 }
 
-func (reqMod *requestModifier) loadAllJs() error {
+func (reqMod *requestModifier) loadAllJs() error {mydebug.INFO()
 	if !reqMod.ser.conf.ModifyRequest {
 		log.Println("ignore requestModifier loadAllJs")
 		return nil
@@ -72,7 +73,7 @@ func (reqMod *requestModifier) loadAllJs() error {
 	return nil
 }
 
-func (reqMod *requestModifier) getJsContent(name string) (content string, err error) {
+func (reqMod *requestModifier) getJsContent(name string) (content string, err error) {mydebug.INFO()
 	jsPath := reqMod.getJsPath(name)
 	if utils.File_exists(jsPath) {
 		script, err := ioutil.ReadFile(jsPath)
@@ -85,11 +86,11 @@ func (reqMod *requestModifier) getJsContent(name string) (content string, err er
 	return "", nil
 }
 
-func (reqMod *requestModifier) CanMod() bool {
+func (reqMod *requestModifier) CanMod() bool {mydebug.INFO()
 	return reqMod.canMod
 }
 
-func (reqMod *requestModifier) parseJs(jsStr string, name string, save2File bool) error {
+func (reqMod *requestModifier) parseJs(jsStr string, name string, save2File bool) error {mydebug.INFO()
 	jsStr = strings.TrimSpace(jsStr)
 	rewriteJs := strings.Replace(rewriteJsTpl, "CUSTOM_JS", jsStr, 1)
 	rewriteJs = strings.Replace(rewriteJs, "PPROXY_HOST", fmt.Sprintf("127.0.0.1:%d", reqMod.ser.conf.Port), 1)
@@ -123,7 +124,7 @@ func (reqMod *requestModifier) parseJs(jsStr string, name string, save2File bool
 	}
 	return err
 }
-func (reqMod *requestModifier) getJsFnByName(name string) (*otto.Value, error) {
+func (reqMod *requestModifier) getJsFnByName(name string) (*otto.Value, error) {mydebug.INFO()
 	names := []string{name, ""}
 	for _, name := range names {
 		if jsFn, has := reqMod.jsFns[name]; has {
@@ -133,7 +134,7 @@ func (reqMod *requestModifier) getJsFnByName(name string) (*otto.Value, error) {
 	return nil, fmt.Errorf("no rewrite rules")
 }
 
-func (reqMod *requestModifier) rewrite(data map[string]interface{}, name string) (map[string]interface{}, error) {
+func (reqMod *requestModifier) rewrite(data map[string]interface{}, name string) (map[string]interface{}, error) {mydebug.INFO()
 
 	reqMod.mu.Lock()
 	defer reqMod.mu.Unlock()

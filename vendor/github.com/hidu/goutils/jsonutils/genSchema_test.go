@@ -1,4 +1,5 @@
 package jsonutils
+import "github.com/equalll/mydebug"
 
 import (
 	"testing"
@@ -8,7 +9,7 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
-func TestGenJsonSchema(t *testing.T){
+func TestGenJsonSchema(t *testing.T){mydebug.INFO()
 	str:=`
 		{
 		"k1":"a",

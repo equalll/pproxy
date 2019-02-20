@@ -1,4 +1,5 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 import (
 	"code.google.com/p/go.net/websocket"
@@ -33,7 +34,7 @@ type SocketIOServer struct {
 	eventEmitters    map[string]*EventEmitter
 }
 
-func NewSocketIOServer(config *Config) *SocketIOServer {
+func NewSocketIOServer(config *Config) *SocketIOServer {mydebug.INFO()
 	server := &SocketIOServer{ServeMux: http.NewServeMux()}
 	if config != nil {
 		server.heartbeatTimeout = config.HeartbeatTimeout
@@ -59,7 +60,7 @@ func NewSocketIOServer(config *Config) *SocketIOServer {
 	return server
 }
 
-func (srv *SocketIOServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (srv *SocketIOServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {mydebug.INFO()
 	path := r.URL.Path
 	if !strings.HasPrefix(path, "/socket.io/1/") {
 
@@ -104,7 +105,7 @@ func (srv *SocketIOServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	websocket.Handler(transport.webSocketHandler).ServeHTTP(w, r)
 }
 
-func (srv *SocketIOServer) Of(name string) *EventEmitter {
+func (srv *SocketIOServer) Of(name string) *EventEmitter {mydebug.INFO()
 	ret, ok := srv.eventEmitters[name]
 	if !ok {
 		ret = NewEventEmitter()
@@ -113,7 +114,7 @@ func (srv *SocketIOServer) Of(name string) *EventEmitter {
 	return ret
 }
 
-func (srv *SocketIOServer) In(name string) *Broadcaster {
+func (srv *SocketIOServer) In(name string) *Broadcaster {mydebug.INFO()
 	namespaces := []*NameSpace{}
 	for _, session := range srv.sessions {
 		ns := session.Of(name)
@@ -125,28 +126,28 @@ func (srv *SocketIOServer) In(name string) *Broadcaster {
 	return &Broadcaster{Namespaces: namespaces}
 }
 
-func (srv *SocketIOServer) Broadcast(name string, args ...interface{}) {
+func (srv *SocketIOServer) Broadcast(name string, args ...interface{}) {mydebug.INFO()
 	srv.In("").Broadcast(name, args...)
 }
 
-func (srv *SocketIOServer) Except(ns *NameSpace) *Broadcaster {
+func (srv *SocketIOServer) Except(ns *NameSpace) *Broadcaster {mydebug.INFO()
 	return srv.In("").Except(ns)
 }
 
-func (srv *SocketIOServer) On(name string, fn interface{}) error {
+func (srv *SocketIOServer) On(name string, fn interface{}) error {mydebug.INFO()
 	return srv.Of("").On(name, fn)
 }
 
-func (srv *SocketIOServer) RemoveListener(name string, fn interface{}) {
+func (srv *SocketIOServer) RemoveListener(name string, fn interface{}) {mydebug.INFO()
 	srv.Of("").RemoveListener(name, fn)
 }
 
-func (srv *SocketIOServer) RemoveAllListeners(name string) {
+func (srv *SocketIOServer) RemoveAllListeners(name string) {mydebug.INFO()
 	srv.Of("").RemoveAllListeners(name)
 }
 
 // authorize origin!!
-func (srv *SocketIOServer) handShake(w http.ResponseWriter, r *http.Request) {
+func (srv *SocketIOServer) handShake(w http.ResponseWriter, r *http.Request) {mydebug.INFO()
 	var values = make(map[interface{}]interface{})
 	if srv.authorize != nil {
 		if ok := srv.authorize(r, values); !ok {
@@ -190,19 +191,19 @@ func (srv *SocketIOServer) handShake(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (srv *SocketIOServer) addSession(ss *Session) {
+func (srv *SocketIOServer) addSession(ss *Session) {mydebug.INFO()
 	srv.mutex.Lock()
 	defer srv.mutex.Unlock()
 	srv.sessions[ss.SessionId] = ss
 }
 
-func (srv *SocketIOServer) removeSession(ss *Session) {
+func (srv *SocketIOServer) removeSession(ss *Session) {mydebug.INFO()
 	srv.mutex.Lock()
 	defer srv.mutex.Unlock()
 	delete(srv.sessions, ss.SessionId)
 }
 
-func (srv *SocketIOServer) getSession(sessionId string) *Session {
+func (srv *SocketIOServer) getSession(sessionId string) *Session {mydebug.INFO()
 	srv.mutex.RLock()
 	defer srv.mutex.RUnlock()
 	return srv.sessions[sessionId]

@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -17,11 +18,11 @@ type wsServer struct {
 	proxySer *ProxyServe
 }
 
-func (ser *ProxyServe) wsInit() {
+func (ser *ProxyServe) wsInit() {mydebug.INFO()
 	ser.wsSer = newWsServer(ser)
 }
 
-func newWsServer(ser *ProxyServe) *wsServer {
+func newWsServer(ser *ProxyServe) *wsServer {mydebug.INFO()
 	wsSer := &wsServer{
 		clients:  make(map[string]*wsClient),
 		proxySer: ser,
@@ -35,7 +36,7 @@ func newWsServer(ser *ProxyServe) *wsServer {
 	return wsSer
 }
 
-func (wsSer *wsServer) init() {
+func (wsSer *wsServer) init() {mydebug.INFO()
 	wsSer.server.On("connect", func(ns *socketio.NameSpace) {
 		wsSer.mu.Lock()
 		defer wsSer.mu.Unlock()
@@ -58,7 +59,7 @@ func (wsSer *wsServer) init() {
 	}, 120)
 }
 
-func (wsSer *wsServer) remove(id string) {
+func (wsSer *wsServer) remove(id string) {mydebug.INFO()
 	wsSer.mu.Lock()
 	defer wsSer.mu.Unlock()
 	if _, has := wsSer.clients[id]; has {
@@ -66,14 +67,14 @@ func (wsSer *wsServer) remove(id string) {
 	}
 }
 
-func (wsSer *wsServer) broadProxyClientNum() {
+func (wsSer *wsServer) broadProxyClientNum() {mydebug.INFO()
 	wsSer.broadcast("user_num", len(wsSer.proxySer.ProxyClients), false)
 }
 
 /**
 *https://github.com/googollee/go-socket.io
  */
-func (wsSer *wsServer) getResponse(ns *socketio.NameSpace, docidStr string) {
+func (wsSer *wsServer) getResponse(ns *socketio.NameSpace, docidStr string) {mydebug.INFO()
 	docid, uintParseErr := parseDocID(docidStr)
 	if uintParseErr != nil {
 		log.Println("parse str2int failed", docidStr, uintParseErr)
@@ -99,7 +100,7 @@ func (wsSer *wsServer) getResponse(ns *socketio.NameSpace, docidStr string) {
 	wsSer.send(ns, "res", data, true)
 }
 
-func (wsSer *wsServer) saveFilter(ns *socketio.NameSpace, formData string) {
+func (wsSer *wsServer) saveFilter(ns *socketio.NameSpace, formData string) {mydebug.INFO()
 	m, err := url.ParseQuery(formData)
 	if err != nil {
 		log.Println("parse filter data err", err)
@@ -125,7 +126,7 @@ func (wsSer *wsServer) saveFilter(ns *socketio.NameSpace, formData string) {
 
 var nnnn int
 
-func (wsSer *wsServer) send(ns *socketio.NameSpace, msgName string, data interface{}, encode bool) {
+func (wsSer *wsServer) send(ns *socketio.NameSpace, msgName string, data interface{}, encode bool) {mydebug.INFO()
 	wsSer.mu.Lock()
 
 	defer func(ns *socketio.NameSpace) {
@@ -147,7 +148,7 @@ func (wsSer *wsServer) send(ns *socketio.NameSpace, msgName string, data interfa
 	}
 }
 
-func (wsSer *wsServer) broadcastReq(req *http.Request, reqCtx *requestCtx, data interface{}) bool {
+func (wsSer *wsServer) broadcastReq(req *http.Request, reqCtx *requestCtx, data interface{}) bool {mydebug.INFO()
 	wsSer.mu.RLock()
 	defer wsSer.mu.RUnlock()
 
@@ -169,7 +170,7 @@ func (wsSer *wsServer) broadcastReq(req *http.Request, reqCtx *requestCtx, data 
 	return hasSend
 }
 
-func (wsSer *wsServer) broadcast(name string, data interface{}, encode bool) {
+func (wsSer *wsServer) broadcast(name string, data interface{}, encode bool) {mydebug.INFO()
 	wsSer.mu.RLock()
 	defer wsSer.mu.RUnlock()
 	for _, client := range wsSer.clients {

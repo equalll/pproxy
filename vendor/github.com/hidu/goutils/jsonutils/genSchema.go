@@ -1,11 +1,12 @@
 package jsonutils
+import "github.com/equalll/mydebug"
 
 import(
 	"reflect"
 	"fmt"
 )
 
-func GenJsonSchema(data interface{})(schema interface{},err error){
+func GenJsonSchema(data interface{})(schema interface{},err error){mydebug.INFO()
  	kind:=reflect.TypeOf(data).Kind()
  	sc:=make(map[string]interface{})
  	sc["description"]=""

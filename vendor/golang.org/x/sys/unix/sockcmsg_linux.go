@@ -5,13 +5,14 @@
 // Socket control messages
 
 package unix
+import "github.com/equalll/mydebug"
 
 import "unsafe"
 
 // UnixCredentials encodes credentials into a socket control message
 // for sending to another process. This can be used for
 // authentication.
-func UnixCredentials(ucred *Ucred) []byte {
+func UnixCredentials(ucred *Ucred) []byte {mydebug.INFO()
 	b := make([]byte, CmsgSpace(SizeofUcred))
 	h := (*Cmsghdr)(unsafe.Pointer(&b[0]))
 	h.Level = SOL_SOCKET
@@ -24,7 +25,7 @@ func UnixCredentials(ucred *Ucred) []byte {
 // ParseUnixCredentials decodes a socket control message that contains
 // credentials in a Ucred structure. To receive such a message, the
 // SO_PASSCRED option must be enabled on the socket.
-func ParseUnixCredentials(m *SocketControlMessage) (*Ucred, error) {
+func ParseUnixCredentials(m *SocketControlMessage) (*Ucred, error) {mydebug.INFO()
 	if m.Header.Level != SOL_SOCKET {
 		return nil, EINVAL
 	}

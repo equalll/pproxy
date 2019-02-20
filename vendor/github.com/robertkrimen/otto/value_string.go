@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -12,7 +13,7 @@ var matchLeading0Exponent = regexp.MustCompile(`([eE][\+\-])0+([1-9])`) // 1e-07
 
 // FIXME
 // https://code.google.com/p/v8/source/browse/branches/bleeding_edge/src/conversions.cc?spec=svn18082&r=18082
-func floatToString(value float64, bitsize int) string {
+func floatToString(value float64, bitsize int) string {mydebug.INFO()
 	// TODO Fit to ECMA-262 9.8.1 specification
 	if math.IsNaN(value) {
 		return "NaN"
@@ -29,7 +30,7 @@ func floatToString(value float64, bitsize int) string {
 	return strconv.FormatFloat(value, 'f', -1, bitsize)
 }
 
-func numberToStringRadix(value Value, radix int) string {
+func numberToStringRadix(value Value, radix int) string {mydebug.INFO()
 	float := value.float64()
 	if math.IsNaN(float) {
 		return "NaN"
@@ -44,7 +45,7 @@ func numberToStringRadix(value Value, radix int) string {
 	return strconv.FormatInt(int64(float), radix)
 }
 
-func (value Value) string() string {
+func (value Value) string() string {mydebug.INFO()
 	if value.kind == valueString {
 		switch value := value.value.(type) {
 		case string:

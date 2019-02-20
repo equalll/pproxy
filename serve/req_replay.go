@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -13,7 +14,7 @@ const (
 	REPLAY_USER_NAME  = "Proxy-pproxy_user"
 )
 
-func (ctx *webRequestCtx) handleReplay() {
+func (ctx *webRequestCtx) handleReplay() {mydebug.INFO()
 	if ctx.req.Method == "POST" {
 		ctx.reqReplayPost()
 		return
@@ -53,7 +54,7 @@ func (ctx *webRequestCtx) handleReplay() {
 
 var replaySkipHeaders = map[string]int{"Content-Length": 1}
 
-func (ctx *webRequestCtx) reqReplayPost() {
+func (ctx *webRequestCtx) reqReplayPost() {mydebug.INFO()
 	replay := ctx.req.FormValue("replay")
 	basic := make(map[string]string)
 	basic["action_url"] = strings.TrimSpace(ctx.req.FormValue("basic_action_url"))

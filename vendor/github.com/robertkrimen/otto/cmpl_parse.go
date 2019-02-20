@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -14,7 +15,7 @@ var falseLiteral = &_nodeLiteral{value: toValue_bool(false)}
 var nullLiteral = &_nodeLiteral{value: nullValue}
 var emptyStatement = &_nodeEmptyStatement{}
 
-func (cmpl *_compiler) parseExpression(in ast.Expression) _nodeExpression {
+func (cmpl *_compiler) parseExpression(in ast.Expression) _nodeExpression {mydebug.INFO()
 	if in == nil {
 		return nil
 	}
@@ -196,7 +197,7 @@ func (cmpl *_compiler) parseExpression(in ast.Expression) _nodeExpression {
 	panic(fmt.Errorf("Here be dragons: cmpl.parseExpression(%T)", in))
 }
 
-func (cmpl *_compiler) parseStatement(in ast.Statement) _nodeStatement {
+func (cmpl *_compiler) parseStatement(in ast.Statement) _nodeStatement {mydebug.INFO()
 	if in == nil {
 		return nil
 	}
@@ -359,14 +360,14 @@ func (cmpl *_compiler) parseStatement(in ast.Statement) _nodeStatement {
 	panic(fmt.Errorf("Here be dragons: cmpl.parseStatement(%T)", in))
 }
 
-func cmpl_parse(in *ast.Program) *_nodeProgram {
+func cmpl_parse(in *ast.Program) *_nodeProgram {mydebug.INFO()
 	cmpl := _compiler{
 		program: in,
 	}
 	return cmpl.parse()
 }
 
-func (cmpl *_compiler) _parse(in *ast.Program) *_nodeProgram {
+func (cmpl *_compiler) _parse(in *ast.Program) *_nodeProgram {mydebug.INFO()
 	out := &_nodeProgram{
 		body: make([]_nodeStatement, len(in.Body)),
 		file: in.File,

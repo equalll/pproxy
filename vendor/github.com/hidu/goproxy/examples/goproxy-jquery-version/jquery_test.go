@@ -1,4 +1,5 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -11,7 +12,7 @@ import (
 	"testing"
 )
 
-func equal(u, v []string) bool {
+func equal(u, v []string) bool {mydebug.INFO()
 	if len(u) != len(v) {
 		return false
 	}
@@ -23,7 +24,7 @@ func equal(u, v []string) bool {
 	return true
 }
 
-func readFile(fname string, t *testing.T) string {
+func readFile(fname string, t *testing.T) string {mydebug.INFO()
 	b, err := ioutil.ReadFile(fname)
 	if err != nil {
 		t.Fatal("readFile", err)
@@ -31,7 +32,7 @@ func readFile(fname string, t *testing.T) string {
 	return string(b)
 }
 
-func TestDefectiveScriptParser(t *testing.T) {
+func TestDefectiveScriptParser(t *testing.T) {mydebug.INFO()
 	if l := len(findScriptSrc(`<!DOCTYPE HTML>
     <html>
     <body>
@@ -61,9 +62,7 @@ func TestDefectiveScriptParser(t *testing.T) {
 	}
 }
 
-func get(url string, t *testing.T) {
-}
-func proxyWithLog() (*http.Client, *bytes.Buffer) {
+func proxyWithLog() (*http.Client, *bytes.Buffer) {mydebug.INFO()
 	proxy := NewJqueryVersionProxy()
 	proxyServer := httptest.NewServer(proxy)
 	buf := new(bytes.Buffer)
@@ -73,55 +72,48 @@ func proxyWithLog() (*http.Client, *bytes.Buffer) {
 	client := &http.Client{Transport: tr}
 	return client, buf
 }
-func TestProxyServiceTwoVersions(t *testing.T) {
+
+func get(t *testing.T, server *httptest.Server, client *http.Client, url string) {mydebug.INFO()
+	resp, err := client.Get(server.URL + url)
+	if err != nil {
+		t.Fatal("cannot get proxy", err)
+	}
+	ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+}
+
+func TestProxyServiceTwoVersions(t *testing.T) {mydebug.INFO()
 	var fs = httptest.NewServer(http.FileServer(http.Dir(".")))
 	defer fs.Close()
 
 	client, buf := proxyWithLog()
 
-	get := func(url string) {
-		resp, err := client.Get(fs.URL + url)
-		if err != nil {
-			t.Fatal("Cannot get proxy", err)
-		}
-		ioutil.ReadAll(resp.Body)
-		resp.Body.Close()
-	}
-
-	get("/w3schools.html")
-	get("/php_man.html")
-	if buf.String() != "" {
+	get(t, fs, client, "/w3schools.html")
+	get(t, fs, client, "/php_man.html")
+	if buf.String() != "" &&
+		!strings.Contains(buf.String(), " uses jquery ") {
 		t.Error("shouldn't warn on a single URL", buf.String())
 	}
-	get("/jquery1.html")
+	get(t, fs, client, "/jquery1.html")
 	warnings := buf.String()
 	if !strings.Contains(warnings, "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js") ||
 		!strings.Contains(warnings, "jquery.1.4.js") ||
 		!strings.Contains(warnings, "Contradicting") {
-		t.Error("contadicting jquery versions (php_man.html, w3schools.html) does not issue warning", warnings)
+		t.Error("contradicting jquery versions (php_man.html, w3schools.html) does not issue warning", warnings)
 	}
 }
-func TestProxyService(t *testing.T) {
+
+func TestProxyService(t *testing.T) {mydebug.INFO()
 	var fs = httptest.NewServer(http.FileServer(http.Dir(".")))
 	defer fs.Close()
 
 	client, buf := proxyWithLog()
 
-	get := func(url string) {
-		resp, err := client.Get(fs.URL + url)
-		if err != nil {
-			t.Fatal("Cannot get proxy", err)
-		}
-		ioutil.ReadAll(resp.Body)
-		resp.Body.Close()
-	}
-	get("/jquery_homepage.html")
-
+	get(t, fs, client, "/jquery_homepage.html")
 	warnings := buf.String()
 	if !strings.Contains(warnings, "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js") ||
 		!strings.Contains(warnings, "http://code.jquery.com/jquery-1.4.2.min.js") ||
 		!strings.Contains(warnings, "Contradicting") {
-		t.Error("contadicting jquery versions does not issue warning")
+		t.Error("contradicting jquery versions does not issue warning")
 	}
-
 }

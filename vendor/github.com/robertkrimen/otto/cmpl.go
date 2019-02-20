@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"github.com/robertkrimen/otto/ast"
@@ -16,7 +17,7 @@ type _compiler struct {
 	program *ast.Program
 }
 
-func (cmpl *_compiler) parse() *_nodeProgram {
+func (cmpl *_compiler) parse() *_nodeProgram {mydebug.INFO()
 	if cmpl.program != nil {
 		cmpl.file = cmpl.program.File
 	}

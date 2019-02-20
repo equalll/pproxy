@@ -10,6 +10,7 @@
 //
 // mkpost is run after cgo -godefs by mkall.sh.
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -20,7 +21,7 @@ import (
 	"regexp"
 )
 
-func main() {
+func main() {mydebug.INFO()
 	b, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		log.Fatal(err)

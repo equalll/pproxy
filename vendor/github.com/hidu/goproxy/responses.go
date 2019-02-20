@@ -1,4 +1,5 @@
 package goproxy
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -14,13 +15,14 @@ import (
 //		return nil,NewResponse(r,goproxy.ContentTypeHtml,http.StatusUnauthorized,
 //			`<!doctype html><html><head><title>Can't use proxy for local addresses</title></head><body/></html>`)
 //	})
-func NewResponse(r *http.Request, contentType string, status int, body string) *http.Response {
+func NewResponse(r *http.Request, contentType string, status int, body string) *http.Response {mydebug.INFO()
 	resp := &http.Response{}
 	resp.Request = r
 	resp.TransferEncoding = r.TransferEncoding
 	resp.Header = make(http.Header)
 	resp.Header.Add("Content-Type", contentType)
 	resp.StatusCode = status
+	resp.Status = http.StatusText(status)
 	buf := bytes.NewBufferString(body)
 	resp.ContentLength = int64(buf.Len())
 	resp.Body = ioutil.NopCloser(buf)
@@ -33,6 +35,6 @@ const (
 )
 
 // Alias for NewResponse(r,ContentTypeText,http.StatusAccepted,text)
-func TextResponse(r *http.Request, text string) *http.Response {
+func TextResponse(r *http.Request, text string) *http.Response {mydebug.INFO()
 	return NewResponse(r, ContentTypeText, http.StatusAccepted, text)
 }

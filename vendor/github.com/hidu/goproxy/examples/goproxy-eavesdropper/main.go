@@ -1,4 +1,5 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"bufio"
@@ -11,13 +12,13 @@ import (
 	"github.com/elazarl/goproxy"
 )
 
-func orPanic(err error) {
+func orPanic(err error) {mydebug.INFO()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func main() {
+func main() {mydebug.INFO()
 	proxy := goproxy.NewProxyHttpServer()
 	proxy.OnRequest(goproxy.ReqHostMatches(regexp.MustCompile("^.*baidu.com$"))).
 		HandleConnect(goproxy.AlwaysReject)

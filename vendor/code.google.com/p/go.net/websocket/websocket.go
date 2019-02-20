@@ -5,6 +5,7 @@
 // Package websocket implements a client and server for the WebSocket protocol
 // as specified in RFC 6455.
 package websocket
+import "github.com/equalll/mydebug"
 
 import (
 	"bufio"
@@ -168,7 +169,7 @@ type Conn struct {
 // if msg is not large enough for the frame data, it fills the msg and next Read
 // will read the rest of the frame data.
 // it reads Text frame or Binary frame.
-func (ws *Conn) Read(msg []byte) (n int, err error) {
+func (ws *Conn) Read(msg []byte) (n int, err error) {mydebug.INFO()
 	ws.rio.Lock()
 	defer ws.rio.Unlock()
 again:
@@ -198,7 +199,7 @@ again:
 
 // Write implements the io.Writer interface:
 // it writes data as a frame to the WebSocket connection.
-func (ws *Conn) Write(msg []byte) (n int, err error) {
+func (ws *Conn) Write(msg []byte) (n int, err error) {mydebug.INFO()
 	ws.wio.Lock()
 	defer ws.wio.Unlock()
 	w, err := ws.frameWriterFactory.NewFrameWriter(ws.PayloadType)
@@ -214,7 +215,7 @@ func (ws *Conn) Write(msg []byte) (n int, err error) {
 }
 
 // Close implements the io.Closer interface.
-func (ws *Conn) Close() error {
+func (ws *Conn) Close() error {mydebug.INFO()
 	err := ws.frameHandler.WriteClose(ws.defaultCloseStatus)
 	if err != nil {
 		return err
@@ -227,7 +228,7 @@ func (ws *Conn) IsServerConn() bool { return ws.request != nil }
 
 // LocalAddr returns the WebSocket Origin for the connection for client, or
 // the WebSocket location for server.
-func (ws *Conn) LocalAddr() net.Addr {
+func (ws *Conn) LocalAddr() net.Addr {mydebug.INFO()
 	if ws.IsClientConn() {
 		return &Addr{ws.config.Origin}
 	}
@@ -236,7 +237,7 @@ func (ws *Conn) LocalAddr() net.Addr {
 
 // RemoteAddr returns the WebSocket location for the connection for client, or
 // the Websocket Origin for server.
-func (ws *Conn) RemoteAddr() net.Addr {
+func (ws *Conn) RemoteAddr() net.Addr {mydebug.INFO()
 	if ws.IsClientConn() {
 		return &Addr{ws.config.Location}
 	}
@@ -246,7 +247,7 @@ func (ws *Conn) RemoteAddr() net.Addr {
 var errSetDeadline = errors.New("websocket: cannot set deadline: not using a net.Conn")
 
 // SetDeadline sets the connection's network read & write deadlines.
-func (ws *Conn) SetDeadline(t time.Time) error {
+func (ws *Conn) SetDeadline(t time.Time) error {mydebug.INFO()
 	if conn, ok := ws.rwc.(net.Conn); ok {
 		return conn.SetDeadline(t)
 	}
@@ -254,7 +255,7 @@ func (ws *Conn) SetDeadline(t time.Time) error {
 }
 
 // SetReadDeadline sets the connection's network read deadline.
-func (ws *Conn) SetReadDeadline(t time.Time) error {
+func (ws *Conn) SetReadDeadline(t time.Time) error {mydebug.INFO()
 	if conn, ok := ws.rwc.(net.Conn); ok {
 		return conn.SetReadDeadline(t)
 	}
@@ -262,7 +263,7 @@ func (ws *Conn) SetReadDeadline(t time.Time) error {
 }
 
 // SetWriteDeadline sets the connection's network write deadline.
-func (ws *Conn) SetWriteDeadline(t time.Time) error {
+func (ws *Conn) SetWriteDeadline(t time.Time) error {mydebug.INFO()
 	if conn, ok := ws.rwc.(net.Conn); ok {
 		return conn.SetWriteDeadline(t)
 	}
@@ -283,7 +284,7 @@ type Codec struct {
 }
 
 // Send sends v marshaled by cd.Marshal as single frame to ws.
-func (cd Codec) Send(ws *Conn, v interface{}) (err error) {
+func (cd Codec) Send(ws *Conn, v interface{}) (err error) {mydebug.INFO()
 	data, payloadType, err := cd.Marshal(v)
 	if err != nil {
 		return err
@@ -300,7 +301,7 @@ func (cd Codec) Send(ws *Conn, v interface{}) (err error) {
 }
 
 // Receive receives single frame from ws, unmarshaled by cd.Unmarshal and stores in v.
-func (cd Codec) Receive(ws *Conn, v interface{}) (err error) {
+func (cd Codec) Receive(ws *Conn, v interface{}) (err error) {mydebug.INFO()
 	ws.rio.Lock()
 	defer ws.rio.Unlock()
 	if ws.frameReader != nil {
@@ -330,7 +331,7 @@ again:
 	return cd.Unmarshal(data, payloadType, v)
 }
 
-func marshal(v interface{}) (msg []byte, payloadType byte, err error) {
+func marshal(v interface{}) (msg []byte, payloadType byte, err error) {mydebug.INFO()
 	switch data := v.(type) {
 	case string:
 		return []byte(data), TextFrame, nil
@@ -340,7 +341,7 @@ func marshal(v interface{}) (msg []byte, payloadType byte, err error) {
 	return nil, UnknownFrame, ErrNotSupported
 }
 
-func unmarshal(msg []byte, payloadType byte, v interface{}) (err error) {
+func unmarshal(msg []byte, payloadType byte, v interface{}) (err error) {mydebug.INFO()
 	switch data := v.(type) {
 	case *string:
 		*data = string(msg)
@@ -380,12 +381,12 @@ Trivial usage:
 */
 var Message = Codec{marshal, unmarshal}
 
-func jsonMarshal(v interface{}) (msg []byte, payloadType byte, err error) {
+func jsonMarshal(v interface{}) (msg []byte, payloadType byte, err error) {mydebug.INFO()
 	msg, err = json.Marshal(v)
 	return msg, TextFrame, err
 }
 
-func jsonUnmarshal(msg []byte, payloadType byte, v interface{}) (err error) {
+func jsonUnmarshal(msg []byte, payloadType byte, v interface{}) (err error) {mydebug.INFO()
 	return json.Unmarshal(msg, v)
 }
 

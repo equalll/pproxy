@@ -1,4 +1,5 @@
 package utils
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -6,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestFile_get_contents(t *testing.T) {
+func TestFile_get_contents(t *testing.T) {mydebug.INFO()
 	res, _ := File_get_contents("fs.go")
 	if len(res) == 0 {
 		t.FailNow()
@@ -14,7 +15,7 @@ func TestFile_get_contents(t *testing.T) {
 	md5_str, err := File_Md5("./fs.go")
 	fmt.Println("fs.go md5:", md5_str, err)
 }
-func TestFile_put_contents(t *testing.T) {
+func TestFile_put_contents(t *testing.T) {mydebug.INFO()
 	test_data := "hello"
 	if File_exists("aaa") {
 		os.Remove("aaa")

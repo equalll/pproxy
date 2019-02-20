@@ -1,4 +1,5 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"github.com/googollee/go-socket.io"
@@ -7,7 +8,7 @@ import (
 	"strings"
 )
 
-func main() {
+func main() {mydebug.INFO()
 	sio := socketio.NewSocketIOServer(&socketio.Config{})
 
 	// Set the on connect handler

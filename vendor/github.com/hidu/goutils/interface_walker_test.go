@@ -1,4 +1,5 @@
 package utils
+import "github.com/equalll/mydebug"
 
 import (
 	//      "fmt"
@@ -7,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestGetVal(t *testing.T) {
+func TestGetVal(t *testing.T) {mydebug.INFO()
 	str := `{"a":{"c":1,"f":1.1},"b":[1,2],"d":{"1":{"a":"ccc"},"2":3},"e":[]}`
 	var m map[string]interface{}
 	err := json.Unmarshal([]byte(str), &m)

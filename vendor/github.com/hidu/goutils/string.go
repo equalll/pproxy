@@ -1,4 +1,5 @@
 package utils
+import "github.com/equalll/mydebug"
 
 import (
 	"crypto/md5"
@@ -14,7 +15,7 @@ import (
   as
   map[style:width:1 class:hello checked:on]
 */
-func StringToMap(str string) (data map[string]string) {
+func StringToMap(str string) (data map[string]string) {mydebug.INFO()
 	re := regexp.MustCompile(`\s*([\w-]+)\s*=\s*(['"]?)(.*)`)
 	data = make(map[string]string)
 	matches := re.FindAllStringSubmatch(str, -1)
@@ -42,13 +43,13 @@ func StringToMap(str string) (data map[string]string) {
 	return
 }
 
-func isChar(ru rune) bool {
+func isChar(ru rune) bool {mydebug.INFO()
 	return (ru >= 0 && ru <= 9) || (ru >= 'a' && ru <= 'z') || (ru >= 'A' && ru <= 'Z') || ru == '_' || ru == '-'
 }
 
 var regSpace *regexp.Regexp = regexp.MustCompile(`\s+`)
 
-func stringParseTextLineSlice(line string) (result []string) {
+func stringParseTextLineSlice(line string) (result []string) {mydebug.INFO()
 	line = strings.TrimSpace(line)
 	index := strings.IndexByte(line, '#')
 	if index == 0 {
@@ -64,7 +65,7 @@ func stringParseTextLineSlice(line string) (result []string) {
 	return regSpace.Split(line, -1)
 }
 
-func LoadText2Slice(text string) (result [][]string) {
+func LoadText2Slice(text string) (result [][]string) {mydebug.INFO()
 	lines := strings.Split(text, "\n")
 	for _, line := range lines {
 		lineArr := stringParseTextLineSlice(line)
@@ -75,7 +76,7 @@ func LoadText2Slice(text string) (result [][]string) {
 	return
 }
 
-func LoadText2SliceMap(text string) (result []map[string]string) {
+func LoadText2SliceMap(text string) (result []map[string]string) {mydebug.INFO()
 	lines := strings.Split(text, "\n")
 	for _, line := range lines {
 		lineArr := stringParseTextLineSlice(line)
@@ -101,7 +102,7 @@ func LoadText2SliceMap(text string) (result []map[string]string) {
 	return result
 }
 
-func StrMd5(mystr string) string {
+func StrMd5(mystr string) string {mydebug.INFO()
 	h := md5.New()
 	h.Write([]byte(mystr))
 	return fmt.Sprintf("%x", h.Sum(nil))

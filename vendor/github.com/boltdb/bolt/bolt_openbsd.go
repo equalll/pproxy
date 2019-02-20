@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"syscall"
@@ -11,7 +12,7 @@ const (
 	msInvalidate             // invalidate cached data
 )
 
-func msync(db *DB) error {
+func msync(db *DB) error {mydebug.INFO()
 	_, _, errno := syscall.Syscall(syscall.SYS_MSYNC, uintptr(unsafe.Pointer(db.data)), uintptr(db.datasz), msInvalidate)
 	if errno != 0 {
 		return errno
@@ -19,7 +20,7 @@ func msync(db *DB) error {
 	return nil
 }
 
-func fdatasync(db *DB) error {
+func fdatasync(db *DB) error {mydebug.INFO()
 	if db.data != nil {
 		return msync(db)
 	}

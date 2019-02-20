@@ -1,4 +1,5 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -7,7 +8,7 @@ import (
 	"time"
 )
 
-func init() {
+func init() {mydebug.INFO()
 	DefaultTransports.RegisterTransport("websocket")
 }
 
@@ -17,7 +18,7 @@ type webSocket struct {
 	conn    *websocket.Conn
 }
 
-func newWebSocket(session *Session) *webSocket {
+func newWebSocket(session *Session) *webSocket {mydebug.INFO()
 	ret := &webSocket{
 		session: session,
 		timeout: session.heartbeatTimeout / 10,
@@ -26,12 +27,12 @@ func newWebSocket(session *Session) *webSocket {
 	return ret
 }
 
-func (ws *webSocket) Send(data []byte) error {
+func (ws *webSocket) Send(data []byte) error {mydebug.INFO()
 	ws.conn.SetWriteDeadline(time.Now().Add(ws.timeout))
 	return websocket.Message.Send(ws.conn, string(data))
 }
 
-func (ws *webSocket) Read() (io.Reader, error) {
+func (ws *webSocket) Read() (io.Reader, error) {mydebug.INFO()
 	var ret string
 	ws.conn.SetReadDeadline(time.Now().Add(ws.timeout))
 	err := websocket.Message.Receive(ws.conn, &ret)
@@ -42,7 +43,7 @@ func (ws *webSocket) Read() (io.Reader, error) {
 	return reader, nil
 }
 
-func (ws *webSocket) webSocketHandler(conn *websocket.Conn) {
+func (ws *webSocket) webSocketHandler(conn *websocket.Conn) {mydebug.INFO()
 	ws.conn = conn
 	ws.session.loop()
 }

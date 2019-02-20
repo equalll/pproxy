@@ -1,10 +1,11 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"math"
 )
 
-func _newContext(runtime *_runtime) {
+func _newContext(runtime *_runtime) {mydebug.INFO()
 	{
 		runtime.global.ObjectPrototype = &_object{
 			runtime:     runtime,
@@ -6210,7 +6211,7 @@ func _newContext(runtime *_runtime) {
 	}
 }
 
-func newConsoleObject(runtime *_runtime) *_object {
+func newConsoleObject(runtime *_runtime) *_object {mydebug.INFO()
 	{
 		log_function := &_object{
 			runtime:     runtime,
@@ -6536,112 +6537,112 @@ func newConsoleObject(runtime *_runtime) *_object {
 	}
 }
 
-func toValue_int(value int) Value {
+func toValue_int(value int) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_int8(value int8) Value {
+func toValue_int8(value int8) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_int16(value int16) Value {
+func toValue_int16(value int16) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_int32(value int32) Value {
+func toValue_int32(value int32) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_int64(value int64) Value {
+func toValue_int64(value int64) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_uint(value uint) Value {
+func toValue_uint(value uint) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_uint8(value uint8) Value {
+func toValue_uint8(value uint8) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_uint16(value uint16) Value {
+func toValue_uint16(value uint16) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_uint32(value uint32) Value {
+func toValue_uint32(value uint32) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_uint64(value uint64) Value {
+func toValue_uint64(value uint64) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_float32(value float32) Value {
+func toValue_float32(value float32) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_float64(value float64) Value {
+func toValue_float64(value float64) Value {mydebug.INFO()
 	return Value{
 		kind:  valueNumber,
 		value: value,
 	}
 }
 
-func toValue_string(value string) Value {
+func toValue_string(value string) Value {mydebug.INFO()
 	return Value{
 		kind:  valueString,
 		value: value,
 	}
 }
 
-func toValue_string16(value []uint16) Value {
+func toValue_string16(value []uint16) Value {mydebug.INFO()
 	return Value{
 		kind:  valueString,
 		value: value,
 	}
 }
 
-func toValue_bool(value bool) Value {
+func toValue_bool(value bool) Value {mydebug.INFO()
 	return Value{
 		kind:  valueBoolean,
 		value: value,
 	}
 }
 
-func toValue_object(value *_object) Value {
+func toValue_object(value *_object) Value {mydebug.INFO()
 	return Value{
 		kind:  valueObject,
 		value: value,

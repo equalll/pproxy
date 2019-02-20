@@ -10,6 +10,7 @@
 //    // Use of this source code is governed by a BSD-style
 //    // license that can be found in the LICENSE file.
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"flag"
@@ -25,7 +26,7 @@ import (
 	"github.com/elazarl/goproxy"
 )
 
-func main() {
+func main() {mydebug.INFO()
 	verbose := flag.Bool("v", false, "should every proxy request be logged to stdout")
 	addr := flag.String("addr", ":8080", "proxy listen address")
 	java := flag.String("javapath", "java", "where the Java executable is located")

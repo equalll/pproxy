@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 
 package websocket
+import "github.com/equalll/mydebug"
 
 import (
 	"bufio"
@@ -11,7 +12,7 @@ import (
 	"net/http"
 )
 
-func newServerConn(rwc io.ReadWriteCloser, buf *bufio.ReadWriter, req *http.Request, config *Config, handshake func(*Config, *http.Request) error) (conn *Conn, err error) {
+func newServerConn(rwc io.ReadWriteCloser, buf *bufio.ReadWriter, req *http.Request, config *Config, handshake func(*Config, *http.Request) error) (conn *Conn, err error) {mydebug.INFO()
 	var hs serverHandshaker = &hybiServerHandshaker{Config: config}
 	code, err := hs.ReadHandshake(buf.Reader, req)
 	if err == ErrBadWebSocketVersion {
@@ -66,11 +67,11 @@ type Server struct {
 }
 
 // ServeHTTP implements the http.Handler interface for a WebSocket
-func (s Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (s Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {mydebug.INFO()
 	s.serveWebSocket(w, req)
 }
 
-func (s Server) serveWebSocket(w http.ResponseWriter, req *http.Request) {
+func (s Server) serveWebSocket(w http.ResponseWriter, req *http.Request) {mydebug.INFO()
 	rwc, buf, err := w.(http.Hijacker).Hijack()
 	if err != nil {
 		panic("Hijack failed: " + err.Error())
@@ -99,7 +100,7 @@ func (s Server) serveWebSocket(w http.ResponseWriter, req *http.Request) {
 //. that doesn't check origin in its Handshake.
 type Handler func(*Conn)
 
-func checkOrigin(config *Config, req *http.Request) (err error) {
+func checkOrigin(config *Config, req *http.Request) (err error) {mydebug.INFO()
 	config.Origin, err = Origin(config, req)
 	if err == nil && config.Origin == nil {
 		return fmt.Errorf("null origin")
@@ -108,7 +109,7 @@ func checkOrigin(config *Config, req *http.Request) (err error) {
 }
 
 // ServeHTTP implements the http.Handler interface for a WebSocket
-func (h Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (h Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {mydebug.INFO()
 	s := Server{Handler: h, Handshake: checkOrigin}
 	s.serveWebSocket(w, req)
 }

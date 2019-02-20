@@ -5,10 +5,11 @@
 // +build go1.4
 
 package unix
+import "github.com/equalll/mydebug"
 
 import "syscall"
 
-func Unsetenv(key string) error {
+func Unsetenv(key string) error {mydebug.INFO()
 	// This was added in Go 1.4.
 	return syscall.Unsetenv(key)
 }

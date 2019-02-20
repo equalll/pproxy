@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -59,7 +60,7 @@ type bucket struct {
 }
 
 // newBucket returns a new bucket associated with a transaction.
-func newBucket(tx *Tx) Bucket {
+func newBucket(tx *Tx) Bucket {mydebug.INFO()
 	var b = Bucket{tx: tx, FillPercent: DefaultFillPercent}
 	if tx.writable {
 		b.buckets = make(map[string]*Bucket)
@@ -69,24 +70,24 @@ func newBucket(tx *Tx) Bucket {
 }
 
 // Tx returns the tx of the bucket.
-func (b *Bucket) Tx() *Tx {
+func (b *Bucket) Tx() *Tx {mydebug.INFO()
 	return b.tx
 }
 
 // Root returns the root of the bucket.
-func (b *Bucket) Root() pgid {
+func (b *Bucket) Root() pgid {mydebug.INFO()
 	return b.root
 }
 
 // Writable returns whether the bucket is writable.
-func (b *Bucket) Writable() bool {
+func (b *Bucket) Writable() bool {mydebug.INFO()
 	return b.tx.writable
 }
 
 // Cursor creates a cursor associated with the bucket.
 // The cursor is only valid as long as the transaction is open.
 // Do not use a cursor after the transaction is closed.
-func (b *Bucket) Cursor() *Cursor {
+func (b *Bucket) Cursor() *Cursor {mydebug.INFO()
 	// Update transaction statistics.
 	b.tx.stats.CursorCount++
 
@@ -100,7 +101,7 @@ func (b *Bucket) Cursor() *Cursor {
 // Bucket retrieves a nested bucket by name.
 // Returns nil if the bucket does not exist.
 // The bucket instance is only valid for the lifetime of the transaction.
-func (b *Bucket) Bucket(name []byte) *Bucket {
+func (b *Bucket) Bucket(name []byte) *Bucket {mydebug.INFO()
 	if b.buckets != nil {
 		if child := b.buckets[string(name)]; child != nil {
 			return child
@@ -127,7 +128,7 @@ func (b *Bucket) Bucket(name []byte) *Bucket {
 
 // Helper method that re-interprets a sub-bucket value
 // from a parent into a Bucket
-func (b *Bucket) openBucket(value []byte) *Bucket {
+func (b *Bucket) openBucket(value []byte) *Bucket {mydebug.INFO()
 	var child = newBucket(b.tx)
 
 	// If unaligned load/stores are broken on this arch and value is
@@ -158,7 +159,7 @@ func (b *Bucket) openBucket(value []byte) *Bucket {
 // CreateBucket creates a new bucket at the given key and returns the new bucket.
 // Returns an error if the key already exists, if the bucket name is blank, or if the bucket name is too long.
 // The bucket instance is only valid for the lifetime of the transaction.
-func (b *Bucket) CreateBucket(key []byte) (*Bucket, error) {
+func (b *Bucket) CreateBucket(key []byte) (*Bucket, error) {mydebug.INFO()
 	if b.tx.db == nil {
 		return nil, ErrTxClosed
 	} else if !b.tx.writable {
@@ -203,7 +204,7 @@ func (b *Bucket) CreateBucket(key []byte) (*Bucket, error) {
 // CreateBucketIfNotExists creates a new bucket if it doesn't already exist and returns a reference to it.
 // Returns an error if the bucket name is blank, or if the bucket name is too long.
 // The bucket instance is only valid for the lifetime of the transaction.
-func (b *Bucket) CreateBucketIfNotExists(key []byte) (*Bucket, error) {
+func (b *Bucket) CreateBucketIfNotExists(key []byte) (*Bucket, error) {mydebug.INFO()
 	child, err := b.CreateBucket(key)
 	if err == ErrBucketExists {
 		return b.Bucket(key), nil
@@ -215,7 +216,7 @@ func (b *Bucket) CreateBucketIfNotExists(key []byte) (*Bucket, error) {
 
 // DeleteBucket deletes a bucket at the given key.
 // Returns an error if the bucket does not exists, or if the key represents a non-bucket value.
-func (b *Bucket) DeleteBucket(key []byte) error {
+func (b *Bucket) DeleteBucket(key []byte) error {mydebug.INFO()
 	if b.tx.db == nil {
 		return ErrTxClosed
 	} else if !b.Writable() {
@@ -264,7 +265,7 @@ func (b *Bucket) DeleteBucket(key []byte) error {
 // Get retrieves the value for a key in the bucket.
 // Returns a nil value if the key does not exist or if the key is a nested bucket.
 // The returned value is only valid for the life of the transaction.
-func (b *Bucket) Get(key []byte) []byte {
+func (b *Bucket) Get(key []byte) []byte {mydebug.INFO()
 	k, v, flags := b.Cursor().seek(key)
 
 	// Return nil if this is a bucket.
@@ -283,7 +284,7 @@ func (b *Bucket) Get(key []byte) []byte {
 // If the key exist then its previous value will be overwritten.
 // Supplied value must remain valid for the life of the transaction.
 // Returns an error if the bucket was created from a read-only transaction, if the key is blank, if the key is too large, or if the value is too large.
-func (b *Bucket) Put(key []byte, value []byte) error {
+func (b *Bucket) Put(key []byte, value []byte) error {mydebug.INFO()
 	if b.tx.db == nil {
 		return ErrTxClosed
 	} else if !b.Writable() {
@@ -315,7 +316,7 @@ func (b *Bucket) Put(key []byte, value []byte) error {
 // Delete removes a key from the bucket.
 // If the key does not exist then nothing is done and a nil error is returned.
 // Returns an error if the bucket was created from a read-only transaction.
-func (b *Bucket) Delete(key []byte) error {
+func (b *Bucket) Delete(key []byte) error {mydebug.INFO()
 	if b.tx.db == nil {
 		return ErrTxClosed
 	} else if !b.Writable() {
@@ -341,7 +342,7 @@ func (b *Bucket) Delete(key []byte) error {
 func (b *Bucket) Sequence() uint64 { return b.bucket.sequence }
 
 // SetSequence updates the sequence number for the bucket.
-func (b *Bucket) SetSequence(v uint64) error {
+func (b *Bucket) SetSequence(v uint64) error {mydebug.INFO()
 	if b.tx.db == nil {
 		return ErrTxClosed
 	} else if !b.Writable() {
@@ -360,7 +361,7 @@ func (b *Bucket) SetSequence(v uint64) error {
 }
 
 // NextSequence returns an autoincrementing integer for the bucket.
-func (b *Bucket) NextSequence() (uint64, error) {
+func (b *Bucket) NextSequence() (uint64, error) {mydebug.INFO()
 	if b.tx.db == nil {
 		return 0, ErrTxClosed
 	} else if !b.Writable() {
@@ -382,7 +383,7 @@ func (b *Bucket) NextSequence() (uint64, error) {
 // If the provided function returns an error then the iteration is stopped and
 // the error is returned to the caller. The provided function must not modify
 // the bucket; this will result in undefined behavior.
-func (b *Bucket) ForEach(fn func(k, v []byte) error) error {
+func (b *Bucket) ForEach(fn func(k, v []byte) error) error {mydebug.INFO()
 	if b.tx.db == nil {
 		return ErrTxClosed
 	}
@@ -396,7 +397,7 @@ func (b *Bucket) ForEach(fn func(k, v []byte) error) error {
 }
 
 // Stat returns stats on a bucket.
-func (b *Bucket) Stats() BucketStats {
+func (b *Bucket) Stats() BucketStats {mydebug.INFO()
 	var s, subStats BucketStats
 	pageSize := b.tx.db.pageSize
 	s.BucketN += 1
@@ -478,7 +479,7 @@ func (b *Bucket) Stats() BucketStats {
 }
 
 // forEachPage iterates over every page in a bucket, including inline pages.
-func (b *Bucket) forEachPage(fn func(*page, int)) {
+func (b *Bucket) forEachPage(fn func(*page, int)) {mydebug.INFO()
 	// If we have an inline page then just use that.
 	if b.page != nil {
 		fn(b.page, 0)
@@ -491,7 +492,7 @@ func (b *Bucket) forEachPage(fn func(*page, int)) {
 
 // forEachPageNode iterates over every page (or node) in a bucket.
 // This also includes inline pages.
-func (b *Bucket) forEachPageNode(fn func(*page, *node, int)) {
+func (b *Bucket) forEachPageNode(fn func(*page, *node, int)) {mydebug.INFO()
 	// If we have an inline page or root node then just use that.
 	if b.page != nil {
 		fn(b.page, nil, 0)
@@ -500,7 +501,7 @@ func (b *Bucket) forEachPageNode(fn func(*page, *node, int)) {
 	b._forEachPageNode(b.root, 0, fn)
 }
 
-func (b *Bucket) _forEachPageNode(pgid pgid, depth int, fn func(*page, *node, int)) {
+func (b *Bucket) _forEachPageNode(pgid pgid, depth int, fn func(*page, *node, int)) {mydebug.INFO()
 	var p, n = b.pageNode(pgid)
 
 	// Execute function.
@@ -524,7 +525,7 @@ func (b *Bucket) _forEachPageNode(pgid pgid, depth int, fn func(*page, *node, in
 }
 
 // spill writes all the nodes for this bucket to dirty pages.
-func (b *Bucket) spill() error {
+func (b *Bucket) spill() error {mydebug.INFO()
 	// Spill all child buckets first.
 	for name, child := range b.buckets {
 		// If the child bucket is small enough and it has no child buckets then
@@ -584,7 +585,7 @@ func (b *Bucket) spill() error {
 
 // inlineable returns true if a bucket is small enough to be written inline
 // and if it contains no subbuckets. Otherwise returns false.
-func (b *Bucket) inlineable() bool {
+func (b *Bucket) inlineable() bool {mydebug.INFO()
 	var n = b.rootNode
 
 	// Bucket must only contain a single leaf node.
@@ -609,12 +610,12 @@ func (b *Bucket) inlineable() bool {
 }
 
 // Returns the maximum total size of a bucket to make it a candidate for inlining.
-func (b *Bucket) maxInlineBucketSize() int {
+func (b *Bucket) maxInlineBucketSize() int {mydebug.INFO()
 	return b.tx.db.pageSize / 4
 }
 
 // write allocates and writes a bucket to a byte slice.
-func (b *Bucket) write() []byte {
+func (b *Bucket) write() []byte {mydebug.INFO()
 	// Allocate the appropriate size.
 	var n = b.rootNode
 	var value = make([]byte, bucketHeaderSize+n.size())
@@ -631,7 +632,7 @@ func (b *Bucket) write() []byte {
 }
 
 // rebalance attempts to balance all nodes.
-func (b *Bucket) rebalance() {
+func (b *Bucket) rebalance() {mydebug.INFO()
 	for _, n := range b.nodes {
 		n.rebalance()
 	}
@@ -641,7 +642,7 @@ func (b *Bucket) rebalance() {
 }
 
 // node creates a node from a page and associates it with a given parent.
-func (b *Bucket) node(pgid pgid, parent *node) *node {
+func (b *Bucket) node(pgid pgid, parent *node) *node {mydebug.INFO()
 	_assert(b.nodes != nil, "nodes map expected")
 
 	// Retrieve node if it's already been created.
@@ -674,7 +675,7 @@ func (b *Bucket) node(pgid pgid, parent *node) *node {
 }
 
 // free recursively frees all pages in the bucket.
-func (b *Bucket) free() {
+func (b *Bucket) free() {mydebug.INFO()
 	if b.root == 0 {
 		return
 	}
@@ -691,7 +692,7 @@ func (b *Bucket) free() {
 }
 
 // dereference removes all references to the old mmap.
-func (b *Bucket) dereference() {
+func (b *Bucket) dereference() {mydebug.INFO()
 	if b.rootNode != nil {
 		b.rootNode.root().dereference()
 	}
@@ -703,7 +704,7 @@ func (b *Bucket) dereference() {
 
 // pageNode returns the in-memory node, if it exists.
 // Otherwise returns the underlying page.
-func (b *Bucket) pageNode(id pgid) (*page, *node) {
+func (b *Bucket) pageNode(id pgid) (*page, *node) {mydebug.INFO()
 	// Inline buckets have a fake page embedded in their value so treat them
 	// differently. We'll return the rootNode (if available) or the fake page.
 	if b.root == 0 {
@@ -751,7 +752,7 @@ type BucketStats struct {
 	InlineBucketInuse int // bytes used for inlined buckets (also accounted for in LeafInuse)
 }
 
-func (s *BucketStats) Add(other BucketStats) {
+func (s *BucketStats) Add(other BucketStats) {mydebug.INFO()
 	s.BranchPageN += other.BranchPageN
 	s.BranchOverflowN += other.BranchOverflowN
 	s.LeafPageN += other.LeafPageN
@@ -771,7 +772,7 @@ func (s *BucketStats) Add(other BucketStats) {
 }
 
 // cloneBytes returns a copy of a given slice.
-func cloneBytes(v []byte) []byte {
+func cloneBytes(v []byte) []byte {mydebug.INFO()
 	var clone = make([]byte, len(v))
 	copy(clone, v)
 	return clone

@@ -1,4 +1,5 @@
 package utils
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -6,7 +7,7 @@ import (
 	"regexp"
 )
 
-func Html_input_tag(tagType string, name string, value string, other_params ...interface{}) (html string) {
+func Html_input_tag(tagType string, name string, value string, other_params ...interface{}) (html string) {mydebug.INFO()
 	params := make(map[string]string)
 	if len(name) > 0 {
 		params["name"] = name
@@ -18,7 +19,7 @@ func Html_input_tag(tagType string, name string, value string, other_params ...i
 	return
 }
 
-func paramsAsString(more_params ...interface{}) string {
+func paramsAsString(more_params ...interface{}) string {mydebug.INFO()
 	params := make(map[string]string)
 	params = params_merge(params, more_params)
 	html := ""
@@ -28,7 +29,7 @@ func paramsAsString(more_params ...interface{}) string {
 	return html
 }
 
-func params_merge(params map[string]string, more_params []interface{}) map[string]string {
+func params_merge(params map[string]string, more_params []interface{}) map[string]string {mydebug.INFO()
 	for _, param := range more_params {
 		switch param.(type) {
 		case map[string]string:
@@ -45,36 +46,36 @@ func params_merge(params map[string]string, more_params []interface{}) map[strin
 	return params
 }
 
-func Html_input_text(name string, value string, other_params ...interface{}) string {
+func Html_input_text(name string, value string, other_params ...interface{}) string {mydebug.INFO()
 	return Html_input_tag("text", name, value, other_params...)
 }
 
-func Html_input_hidden(name string, value string, other_params ...interface{}) string {
+func Html_input_hidden(name string, value string, other_params ...interface{}) string {mydebug.INFO()
 	return Html_input_tag("hidden", name, value, other_params...)
 }
-func Html_input_password(name string, value string, other_params ...interface{}) string {
+func Html_input_password(name string, value string, other_params ...interface{}) string {mydebug.INFO()
 	return Html_input_tag("password", name, value, other_params...)
 }
-func Html_input_email(name string, value string, other_params ...interface{}) string {
+func Html_input_email(name string, value string, other_params ...interface{}) string {mydebug.INFO()
 	return Html_input_tag("email", name, value, other_params...)
 }
-func Html_input_url(name string, value string, other_params ...interface{}) string {
+func Html_input_url(name string, value string, other_params ...interface{}) string {mydebug.INFO()
 	return Html_input_tag("url", name, value, other_params...)
 }
-func Html_input_search(name string, value string, other_params ...interface{}) string {
+func Html_input_search(name string, value string, other_params ...interface{}) string {mydebug.INFO()
 	return Html_input_tag("search", name, value, other_params...)
 }
-func Html_input_file(name string, value string, other_params ...interface{}) string {
+func Html_input_file(name string, value string, other_params ...interface{}) string {mydebug.INFO()
 	return Html_input_tag("file", name, value, other_params...)
 }
-func Html_input_submit(value string, other_params ...interface{}) string {
+func Html_input_submit(value string, other_params ...interface{}) string {mydebug.INFO()
 	return Html_input_tag("submit", "", value, other_params...)
 }
-func Html_input_reset(value string, other_params ...interface{}) string {
+func Html_input_reset(value string, other_params ...interface{}) string {mydebug.INFO()
 	return Html_input_tag("reset", "", value, other_params...)
 }
 
-func Html_link(url string, text string, more_params ...interface{}) string {
+func Html_link(url string, text string, more_params ...interface{}) string {mydebug.INFO()
 	params := make(map[string]string)
 	params["href"] = url
 	params["title"] = text
@@ -82,7 +83,7 @@ func Html_link(url string, text string, more_params ...interface{}) string {
 	return html
 }
 
-func Html_checkBox(name string, value string, label string, isChecked bool, other_params ...interface{}) string {
+func Html_checkBox(name string, value string, label string, isChecked bool, other_params ...interface{}) string {mydebug.INFO()
 	params := make(map[string]string)
 	if isChecked {
 		params["checked"] = "checked"
@@ -92,7 +93,7 @@ func Html_checkBox(name string, value string, label string, isChecked bool, othe
 	return html
 }
 
-func Html_datalist(id string, values []string) string {
+func Html_datalist(id string, values []string) string {mydebug.INFO()
 	html := "<datalist id='" + id + "'>"
 	for _, v := range values {
 		html += "<option value='" + template.HTMLEscapeString(v) + "'>"
@@ -101,7 +102,7 @@ func Html_datalist(id string, values []string) string {
 	return html
 }
 
-func Html_textArea(name string, value string, more_params ...interface{}) string {
+func Html_textArea(name string, value string, more_params ...interface{}) string {mydebug.INFO()
 	params := make(map[string]string)
 	params["name"] = name
 	params["value"] = value
@@ -120,11 +121,11 @@ type html_option struct {
 	Params  map[string]string
 }
 
-func NewHtml_Options() *Html_Options {
+func NewHtml_Options() *Html_Options {mydebug.INFO()
 	return new(Html_Options)
 }
 
-func (options *Html_Options) AddOption(name interface{}, value interface{}, checked bool) {
+func (options *Html_Options) AddOption(name interface{}, value interface{}, checked bool) {mydebug.INFO()
 	option := new(html_option)
 	option.Name = name
 	option.Value = value
@@ -132,7 +133,7 @@ func (options *Html_Options) AddOption(name interface{}, value interface{}, chec
 	options.Items = append(options.Items, option)
 }
 
-func Html_select(name string, options *Html_Options, other_params ...interface{}) string {
+func Html_select(name string, options *Html_Options, other_params ...interface{}) string {mydebug.INFO()
 	params := make(map[string]string)
 	params["name"] = name
 	html := "<select" + paramsAsString(params_merge(params, other_params)) + ">\n"
@@ -153,6 +154,6 @@ func Html_select(name string, options *Html_Options, other_params ...interface{}
 
 var html_tag_reg *regexp.Regexp = regexp.MustCompile(`>\s+<`)
 
-func Html_reduceSpace(html string) string {
+func Html_reduceSpace(html string) string {mydebug.INFO()
 	return html_tag_reg.ReplaceAllString(html, "><")
 }

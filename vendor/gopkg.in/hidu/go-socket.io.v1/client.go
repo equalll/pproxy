@@ -1,4 +1,5 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 import (
 	"code.google.com/p/go.net/websocket"
@@ -22,7 +23,7 @@ type Client struct {
 	*EventEmitter
 }
 
-func Dial(origin string) (*Client, error) {
+func Dial(origin string) (*Client, error) {mydebug.INFO()
 	u, err := url.Parse(origin)
 	if err != nil {
 		return nil, err
@@ -84,7 +85,7 @@ func Dial(origin string) (*Client, error) {
 	}, nil
 }
 
-func parseEndpoint(u *url.URL) string {
+func parseEndpoint(u *url.URL) string {mydebug.INFO()
 	path := u.Path
 	if l := len(path); l > 0 && path[len(path)-1] == '/' {
 		path = path[:l-1]
@@ -100,16 +101,16 @@ func parseEndpoint(u *url.URL) string {
 	return endpoint
 }
 
-func (c *Client) Run() {
+func (c *Client) Run() {mydebug.INFO()
 	c.session.loop()
 }
 
-func (c *Client) Quit() error {
+func (c *Client) Quit() error {mydebug.INFO()
 	dc := new(disconnectPacket)
 	return c.session.defaultNS.sendPacket(dc)
 }
 
-func (c *Client) Of(name string) (nameSpace *NameSpace) {
+func (c *Client) Of(name string) (nameSpace *NameSpace) {mydebug.INFO()
 	ee := c.session.emitters[name]
 	ns := c.session.Of(name)
 	if ee == nil {
@@ -119,10 +120,10 @@ func (c *Client) Of(name string) (nameSpace *NameSpace) {
 	return ns
 }
 
-func (c *Client) Call(name string, timeout time.Duration, reply []interface{}, args ...interface{}) error {
+func (c *Client) Call(name string, timeout time.Duration, reply []interface{}, args ...interface{}) error {mydebug.INFO()
 	return c.Of(c.endpoint).Call(name, timeout, reply, args...)
 }
 
-func (c *Client) Emit(name string, args ...interface{}) error {
+func (c *Client) Emit(name string, args ...interface{}) error {mydebug.INFO()
 	return c.Of(c.endpoint).Emit(name, args...)
 }

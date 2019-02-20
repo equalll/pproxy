@@ -1,11 +1,12 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
 )
 
 // broadcastReq broadcast request to user's browser
-func (ser *ProxyServe) broadcastReq(reqCtx *requestCtx) bool {
+func (ser *ProxyServe) broadcastReq(reqCtx *requestCtx) bool {mydebug.INFO()
 	req := reqCtx.Req
 	data := make(map[string]interface{})
 	data["docid"] = fmt.Sprintf("%d", reqCtx.Docid)

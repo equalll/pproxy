@@ -1,28 +1,30 @@
 package goproxy_test
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
 	"crypto/rsa"
 	"encoding/binary"
-	"github.com/elazarl/goproxy"
 	"io"
 	"math"
 	"math/rand"
 	"testing"
+
+	"github.com/elazarl/goproxy"
 )
 
 type RandSeedReader struct {
 	r rand.Rand
 }
 
-func (r *RandSeedReader) Read(b []byte) (n int, err error) {
+func (r *RandSeedReader) Read(b []byte) (n int, err error) {mydebug.INFO()
 	for i := range b {
 		b[i] = byte(r.r.Int() & 0xFF)
 	}
 	return len(b), nil
 }
 
-func TestCounterEncDifferentConsecutive(t *testing.T) {
+func TestCounterEncDifferentConsecutive(t *testing.T) {mydebug.INFO()
 	k, err := rsa.GenerateKey(&RandSeedReader{*rand.New(rand.NewSource(0xFF43109))}, 128)
 	fatalOnErr(err, "rsa.GenerateKey", t)
 	c, err := goproxy.NewCounterEncryptorRandFromKey(k, []byte("the quick brown fox run over the lazy dog"))
@@ -37,7 +39,7 @@ func TestCounterEncDifferentConsecutive(t *testing.T) {
 	}
 }
 
-func TestCounterEncIdenticalStreams(t *testing.T) {
+func TestCounterEncIdenticalStreams(t *testing.T) {mydebug.INFO()
 	k, err := rsa.GenerateKey(&RandSeedReader{*rand.New(rand.NewSource(0xFF43109))}, 128)
 	fatalOnErr(err, "rsa.GenerateKey", t)
 	c1, err := goproxy.NewCounterEncryptorRandFromKey(k, []byte("the quick brown fox run over the lazy dog"))
@@ -63,7 +65,7 @@ func TestCounterEncIdenticalStreams(t *testing.T) {
 	}
 }
 
-func stddev(data []int) float64 {
+func stddev(data []int) float64 {mydebug.INFO()
 	var sum, sum_sqr float64 = 0, 0
 	for _, h := range data {
 		sum += float64(h)
@@ -74,7 +76,7 @@ func stddev(data []int) float64 {
 	return math.Sqrt(variance)
 }
 
-func TestCounterEncStreamHistogram(t *testing.T) {
+func TestCounterEncStreamHistogram(t *testing.T) {mydebug.INFO()
 	k, err := rsa.GenerateKey(&RandSeedReader{*rand.New(rand.NewSource(0xFF43109))}, 128)
 	fatalOnErr(err, "rsa.GenerateKey", t)
 	c, err := goproxy.NewCounterEncryptorRandFromKey(k, []byte("the quick brown fox run over the lazy dog"))
@@ -82,11 +84,11 @@ func TestCounterEncStreamHistogram(t *testing.T) {
 	nout := 100 * 1000
 	out := make([]byte, nout)
 	io.ReadFull(&c, out)
-	refhist := make([]int, 256)
+	refhist := make([]int, 512)
 	for i := 0; i < nout; i++ {
 		refhist[rand.Intn(256)]++
 	}
-	hist := make([]int, 256)
+	hist := make([]int, 512)
 	for _, b := range out {
 		hist[int(b)]++
 	}

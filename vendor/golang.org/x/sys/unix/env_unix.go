@@ -7,21 +7,22 @@
 // Unix environment variables.
 
 package unix
+import "github.com/equalll/mydebug"
 
 import "syscall"
 
-func Getenv(key string) (value string, found bool) {
+func Getenv(key string) (value string, found bool) {mydebug.INFO()
 	return syscall.Getenv(key)
 }
 
-func Setenv(key, value string) error {
+func Setenv(key, value string) error {mydebug.INFO()
 	return syscall.Setenv(key, value)
 }
 
-func Clearenv() {
+func Clearenv() {mydebug.INFO()
 	syscall.Clearenv()
 }
 
-func Environ() []string {
+func Environ() []string {mydebug.INFO()
 	return syscall.Environ()
 }

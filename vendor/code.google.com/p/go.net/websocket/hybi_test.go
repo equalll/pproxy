@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 
 package websocket
+import "github.com/equalll/mydebug"
 
 import (
 	"bufio"
@@ -17,7 +18,7 @@ import (
 
 // Test the getNonceAccept function with values in
 // http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-17
-func TestSecWebSocketAccept(t *testing.T) {
+func TestSecWebSocketAccept(t *testing.T) {mydebug.INFO()
 	nonce := []byte("dGhlIHNhbXBsZSBub25jZQ==")
 	expected := []byte("s3pPLMBiTxaQ9kYGzzhZRbK+xOo=")
 	accept, err := getNonceAccept(nonce)
@@ -30,7 +31,7 @@ func TestSecWebSocketAccept(t *testing.T) {
 	}
 }
 
-func TestHybiClientHandshake(t *testing.T) {
+func TestHybiClientHandshake(t *testing.T) {mydebug.INFO()
 	b := bytes.NewBuffer([]byte{})
 	bw := bufio.NewWriter(b)
 	br := bufio.NewReader(strings.NewReader(`HTTP/1.1 101 Switching Protocols
@@ -92,7 +93,7 @@ Sec-WebSocket-Protocol: chat
 	}
 }
 
-func TestHybiClientHandshakeWithHeader(t *testing.T) {
+func TestHybiClientHandshakeWithHeader(t *testing.T) {mydebug.INFO()
 	b := bytes.NewBuffer([]byte{})
 	bw := bufio.NewWriter(b)
 	br := bufio.NewReader(strings.NewReader(`HTTP/1.1 101 Switching Protocols
@@ -157,7 +158,7 @@ Sec-WebSocket-Protocol: chat
 	}
 }
 
-func TestHybiServerHandshake(t *testing.T) {
+func TestHybiServerHandshake(t *testing.T) {mydebug.INFO()
 	config := new(Config)
 	handshaker := &hybiServerHandshaker{Config: config}
 	br := bufio.NewReader(strings.NewReader(`GET /chat HTTP/1.1
@@ -207,7 +208,7 @@ Sec-WebSocket-Version: 13
 	}
 }
 
-func TestHybiServerHandshakeNoSubProtocol(t *testing.T) {
+func TestHybiServerHandshakeNoSubProtocol(t *testing.T) {mydebug.INFO()
 	config := new(Config)
 	handshaker := &hybiServerHandshaker{Config: config}
 	br := bufio.NewReader(strings.NewReader(`GET /chat HTTP/1.1
@@ -252,7 +253,7 @@ Sec-WebSocket-Version: 13
 	}
 }
 
-func TestHybiServerHandshakeHybiBadVersion(t *testing.T) {
+func TestHybiServerHandshakeHybiBadVersion(t *testing.T) {mydebug.INFO()
 	config := new(Config)
 	handshaker := &hybiServerHandshaker{Config: config}
 	br := bufio.NewReader(strings.NewReader(`GET /chat HTTP/1.1
@@ -278,7 +279,7 @@ Sec-WebSocket-Version: 9
 	}
 }
 
-func testHybiFrame(t *testing.T, testHeader, testPayload, testMaskedPayload []byte, frameHeader *hybiFrameHeader) {
+func testHybiFrame(t *testing.T, testHeader, testPayload, testMaskedPayload []byte, frameHeader *hybiFrameHeader) {mydebug.INFO()
 	b := bytes.NewBuffer([]byte{})
 	frameWriterFactory := &hybiFrameWriterFactory{bufio.NewWriter(b), false}
 	w, _ := frameWriterFactory.NewFrameWriter(TextFrame)
@@ -334,7 +335,7 @@ func testHybiFrame(t *testing.T, testHeader, testPayload, testMaskedPayload []by
 	}
 }
 
-func TestHybiShortTextFrame(t *testing.T) {
+func TestHybiShortTextFrame(t *testing.T) {mydebug.INFO()
 	frameHeader := &hybiFrameHeader{Fin: true, OpCode: TextFrame}
 	payload := []byte("hello")
 	testHybiFrame(t, []byte{0x81, 0x05}, payload, payload, frameHeader)
@@ -343,7 +344,7 @@ func TestHybiShortTextFrame(t *testing.T) {
 	testHybiFrame(t, []byte{0x81, 125}, payload, payload, frameHeader)
 }
 
-func TestHybiShortMaskedTextFrame(t *testing.T) {
+func TestHybiShortMaskedTextFrame(t *testing.T) {mydebug.INFO()
 	frameHeader := &hybiFrameHeader{Fin: true, OpCode: TextFrame,
 		MaskingKey: []byte{0xcc, 0x55, 0x80, 0x20}}
 	payload := []byte("hello")
@@ -353,7 +354,7 @@ func TestHybiShortMaskedTextFrame(t *testing.T) {
 	testHybiFrame(t, header, payload, maskedPayload, frameHeader)
 }
 
-func TestHybiShortBinaryFrame(t *testing.T) {
+func TestHybiShortBinaryFrame(t *testing.T) {mydebug.INFO()
 	frameHeader := &hybiFrameHeader{Fin: true, OpCode: BinaryFrame}
 	payload := []byte("hello")
 	testHybiFrame(t, []byte{0x82, 0x05}, payload, payload, frameHeader)
@@ -362,7 +363,7 @@ func TestHybiShortBinaryFrame(t *testing.T) {
 	testHybiFrame(t, []byte{0x82, 125}, payload, payload, frameHeader)
 }
 
-func TestHybiControlFrame(t *testing.T) {
+func TestHybiControlFrame(t *testing.T) {mydebug.INFO()
 	frameHeader := &hybiFrameHeader{Fin: true, OpCode: PingFrame}
 	payload := []byte("hello")
 	testHybiFrame(t, []byte{0x89, 0x05}, payload, payload, frameHeader)
@@ -375,7 +376,7 @@ func TestHybiControlFrame(t *testing.T) {
 	testHybiFrame(t, []byte{0x88, 0x02}, payload, payload, frameHeader)
 }
 
-func TestHybiLongFrame(t *testing.T) {
+func TestHybiLongFrame(t *testing.T) {mydebug.INFO()
 	frameHeader := &hybiFrameHeader{Fin: true, OpCode: TextFrame}
 	payload := make([]byte, 126)
 	testHybiFrame(t, []byte{0x81, 126, 0x00, 126}, payload, payload, frameHeader)
@@ -387,7 +388,7 @@ func TestHybiLongFrame(t *testing.T) {
 	testHybiFrame(t, []byte{0x81, 127, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00}, payload, payload, frameHeader)
 }
 
-func TestHybiClientRead(t *testing.T) {
+func TestHybiClientRead(t *testing.T) {mydebug.INFO()
 	wireData := []byte{0x81, 0x05, 'h', 'e', 'l', 'l', 'o',
 		0x89, 0x05, 'h', 'e', 'l', 'l', 'o', // ping
 		0x81, 0x05, 'w', 'o', 'r', 'l', 'd'}
@@ -425,7 +426,7 @@ func TestHybiClientRead(t *testing.T) {
 	}
 }
 
-func TestHybiShortRead(t *testing.T) {
+func TestHybiShortRead(t *testing.T) {mydebug.INFO()
 	wireData := []byte{0x81, 0x05, 'h', 'e', 'l', 'l', 'o',
 		0x89, 0x05, 'h', 'e', 'l', 'l', 'o', // ping
 		0x81, 0x05, 'w', 'o', 'r', 'l', 'd'}
@@ -465,7 +466,7 @@ func TestHybiShortRead(t *testing.T) {
 	}
 }
 
-func TestHybiServerRead(t *testing.T) {
+func TestHybiServerRead(t *testing.T) {mydebug.INFO()
 	wireData := []byte{0x81, 0x85, 0xcc, 0x55, 0x80, 0x20,
 		0xa4, 0x30, 0xec, 0x4c, 0xa3, // hello
 		0x89, 0x85, 0xcc, 0x55, 0x80, 0x20,
@@ -511,7 +512,7 @@ func TestHybiServerRead(t *testing.T) {
 	}
 }
 
-func TestHybiServerReadWithoutMasking(t *testing.T) {
+func TestHybiServerReadWithoutMasking(t *testing.T) {mydebug.INFO()
 	wireData := []byte{0x81, 0x05, 'h', 'e', 'l', 'l', 'o'}
 	br := bufio.NewReader(bytes.NewBuffer(wireData))
 	bw := bufio.NewWriter(bytes.NewBuffer([]byte{}))
@@ -524,7 +525,7 @@ func TestHybiServerReadWithoutMasking(t *testing.T) {
 	}
 }
 
-func TestHybiClientReadWithMasking(t *testing.T) {
+func TestHybiClientReadWithMasking(t *testing.T) {mydebug.INFO()
 	wireData := []byte{0x81, 0x85, 0xcc, 0x55, 0x80, 0x20,
 		0xa4, 0x30, 0xec, 0x4c, 0xa3, // hello
 	}
@@ -543,7 +544,7 @@ func TestHybiClientReadWithMasking(t *testing.T) {
 // Test the hybiServerHandshaker supports firefox implementation and
 // checks Connection request header include (but it's not necessary
 // equal to) "upgrade"
-func TestHybiServerFirefoxHandshake(t *testing.T) {
+func TestHybiServerFirefoxHandshake(t *testing.T) {mydebug.INFO()
 	config := new(Config)
 	handshaker := &hybiServerHandshaker{Config: config}
 	br := bufio.NewReader(strings.NewReader(`GET /chat HTTP/1.1

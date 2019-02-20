@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -19,21 +20,21 @@ import (
 )
 
 // Int64ToBytes int64转换为byte
-func Int64ToBytes(i int64) []byte {
+func Int64ToBytes(i int64) []byte {mydebug.INFO()
 	var buf = make([]byte, 8)
 	binary.BigEndian.PutUint64(buf, uint64(i))
 	return buf
 }
 
 // IntToBytes int转换为byte
-func IntToBytes(i int) []byte {
+func IntToBytes(i int) []byte {mydebug.INFO()
 	var buf = make([]byte, 8)
 	binary.BigEndian.PutUint64(buf, uint64(i))
 	return buf
 }
 
 // IsLocalIP 判断一个host是否本地ip
-func IsLocalIP(host string) bool {
+func IsLocalIP(host string) bool {mydebug.INFO()
 	ips, _ := net.LookupIP(host)
 	for _, ip := range ips {
 		if ip.IsLoopback() {
@@ -55,14 +56,14 @@ func IsLocalIP(host string) bool {
 	return false
 }
 
-func forgetRead(reader *io.ReadCloser) *bytes.Buffer {
+func forgetRead(reader *io.ReadCloser) *bytes.Buffer {mydebug.INFO()
 	buf := bytes.NewBuffer([]byte{})
 	io.Copy(buf, *reader)
 	*reader = ioutil.NopCloser(buf).(io.ReadCloser)
 	return bytes.NewBuffer(buf.Bytes())
 }
 
-func dataEncode(data interface{}) []byte {
+func dataEncode(data interface{}) []byte {mydebug.INFO()
 	bf, err := json.Marshal(data)
 	if err != nil {
 		log.Println("data_encode_err", err)
@@ -70,7 +71,7 @@ func dataEncode(data interface{}) []byte {
 	}
 	return bf
 }
-func dataDecode(dataInput []byte, out interface{}) error {
+func dataDecode(dataInput []byte, out interface{}) error {mydebug.INFO()
 	if len(dataInput) == 0 {
 		return fmt.Errorf("empty dataInput")
 	}
@@ -82,14 +83,14 @@ func dataDecode(dataInput []byte, out interface{}) error {
 	return err
 }
 
-func getMapValStr(m map[string]interface{}, k string) string {
+func getMapValStr(m map[string]interface{}, k string) string {mydebug.INFO()
 	if val, has := m[k]; has {
 		return fmt.Sprintf("%s", val)
 	}
 	return ""
 }
 
-func gzipDocode(buf *bytes.Buffer) string {
+func gzipDocode(buf *bytes.Buffer) string {mydebug.INFO()
 	if buf.Len() < 1 {
 		return ""
 	}
@@ -102,7 +103,7 @@ func gzipDocode(buf *bytes.Buffer) string {
 	log.Println("unzip body failed", err)
 	return ""
 }
-func gzipEncode(data []byte) *bytes.Buffer {
+func gzipEncode(data []byte) *bytes.Buffer {mydebug.INFO()
 	buf := bytes.NewBuffer([]byte{})
 	gw := gzip.NewWriter(buf)
 	defer gw.Close()
@@ -110,7 +111,7 @@ func gzipEncode(data []byte) *bytes.Buffer {
 	return buf
 }
 
-func parseURLInputAsSlice(input string) []string {
+func parseURLInputAsSlice(input string) []string {mydebug.INFO()
 	arr := strings.Split(input, "|")
 	var result []string
 	for _, val := range arr {
@@ -122,7 +123,7 @@ func parseURLInputAsSlice(input string) []string {
 	return result
 }
 
-func getFormValuesWithPrefix(values url.Values, prefix string) map[string][]string {
+func getFormValuesWithPrefix(values url.Values, prefix string) map[string][]string {mydebug.INFO()
 	result := make(map[string][]string)
 	for k, v := range values {
 		if strings.HasPrefix(k, prefix) {
@@ -133,7 +134,7 @@ func getFormValuesWithPrefix(values url.Values, prefix string) map[string][]stri
 	return result
 }
 
-func getTextAreaHeightByString(mystr string, minHeight int) int {
+func getTextAreaHeightByString(mystr string, minHeight int) int {mydebug.INFO()
 	height := (len(strings.Split(mystr, "\n")) + 1) * 25
 	if height < minHeight {
 		height = minHeight
@@ -141,7 +142,7 @@ func getTextAreaHeightByString(mystr string, minHeight int) int {
 	return height
 }
 
-func getHostPortFromReq(req *http.Request) (host string, port int, err error) {
+func getHostPortFromReq(req *http.Request) (host string, port int, err error) {mydebug.INFO()
 	host, port, err = parseHostPort(req.Host)
 	if err == nil && port == 0 {
 		switch req.URL.Scheme {
@@ -158,7 +159,7 @@ func getHostPortFromReq(req *http.Request) (host string, port int, err error) {
 	return
 }
 
-func parseHostPort(hostPortstr string) (host string, port int, err error) {
+func parseHostPort(hostPortstr string) (host string, port int, err error) {mydebug.INFO()
 	var portStr string
 	if !strings.Contains(hostPortstr, ":") {
 		hostPortstr += ":0"
@@ -174,7 +175,7 @@ func parseHostPort(hostPortstr string) (host string, port int, err error) {
 	return
 }
 
-func checkURLValuesChange(first url.Values, second url.Values) (change bool) {
+func checkURLValuesChange(first url.Values, second url.Values) (change bool) {mydebug.INFO()
 	for k, v := range first {
 		secV, has := second[k]
 		if !has {
@@ -196,7 +197,7 @@ func checkURLValuesChange(first url.Values, second url.Values) (change bool) {
 	return false
 }
 
-func parseDocID(strid string) (docid int, err error) {
+func parseDocID(strid string) (docid int, err error) {mydebug.INFO()
 	docid64, parseErr := strconv.ParseUint(strid, 10, 64)
 	if parseErr == nil {
 		return int(docid64), nil
@@ -204,7 +205,7 @@ func parseDocID(strid string) (docid int, err error) {
 	return 0, parseErr
 }
 
-func removeHeader(req *http.Request) {
+func removeHeader(req *http.Request) {mydebug.INFO()
 	for k := range req.Header {
 		if len(k) > 5 && k[:6] == "Proxy-" {
 			req.Header.Del(k)
@@ -212,7 +213,7 @@ func removeHeader(req *http.Request) {
 	}
 }
 
-func getPostData(req *http.Request) (post *url.Values) {
+func getPostData(req *http.Request) (post *url.Values) {mydebug.INFO()
 	post = new(url.Values)
 	if strings.Contains(req.Header.Get("Content-Type"), "x-www-form-urlencoded") {
 		buf := forgetRead(&req.Body)
@@ -232,7 +233,7 @@ func getPostData(req *http.Request) (post *url.Values) {
 	return post
 }
 
-func headerEncode(data []byte) []byte {
+func headerEncode(data []byte) []byte {mydebug.INFO()
 	t := bytes.Replace(data, []byte("\r"), []byte("\\r"), -1)
 	t = bytes.Replace(t, []byte("\n"), []byte("\\n"), -1)
 	return t

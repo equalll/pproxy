@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 
 package websocket
+import "github.com/equalll/mydebug"
 
 import (
 	"bufio"
@@ -19,12 +20,12 @@ type DialError struct {
 	Err error
 }
 
-func (e *DialError) Error() string {
+func (e *DialError) Error() string {mydebug.INFO()
 	return "websocket.Dial " + e.Config.Location.String() + ": " + e.Err.Error()
 }
 
 // NewConfig creates a new WebSocket config for client connection.
-func NewConfig(server, origin string) (config *Config, err error) {
+func NewConfig(server, origin string) (config *Config, err error) {mydebug.INFO()
 	config = new(Config)
 	config.Version = ProtocolVersionHybi13
 	config.Location, err = url.ParseRequestURI(server)
@@ -40,7 +41,7 @@ func NewConfig(server, origin string) (config *Config, err error) {
 }
 
 // NewClient creates a new WebSocket client connection over rwc.
-func NewClient(config *Config, rwc io.ReadWriteCloser) (ws *Conn, err error) {
+func NewClient(config *Config, rwc io.ReadWriteCloser) (ws *Conn, err error) {mydebug.INFO()
 	br := bufio.NewReader(rwc)
 	bw := bufio.NewWriter(rwc)
 	err = hybiClientHandshake(config, br, bw)
@@ -53,7 +54,7 @@ func NewClient(config *Config, rwc io.ReadWriteCloser) (ws *Conn, err error) {
 }
 
 // Dial opens a new client connection to a WebSocket.
-func Dial(url_, protocol, origin string) (ws *Conn, err error) {
+func Dial(url_, protocol, origin string) (ws *Conn, err error) {mydebug.INFO()
 	config, err := NewConfig(url_, origin)
 	if err != nil {
 		return nil, err
@@ -65,7 +66,7 @@ func Dial(url_, protocol, origin string) (ws *Conn, err error) {
 }
 
 // DialConfig opens a new client connection to a WebSocket with a config.
-func DialConfig(config *Config) (ws *Conn, err error) {
+func DialConfig(config *Config) (ws *Conn, err error) {mydebug.INFO()
 	var client net.Conn
 	if config.Location == nil {
 		return nil, &DialError{config, ErrBadWebSocketLocation}

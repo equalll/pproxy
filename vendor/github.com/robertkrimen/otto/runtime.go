@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"errors"
@@ -66,7 +67,7 @@ type _runtime struct {
 	lck    sync.Mutex
 }
 
-func (self *_runtime) enterScope(scope *_scope) {
+func (self *_runtime) enterScope(scope *_scope) {mydebug.INFO()
 	scope.outer = self.scope
 	if self.scope != nil {
 		if self.stackLimit != 0 && self.scope.depth+1 >= self.stackLimit {
@@ -79,16 +80,16 @@ func (self *_runtime) enterScope(scope *_scope) {
 	self.scope = scope
 }
 
-func (self *_runtime) leaveScope() {
+func (self *_runtime) leaveScope() {mydebug.INFO()
 	self.scope = self.scope.outer
 }
 
 // FIXME This is used in two places (cloning)
-func (self *_runtime) enterGlobalScope() {
+func (self *_runtime) enterGlobalScope() {mydebug.INFO()
 	self.enterScope(newScope(self.globalStash, self.globalStash, self.globalObject))
 }
 
-func (self *_runtime) enterFunctionScope(outer _stash, this Value) *_fnStash {
+func (self *_runtime) enterFunctionScope(outer _stash, this Value) *_fnStash {mydebug.INFO()
 	if outer == nil {
 		outer = self.globalStash
 	}
@@ -104,7 +105,7 @@ func (self *_runtime) enterFunctionScope(outer _stash, this Value) *_fnStash {
 	return stash
 }
 
-func (self *_runtime) putValue(reference _reference, value Value) {
+func (self *_runtime) putValue(reference _reference, value Value) {mydebug.INFO()
 	name := reference.putValue(value)
 	if name != "" {
 		// Why? -- If reference.base == nil
@@ -113,7 +114,7 @@ func (self *_runtime) putValue(reference _reference, value Value) {
 	}
 }
 
-func (self *_runtime) tryCatchEvaluate(inner func() Value) (tryValue Value, exception bool) {
+func (self *_runtime) tryCatchEvaluate(inner func() Value) (tryValue Value, exception bool) {mydebug.INFO()
 	// resultValue = The value of the block (e.g. the last statement)
 	// throw = Something was thrown
 	// throwValue = The value of what was thrown
@@ -143,7 +144,7 @@ func (self *_runtime) tryCatchEvaluate(inner func() Value) (tryValue Value, exce
 
 // toObject
 
-func (self *_runtime) toObject(value Value) *_object {
+func (self *_runtime) toObject(value Value) *_object {mydebug.INFO()
 	switch value.kind {
 	case valueEmpty, valueUndefined, valueNull:
 		panic(self.panicTypeError())
@@ -159,7 +160,7 @@ func (self *_runtime) toObject(value Value) *_object {
 	panic(self.panicTypeError())
 }
 
-func (self *_runtime) objectCoerce(value Value) (*_object, error) {
+func (self *_runtime) objectCoerce(value Value) (*_object, error) {mydebug.INFO()
 	switch value.kind {
 	case valueUndefined:
 		return nil, errors.New("undefined")
@@ -177,7 +178,7 @@ func (self *_runtime) objectCoerce(value Value) (*_object, error) {
 	panic(self.panicTypeError())
 }
 
-func checkObjectCoercible(rt *_runtime, value Value) {
+func checkObjectCoercible(rt *_runtime, value Value) {mydebug.INFO()
 	isObject, mustCoerce := testObjectCoercible(value)
 	if !isObject && !mustCoerce {
 		panic(rt.panicTypeError())
@@ -186,7 +187,7 @@ func checkObjectCoercible(rt *_runtime, value Value) {
 
 // testObjectCoercible
 
-func testObjectCoercible(value Value) (isObject bool, mustCoerce bool) {
+func testObjectCoercible(value Value) (isObject bool, mustCoerce bool) {mydebug.INFO()
 	switch value.kind {
 	case valueReference, valueEmpty, valueNull, valueUndefined:
 		return false, false
@@ -199,7 +200,7 @@ func testObjectCoercible(value Value) (isObject bool, mustCoerce bool) {
 	}
 }
 
-func (self *_runtime) safeToValue(value interface{}) (Value, error) {
+func (self *_runtime) safeToValue(value interface{}) (Value, error) {mydebug.INFO()
 	result := Value{}
 	err := catchPanic(func() {
 		result = self.toValue(value)
@@ -209,7 +210,7 @@ func (self *_runtime) safeToValue(value interface{}) (Value, error) {
 
 // convertNumeric converts numeric parameter val from js to that of type t if it is safe to do so, otherwise it panics.
 // This allows literals (int64), bitwise values (int32) and the general form (float64) of javascript numerics to be passed as parameters to go functions easily.
-func (self *_runtime) convertNumeric(v Value, t reflect.Type) reflect.Value {
+func (self *_runtime) convertNumeric(v Value, t reflect.Type) reflect.Value {mydebug.INFO()
 	val := reflect.ValueOf(v.export())
 
 	if val.Kind() == t.Kind() {
@@ -288,7 +289,7 @@ var typeOfValue = reflect.TypeOf(Value{})
 // convertCallParameter converts request val to type t if possible.
 // If the conversion fails due to overflow or type miss-match then it panics.
 // If no conversion is known then the original value is returned.
-func (self *_runtime) convertCallParameter(v Value, t reflect.Type) reflect.Value {
+func (self *_runtime) convertCallParameter(v Value, t reflect.Type) reflect.Value {mydebug.INFO()
 	if t == typeOfValue {
 		return reflect.ValueOf(v)
 	}
@@ -447,7 +448,7 @@ func (self *_runtime) convertCallParameter(v Value, t reflect.Type) reflect.Valu
 	panic(self.panicTypeError("can't convert from %q to %q", s, t.String()))
 }
 
-func (self *_runtime) toValue(value interface{}) Value {
+func (self *_runtime) toValue(value interface{}) Value {mydebug.INFO()
 	switch value := value.(type) {
 	case Value:
 		return value
@@ -588,23 +589,23 @@ func (self *_runtime) toValue(value interface{}) Value {
 	return toValue(value)
 }
 
-func (runtime *_runtime) newGoSlice(value reflect.Value) *_object {
+func (runtime *_runtime) newGoSlice(value reflect.Value) *_object {mydebug.INFO()
 	self := runtime.newGoSliceObject(value)
 	self.prototype = runtime.global.ArrayPrototype
 	return self
 }
 
-func (runtime *_runtime) newGoArray(value reflect.Value) *_object {
+func (runtime *_runtime) newGoArray(value reflect.Value) *_object {mydebug.INFO()
 	self := runtime.newGoArrayObject(value)
 	self.prototype = runtime.global.ArrayPrototype
 	return self
 }
 
-func (runtime *_runtime) parse(filename string, src, sm interface{}) (*ast.Program, error) {
+func (runtime *_runtime) parse(filename string, src, sm interface{}) (*ast.Program, error) {mydebug.INFO()
 	return parser.ParseFileWithSourceMap(nil, filename, src, sm, 0)
 }
 
-func (runtime *_runtime) cmpl_parse(filename string, src, sm interface{}) (*_nodeProgram, error) {
+func (runtime *_runtime) cmpl_parse(filename string, src, sm interface{}) (*_nodeProgram, error) {mydebug.INFO()
 	program, err := parser.ParseFileWithSourceMap(nil, filename, src, sm, 0)
 	if err != nil {
 		return nil, err
@@ -613,7 +614,7 @@ func (runtime *_runtime) cmpl_parse(filename string, src, sm interface{}) (*_nod
 	return cmpl_parse(program), nil
 }
 
-func (self *_runtime) parseSource(src, sm interface{}) (*_nodeProgram, *ast.Program, error) {
+func (self *_runtime) parseSource(src, sm interface{}) (*_nodeProgram, *ast.Program, error) {mydebug.INFO()
 	switch src := src.(type) {
 	case *ast.Program:
 		return nil, src, nil
@@ -626,7 +627,7 @@ func (self *_runtime) parseSource(src, sm interface{}) (*_nodeProgram, *ast.Prog
 	return nil, program, err
 }
 
-func (self *_runtime) cmpl_runOrEval(src, sm interface{}, eval bool) (Value, error) {
+func (self *_runtime) cmpl_runOrEval(src, sm interface{}, eval bool) (Value, error) {mydebug.INFO()
 	result := Value{}
 	cmpl_program, program, err := self.parseSource(src, sm)
 	if err != nil {
@@ -647,15 +648,15 @@ func (self *_runtime) cmpl_runOrEval(src, sm interface{}, eval bool) (Value, err
 	return result, err
 }
 
-func (self *_runtime) cmpl_run(src, sm interface{}) (Value, error) {
+func (self *_runtime) cmpl_run(src, sm interface{}) (Value, error) {mydebug.INFO()
 	return self.cmpl_runOrEval(src, sm, false)
 }
 
-func (self *_runtime) cmpl_eval(src, sm interface{}) (Value, error) {
+func (self *_runtime) cmpl_eval(src, sm interface{}) (Value, error) {mydebug.INFO()
 	return self.cmpl_runOrEval(src, sm, true)
 }
 
-func (self *_runtime) parseThrow(err error) {
+func (self *_runtime) parseThrow(err error) {mydebug.INFO()
 	if err == nil {
 		return
 	}
@@ -672,7 +673,7 @@ func (self *_runtime) parseThrow(err error) {
 	panic(self.panicSyntaxError(err.Error()))
 }
 
-func (self *_runtime) cmpl_parseOrThrow(src, sm interface{}) *_nodeProgram {
+func (self *_runtime) cmpl_parseOrThrow(src, sm interface{}) *_nodeProgram {mydebug.INFO()
 	program, err := self.cmpl_parse("", src, sm)
 	self.parseThrow(err) // Will panic/throw appropriately
 	return program

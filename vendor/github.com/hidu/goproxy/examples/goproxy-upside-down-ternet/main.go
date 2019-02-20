@@ -1,4 +1,5 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"github.com/elazarl/goproxy"
@@ -8,7 +9,7 @@ import (
 	"net/http"
 )
 
-func main() {
+func main() {mydebug.INFO()
 	proxy := goproxy.NewProxyHttpServer()
 	proxy.OnResponse().Do(goproxy_image.HandleImage(func(img image.Image, ctx *goproxy.ProxyCtx) image.Image {
 		dx, dy := img.Bounds().Dx(), img.Bounds().Dy()

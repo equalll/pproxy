@@ -2,6 +2,7 @@
 *fix json data with jsonschema
 */
 package jsonutils
+import "github.com/equalll/mydebug"
 
 import (
 	"reflect"
@@ -10,7 +11,7 @@ import (
 )
 
 
-func FixDataWithSchema(data interface{},schema interface{})(dataFix interface{},err error){
+func FixDataWithSchema(data interface{},schema interface{})(dataFix interface{},err error){mydebug.INFO()
 	_,err=gojsonschema.NewSchema(gojsonschema.NewGoLoader(schema))
 	if(err!=nil){
 		return nil,err
@@ -19,7 +20,7 @@ func FixDataWithSchema(data interface{},schema interface{})(dataFix interface{},
 	return fixDataWithSchemaInterface(data,schema)
 }
 
-func fixDataWithSchemaInterface(data interface{},schema interface{})(dataFix interface{},err error){
+func fixDataWithSchemaInterface(data interface{},schema interface{})(dataFix interface{},err error){mydebug.INFO()
 	t:=reflect.TypeOf(schema).Kind()
 	if(t!=reflect.Map){
 		return nil,fmt.Errorf("type error,%s",t)

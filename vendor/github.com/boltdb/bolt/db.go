@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"errors"
@@ -130,24 +131,24 @@ type DB struct {
 }
 
 // Path returns the path to currently open database file.
-func (db *DB) Path() string {
+func (db *DB) Path() string {mydebug.INFO()
 	return db.path
 }
 
 // GoString returns the Go string representation of the database.
-func (db *DB) GoString() string {
+func (db *DB) GoString() string {mydebug.INFO()
 	return fmt.Sprintf("bolt.DB{path:%q}", db.path)
 }
 
 // String returns the string representation of the database.
-func (db *DB) String() string {
+func (db *DB) String() string {mydebug.INFO()
 	return fmt.Sprintf("DB<%q>", db.path)
 }
 
 // Open creates and opens a database at the given path.
 // If the file does not exist then it will be created automatically.
 // Passing in nil options will cause Bolt to open the database with the default options.
-func Open(path string, mode os.FileMode, options *Options) (*DB, error) {
+func Open(path string, mode os.FileMode, options *Options) (*DB, error) {mydebug.INFO()
 	var db = &DB{opened: true}
 
 	// Set default options if no options are provided.
@@ -242,7 +243,7 @@ func Open(path string, mode os.FileMode, options *Options) (*DB, error) {
 
 // mmap opens the underlying memory-mapped file and initializes the meta references.
 // minsz is the minimum size that the new mmap can be.
-func (db *DB) mmap(minsz int) error {
+func (db *DB) mmap(minsz int) error {mydebug.INFO()
 	db.mmaplock.Lock()
 	defer db.mmaplock.Unlock()
 
@@ -295,7 +296,7 @@ func (db *DB) mmap(minsz int) error {
 }
 
 // munmap unmaps the data file from memory.
-func (db *DB) munmap() error {
+func (db *DB) munmap() error {mydebug.INFO()
 	if err := munmap(db); err != nil {
 		return fmt.Errorf("unmap error: " + err.Error())
 	}
@@ -305,7 +306,7 @@ func (db *DB) munmap() error {
 // mmapSize determines the appropriate size for the mmap given the current size
 // of the database. The minimum size is 32KB and doubles until it reaches 1GB.
 // Returns an error if the new mmap size is greater than the max allowed.
-func (db *DB) mmapSize(size int) (int, error) {
+func (db *DB) mmapSize(size int) (int, error) {mydebug.INFO()
 	// Double the size from 32KB until 1GB.
 	for i := uint(15); i <= 30; i++ {
 		if size <= 1<<i {
@@ -340,7 +341,7 @@ func (db *DB) mmapSize(size int) (int, error) {
 }
 
 // init creates a new database file and initializes its meta pages.
-func (db *DB) init() error {
+func (db *DB) init() error {mydebug.INFO()
 	// Set the page size to the OS page size.
 	db.pageSize = os.Getpagesize()
 
@@ -388,7 +389,7 @@ func (db *DB) init() error {
 
 // Close releases all database resources.
 // All transactions must be closed before closing the database.
-func (db *DB) Close() error {
+func (db *DB) Close() error {mydebug.INFO()
 	db.rwlock.Lock()
 	defer db.rwlock.Unlock()
 
@@ -401,7 +402,7 @@ func (db *DB) Close() error {
 	return db.close()
 }
 
-func (db *DB) close() error {
+func (db *DB) close() error {mydebug.INFO()
 	if !db.opened {
 		return nil
 	}
@@ -456,14 +457,14 @@ func (db *DB) close() error {
 //
 // IMPORTANT: You must close read-only transactions after you are finished or
 // else the database will not reclaim old pages.
-func (db *DB) Begin(writable bool) (*Tx, error) {
+func (db *DB) Begin(writable bool) (*Tx, error) {mydebug.INFO()
 	if writable {
 		return db.beginRWTx()
 	}
 	return db.beginTx()
 }
 
-func (db *DB) beginTx() (*Tx, error) {
+func (db *DB) beginTx() (*Tx, error) {mydebug.INFO()
 	// Lock the meta pages while we initialize the transaction. We obtain
 	// the meta lock before the mmap lock because that's the order that the
 	// write transaction will obtain them.
@@ -501,7 +502,7 @@ func (db *DB) beginTx() (*Tx, error) {
 	return t, nil
 }
 
-func (db *DB) beginRWTx() (*Tx, error) {
+func (db *DB) beginRWTx() (*Tx, error) {mydebug.INFO()
 	// If the database was opened with Options.ReadOnly, return an error.
 	if db.readOnly {
 		return nil, ErrDatabaseReadOnly
@@ -542,7 +543,7 @@ func (db *DB) beginRWTx() (*Tx, error) {
 }
 
 // removeTx removes a transaction from the database.
-func (db *DB) removeTx(tx *Tx) {
+func (db *DB) removeTx(tx *Tx) {mydebug.INFO()
 	// Release the read lock on the mmap.
 	db.mmaplock.RUnlock()
 
@@ -575,7 +576,7 @@ func (db *DB) removeTx(tx *Tx) {
 // returned from the Update() method.
 //
 // Attempting to manually commit or rollback within the function will cause a panic.
-func (db *DB) Update(fn func(*Tx) error) error {
+func (db *DB) Update(fn func(*Tx) error) error {mydebug.INFO()
 	t, err := db.Begin(true)
 	if err != nil {
 		return err
@@ -606,7 +607,7 @@ func (db *DB) Update(fn func(*Tx) error) error {
 // Any error that is returned from the function is returned from the View() method.
 //
 // Attempting to manually rollback within the function will cause a panic.
-func (db *DB) View(fn func(*Tx) error) error {
+func (db *DB) View(fn func(*Tx) error) error {mydebug.INFO()
 	t, err := db.Begin(false)
 	if err != nil {
 		return err
@@ -654,7 +655,7 @@ func (db *DB) View(fn func(*Tx) error) error {
 // and DB.MaxBatchDelay, respectively.
 //
 // Batch is only useful when there are multiple goroutines calling it.
-func (db *DB) Batch(fn func(*Tx) error) error {
+func (db *DB) Batch(fn func(*Tx) error) error {mydebug.INFO()
 	errCh := make(chan error, 1)
 
 	db.batchMu.Lock()
@@ -692,13 +693,13 @@ type batch struct {
 }
 
 // trigger runs the batch if it hasn't already been run.
-func (b *batch) trigger() {
+func (b *batch) trigger() {mydebug.INFO()
 	b.start.Do(b.run)
 }
 
 // run performs the transactions in the batch and communicates results
 // back to DB.Batch.
-func (b *batch) run() {
+func (b *batch) run() {mydebug.INFO()
 	b.db.batchMu.Lock()
 	b.timer.Stop()
 	// Make sure no new work is added to this batch, but don't break
@@ -751,14 +752,14 @@ type panicked struct {
 	reason interface{}
 }
 
-func (p panicked) Error() string {
+func (p panicked) Error() string {mydebug.INFO()
 	if err, ok := p.reason.(error); ok {
 		return err.Error()
 	}
 	return fmt.Sprintf("panic: %v", p.reason)
 }
 
-func safelyCall(fn func(*Tx) error, tx *Tx) (err error) {
+func safelyCall(fn func(*Tx) error, tx *Tx) (err error) {mydebug.INFO()
 	defer func() {
 		if p := recover(); p != nil {
 			err = panicked{p}
@@ -775,7 +776,7 @@ func (db *DB) Sync() error { return fdatasync(db) }
 
 // Stats retrieves ongoing performance stats for the database.
 // This is only updated when a transaction closes.
-func (db *DB) Stats() Stats {
+func (db *DB) Stats() Stats {mydebug.INFO()
 	db.statlock.RLock()
 	defer db.statlock.RUnlock()
 	return db.stats
@@ -783,23 +784,23 @@ func (db *DB) Stats() Stats {
 
 // This is for internal access to the raw data bytes from the C cursor, use
 // carefully, or not at all.
-func (db *DB) Info() *Info {
+func (db *DB) Info() *Info {mydebug.INFO()
 	return &Info{uintptr(unsafe.Pointer(&db.data[0])), db.pageSize}
 }
 
 // page retrieves a page reference from the mmap based on the current page size.
-func (db *DB) page(id pgid) *page {
+func (db *DB) page(id pgid) *page {mydebug.INFO()
 	pos := id * pgid(db.pageSize)
 	return (*page)(unsafe.Pointer(&db.data[pos]))
 }
 
 // pageInBuffer retrieves a page reference from a given byte array based on the current page size.
-func (db *DB) pageInBuffer(b []byte, id pgid) *page {
+func (db *DB) pageInBuffer(b []byte, id pgid) *page {mydebug.INFO()
 	return (*page)(unsafe.Pointer(&b[id*pgid(db.pageSize)]))
 }
 
 // meta retrieves the current meta page reference.
-func (db *DB) meta() *meta {
+func (db *DB) meta() *meta {mydebug.INFO()
 	// We have to return the meta with the highest txid which doesn't fail
 	// validation. Otherwise, we can cause errors when in fact the database is
 	// in a consistent state. metaA is the one with the higher txid.
@@ -823,7 +824,7 @@ func (db *DB) meta() *meta {
 }
 
 // allocate returns a contiguous block of memory starting at a given page.
-func (db *DB) allocate(count int) (*page, error) {
+func (db *DB) allocate(count int) (*page, error) {mydebug.INFO()
 	// Allocate a temporary buffer for the page.
 	var buf []byte
 	if count == 1 {
@@ -855,7 +856,7 @@ func (db *DB) allocate(count int) (*page, error) {
 }
 
 // grow grows the size of the database to the given sz.
-func (db *DB) grow(sz int) error {
+func (db *DB) grow(sz int) error {mydebug.INFO()
 	// Ignore if the new size is less than available file size.
 	if sz <= db.filesz {
 		return nil
@@ -886,7 +887,7 @@ func (db *DB) grow(sz int) error {
 	return nil
 }
 
-func (db *DB) IsReadOnly() bool {
+func (db *DB) IsReadOnly() bool {mydebug.INFO()
 	return db.readOnly
 }
 
@@ -943,7 +944,7 @@ type Stats struct {
 // Sub calculates and returns the difference between two sets of database stats.
 // This is useful when obtaining stats at two different points and time and
 // you need the performance counters that occurred within that time span.
-func (s *Stats) Sub(other *Stats) Stats {
+func (s *Stats) Sub(other *Stats) Stats {mydebug.INFO()
 	if other == nil {
 		return *s
 	}
@@ -957,7 +958,7 @@ func (s *Stats) Sub(other *Stats) Stats {
 	return diff
 }
 
-func (s *Stats) add(other *Stats) {
+func (s *Stats) add(other *Stats) {mydebug.INFO()
 	s.TxStats.add(&other.TxStats)
 }
 
@@ -979,7 +980,7 @@ type meta struct {
 }
 
 // validate checks the marker bytes and version of the meta page to ensure it matches this binary.
-func (m *meta) validate() error {
+func (m *meta) validate() error {mydebug.INFO()
 	if m.magic != magic {
 		return ErrInvalid
 	} else if m.version != version {
@@ -991,12 +992,12 @@ func (m *meta) validate() error {
 }
 
 // copy copies one meta object to another.
-func (m *meta) copy(dest *meta) {
+func (m *meta) copy(dest *meta) {mydebug.INFO()
 	*dest = *m
 }
 
 // write writes the meta onto a page.
-func (m *meta) write(p *page) {
+func (m *meta) write(p *page) {mydebug.INFO()
 	if m.root.root >= m.pgid {
 		panic(fmt.Sprintf("root bucket pgid (%d) above high water mark (%d)", m.root.root, m.pgid))
 	} else if m.freelist >= m.pgid {
@@ -1014,14 +1015,14 @@ func (m *meta) write(p *page) {
 }
 
 // generates the checksum for the meta.
-func (m *meta) sum64() uint64 {
+func (m *meta) sum64() uint64 {mydebug.INFO()
 	var h = fnv.New64a()
 	_, _ = h.Write((*[unsafe.Offsetof(meta{}.checksum)]byte)(unsafe.Pointer(m))[:])
 	return h.Sum64()
 }
 
 // _assert will panic with a given formatted message if the given condition is false.
-func _assert(condition bool, msg string, v ...interface{}) {
+func _assert(condition bool, msg string, v ...interface{}) {mydebug.INFO()
 	if !condition {
 		panic(fmt.Sprintf("assertion failed: "+msg, v...))
 	}
@@ -1030,7 +1031,7 @@ func _assert(condition bool, msg string, v ...interface{}) {
 func warn(v ...interface{})              { fmt.Fprintln(os.Stderr, v...) }
 func warnf(msg string, v ...interface{}) { fmt.Fprintf(os.Stderr, msg+"\n", v...) }
 
-func printstack() {
+func printstack() {mydebug.INFO()
 	stack := strings.Join(strings.Split(string(debug.Stack()), "\n")[2:], "\n")
 	fmt.Fprintln(os.Stderr, stack)
 }

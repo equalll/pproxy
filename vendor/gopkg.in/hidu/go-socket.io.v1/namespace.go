@@ -1,4 +1,5 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 import (
 	"encoding/json"
@@ -17,7 +18,7 @@ type NameSpace struct {
 	waiting     map[int]chan []byte
 }
 
-func NewNameSpace(session *Session, endpoint string, ee *EventEmitter) *NameSpace {
+func NewNameSpace(session *Session, endpoint string, ee *EventEmitter) *NameSpace {mydebug.INFO()
 	ret := &NameSpace{
 		EventEmitter: ee,
 		endpoint:     endpoint,
@@ -29,15 +30,15 @@ func NewNameSpace(session *Session, endpoint string, ee *EventEmitter) *NameSpac
 	return ret
 }
 
-func (ns *NameSpace) Endpoint() string {
+func (ns *NameSpace) Endpoint() string {mydebug.INFO()
 	return ns.endpoint
 }
 
-func (ns *NameSpace) Id() string {
+func (ns *NameSpace) Id() string {mydebug.INFO()
 	return ns.Session.SessionId
 }
 
-func (ns *NameSpace) Call(name string, timeout time.Duration, reply []interface{}, args ...interface{}) error {
+func (ns *NameSpace) Call(name string, timeout time.Duration, reply []interface{}, args ...interface{}) error {mydebug.INFO()
 	if !ns.connected {
 		return NotConnected
 	}
@@ -88,7 +89,7 @@ func (ns *NameSpace) Call(name string, timeout time.Duration, reply []interface{
 	return nil
 }
 
-func (ns *NameSpace) Emit(name string, args ...interface{}) error {
+func (ns *NameSpace) Emit(name string, args ...interface{}) error {mydebug.INFO()
 	if !ns.connected {
 		return NotConnected
 	}
@@ -109,7 +110,7 @@ func (ns *NameSpace) Emit(name string, args ...interface{}) error {
 	return nil
 }
 
-func (ns *NameSpace) onPacket(packet Packet) {
+func (ns *NameSpace) onPacket(packet Packet) {mydebug.INFO()
 	switch p := packet.(type) {
 	case *disconnectPacket:
 		ns.onDisconnect()
@@ -122,7 +123,7 @@ func (ns *NameSpace) onPacket(packet Packet) {
 	}
 }
 
-func (ns *NameSpace) onAckPacket(packet *ackPacket) {
+func (ns *NameSpace) onAckPacket(packet *ackPacket) {mydebug.INFO()
 	c, ok := ns.waiting[packet.ackId]
 	if !ok {
 		return
@@ -130,7 +131,7 @@ func (ns *NameSpace) onAckPacket(packet *ackPacket) {
 	c <- []byte(packet.args)
 }
 
-func (ns *NameSpace) onEventPacket(packet *eventPacket) {
+func (ns *NameSpace) onEventPacket(packet *eventPacket) {mydebug.INFO()
 	callback := func(args []interface{}) {
 		ack := new(ackPacket)
 		ack.ackId = packet.Id()
@@ -148,7 +149,7 @@ func (ns *NameSpace) onEventPacket(packet *eventPacket) {
 	ns.emitRaw(packet.name, ns, callback, packet.args, packet.packetCommon)
 }
 
-func (ns *NameSpace) sendPacket(packet Packet) error {
+func (ns *NameSpace) sendPacket(packet Packet) error {mydebug.INFO()
 	if !ns.connected {
 		println(ns.endpoint + "not connected")
 		return NotConnected
@@ -156,7 +157,7 @@ func (ns *NameSpace) sendPacket(packet Packet) error {
 	return ns.Session.transport.Send(encodePacket(ns.endpoint, packet))
 }
 
-func (ns *NameSpace) onConnect() {
+func (ns *NameSpace) onConnect() {mydebug.INFO()
 	if ns.connected == false {
 		ns.emit("connect", ns, nil)
 		ns.connected = true
@@ -164,7 +165,7 @@ func (ns *NameSpace) onConnect() {
 	}
 }
 
-func (ns *NameSpace) onDisconnect() {
+func (ns *NameSpace) onDisconnect() {mydebug.INFO()
 	ns.emit("disconnect", ns, nil)
 	ns.connected = false
 }

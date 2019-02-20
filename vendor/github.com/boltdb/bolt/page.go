@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -36,7 +37,7 @@ type page struct {
 }
 
 // typ returns a human readable page type string used for debugging.
-func (p *page) typ() string {
+func (p *page) typ() string {mydebug.INFO()
 	if (p.flags & branchPageFlag) != 0 {
 		return "branch"
 	} else if (p.flags & leafPageFlag) != 0 {
@@ -50,18 +51,18 @@ func (p *page) typ() string {
 }
 
 // meta returns a pointer to the metadata section of the page.
-func (p *page) meta() *meta {
+func (p *page) meta() *meta {mydebug.INFO()
 	return (*meta)(unsafe.Pointer(&p.ptr))
 }
 
 // leafPageElement retrieves the leaf node by index
-func (p *page) leafPageElement(index uint16) *leafPageElement {
+func (p *page) leafPageElement(index uint16) *leafPageElement {mydebug.INFO()
 	n := &((*[0x7FFFFFF]leafPageElement)(unsafe.Pointer(&p.ptr)))[index]
 	return n
 }
 
 // leafPageElements retrieves a list of leaf nodes.
-func (p *page) leafPageElements() []leafPageElement {
+func (p *page) leafPageElements() []leafPageElement {mydebug.INFO()
 	if p.count == 0 {
 		return nil
 	}
@@ -69,12 +70,12 @@ func (p *page) leafPageElements() []leafPageElement {
 }
 
 // branchPageElement retrieves the branch node by index
-func (p *page) branchPageElement(index uint16) *branchPageElement {
+func (p *page) branchPageElement(index uint16) *branchPageElement {mydebug.INFO()
 	return &((*[0x7FFFFFF]branchPageElement)(unsafe.Pointer(&p.ptr)))[index]
 }
 
 // branchPageElements retrieves a list of branch nodes.
-func (p *page) branchPageElements() []branchPageElement {
+func (p *page) branchPageElements() []branchPageElement {mydebug.INFO()
 	if p.count == 0 {
 		return nil
 	}
@@ -82,7 +83,7 @@ func (p *page) branchPageElements() []branchPageElement {
 }
 
 // dump writes n bytes of the page to STDERR as hex output.
-func (p *page) hexdump(n int) {
+func (p *page) hexdump(n int) {mydebug.INFO()
 	buf := (*[maxAllocSize]byte)(unsafe.Pointer(p))[:n]
 	fmt.Fprintf(os.Stderr, "%x\n", buf)
 }
@@ -101,7 +102,7 @@ type branchPageElement struct {
 }
 
 // key returns a byte slice of the node key.
-func (n *branchPageElement) key() []byte {
+func (n *branchPageElement) key() []byte {mydebug.INFO()
 	buf := (*[maxAllocSize]byte)(unsafe.Pointer(n))
 	return (*[maxAllocSize]byte)(unsafe.Pointer(&buf[n.pos]))[:n.ksize]
 }
@@ -115,13 +116,13 @@ type leafPageElement struct {
 }
 
 // key returns a byte slice of the node key.
-func (n *leafPageElement) key() []byte {
+func (n *leafPageElement) key() []byte {mydebug.INFO()
 	buf := (*[maxAllocSize]byte)(unsafe.Pointer(n))
 	return (*[maxAllocSize]byte)(unsafe.Pointer(&buf[n.pos]))[:n.ksize:n.ksize]
 }
 
 // value returns a byte slice of the node value.
-func (n *leafPageElement) value() []byte {
+func (n *leafPageElement) value() []byte {mydebug.INFO()
 	buf := (*[maxAllocSize]byte)(unsafe.Pointer(n))
 	return (*[maxAllocSize]byte)(unsafe.Pointer(&buf[n.pos+n.ksize]))[:n.vsize:n.vsize]
 }
@@ -141,7 +142,7 @@ func (s pgids) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 func (s pgids) Less(i, j int) bool { return s[i] < s[j] }
 
 // merge returns the sorted union of a and b.
-func (a pgids) merge(b pgids) pgids {
+func (a pgids) merge(b pgids) pgids {mydebug.INFO()
 	// Return the opposite slice if one is nil.
 	if len(a) == 0 {
 		return b

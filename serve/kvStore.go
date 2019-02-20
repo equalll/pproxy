@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"github.com/boltdb/bolt"
@@ -29,11 +30,11 @@ type StoreType struct {
 	Data KvType `json:"data"`
 }
 
-func newStoreType(data map[string]interface{}) *StoreType {
+func newStoreType(data map[string]interface{}) *StoreType {mydebug.INFO()
 	return &StoreType{Now: time.Now().Unix(), Data: data}
 }
 
-func newKvStore(dbPath string) (kv *kvStore, err error) {
+func newKvStore(dbPath string) (kv *kvStore, err error) {mydebug.INFO()
 	kv = &kvStore{
 		dbPath: dbPath,
 	}
@@ -49,24 +50,24 @@ func newKvStore(dbPath string) (kv *kvStore, err error) {
 	return
 }
 
-func (kv *kvStore) initTable(name KV_TBALE_NAME_TYPE) {
+func (kv *kvStore) initTable(name KV_TBALE_NAME_TYPE) {mydebug.INFO()
 	kv.tables[name] = newkvStoreTable(name, kv)
 }
 
-func (kv *kvStore) GetkvStoreTable(name KV_TBALE_NAME_TYPE) (tb *kvStoreTable) {
+func (kv *kvStore) GetkvStoreTable(name KV_TBALE_NAME_TYPE) (tb *kvStoreTable) {mydebug.INFO()
 	if tb, has := kv.tables[name]; has {
 		return tb
 	}
 	return nil
 }
 
-func (kv *kvStore) Gc(max_life int64) {
+func (kv *kvStore) Gc(max_life int64) {mydebug.INFO()
 	for _, tb := range kv.tables {
 		tb.Gc(max_life)
 	}
 }
 
-func (kv *kvStore) StartGcTimer(sec int64, max_life int64) {
+func (kv *kvStore) StartGcTimer(sec int64, max_life int64) {mydebug.INFO()
 	if max_life < 1 {
 		return
 	}
@@ -75,7 +76,7 @@ func (kv *kvStore) StartGcTimer(sec int64, max_life int64) {
 	}, sec)
 }
 
-func newkvStoreTable(name KV_TBALE_NAME_TYPE, kv *kvStore) *kvStoreTable {
+func newkvStoreTable(name KV_TBALE_NAME_TYPE, kv *kvStore) *kvStoreTable {mydebug.INFO()
 	tb := &kvStoreTable{
 		name: name,
 		kv:   kv,
@@ -87,7 +88,7 @@ func newkvStoreTable(name KV_TBALE_NAME_TYPE, kv *kvStore) *kvStoreTable {
 	return tb
 }
 
-func (tb *kvStoreTable) Save(key []byte, val *StoreType) error {
+func (tb *kvStoreTable) Save(key []byte, val *StoreType) error {mydebug.INFO()
 	err := tb.kv.db.Update(func(tx *bolt.Tx) error {
 		bk, _ := tx.CreateBucketIfNotExists([]byte(tb.name))
 		return bk.Put(key, dataEncode(val))
@@ -95,7 +96,7 @@ func (tb *kvStoreTable) Save(key []byte, val *StoreType) error {
 	return err
 }
 
-func (tb *kvStoreTable) Get(key []byte) (val *StoreType, err error) {
+func (tb *kvStoreTable) Get(key []byte) (val *StoreType, err error) {mydebug.INFO()
 	err = tb.kv.db.View(func(tx *bolt.Tx) error {
 		bk := tx.Bucket([]byte(tb.name))
 		bs := bk.Get(key)
@@ -107,7 +108,7 @@ func (tb *kvStoreTable) Get(key []byte) (val *StoreType, err error) {
 	return
 }
 
-func (tb *kvStoreTable) Del(key []byte) (err error) {
+func (tb *kvStoreTable) Del(key []byte) (err error) {mydebug.INFO()
 	err = tb.kv.db.Update(func(tx *bolt.Tx) error {
 		bk := tx.Bucket([]byte(tb.name))
 		return bk.Delete(key)
@@ -115,7 +116,7 @@ func (tb *kvStoreTable) Del(key []byte) (err error) {
 	return
 }
 
-func (tb *kvStoreTable) Gc(gc_life int64) {
+func (tb *kvStoreTable) Gc(gc_life int64) {mydebug.INFO()
 	if gc_life < 1 {
 		return
 	}

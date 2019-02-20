@@ -10,6 +10,7 @@
 // wrap it in our own nicer implementation.
 
 package unix
+import "github.com/equalll/mydebug"
 
 import (
 	"syscall"
@@ -20,49 +21,49 @@ import (
  * Wrapped
  */
 
-func Access(path string, mode uint32) (err error) {
+func Access(path string, mode uint32) (err error) {mydebug.INFO()
 	return Faccessat(AT_FDCWD, path, mode, 0)
 }
 
-func Chmod(path string, mode uint32) (err error) {
+func Chmod(path string, mode uint32) (err error) {mydebug.INFO()
 	return Fchmodat(AT_FDCWD, path, mode, 0)
 }
 
-func Chown(path string, uid int, gid int) (err error) {
+func Chown(path string, uid int, gid int) (err error) {mydebug.INFO()
 	return Fchownat(AT_FDCWD, path, uid, gid, 0)
 }
 
-func Creat(path string, mode uint32) (fd int, err error) {
+func Creat(path string, mode uint32) (fd int, err error) {mydebug.INFO()
 	return Open(path, O_CREAT|O_WRONLY|O_TRUNC, mode)
 }
 
 //sys	Linkat(olddirfd int, oldpath string, newdirfd int, newpath string, flags int) (err error)
 
-func Link(oldpath string, newpath string) (err error) {
+func Link(oldpath string, newpath string) (err error) {mydebug.INFO()
 	return Linkat(AT_FDCWD, oldpath, AT_FDCWD, newpath, 0)
 }
 
-func Mkdir(path string, mode uint32) (err error) {
+func Mkdir(path string, mode uint32) (err error) {mydebug.INFO()
 	return Mkdirat(AT_FDCWD, path, mode)
 }
 
-func Mknod(path string, mode uint32, dev int) (err error) {
+func Mknod(path string, mode uint32, dev int) (err error) {mydebug.INFO()
 	return Mknodat(AT_FDCWD, path, mode, dev)
 }
 
-func Open(path string, mode int, perm uint32) (fd int, err error) {
+func Open(path string, mode int, perm uint32) (fd int, err error) {mydebug.INFO()
 	return openat(AT_FDCWD, path, mode|O_LARGEFILE, perm)
 }
 
 //sys	openat(dirfd int, path string, flags int, mode uint32) (fd int, err error)
 
-func Openat(dirfd int, path string, flags int, mode uint32) (fd int, err error) {
+func Openat(dirfd int, path string, flags int, mode uint32) (fd int, err error) {mydebug.INFO()
 	return openat(dirfd, path, flags|O_LARGEFILE, mode)
 }
 
 //sys	ppoll(fds *PollFd, nfds int, timeout *Timespec, sigmask *Sigset_t) (n int, err error)
 
-func Ppoll(fds []PollFd, timeout *Timespec, sigmask *Sigset_t) (n int, err error) {
+func Ppoll(fds []PollFd, timeout *Timespec, sigmask *Sigset_t) (n int, err error) {mydebug.INFO()
 	if len(fds) == 0 {
 		return ppoll(nil, 0, timeout, sigmask)
 	}
@@ -71,25 +72,25 @@ func Ppoll(fds []PollFd, timeout *Timespec, sigmask *Sigset_t) (n int, err error
 
 //sys	Readlinkat(dirfd int, path string, buf []byte) (n int, err error)
 
-func Readlink(path string, buf []byte) (n int, err error) {
+func Readlink(path string, buf []byte) (n int, err error) {mydebug.INFO()
 	return Readlinkat(AT_FDCWD, path, buf)
 }
 
-func Rename(oldpath string, newpath string) (err error) {
+func Rename(oldpath string, newpath string) (err error) {mydebug.INFO()
 	return Renameat(AT_FDCWD, oldpath, AT_FDCWD, newpath)
 }
 
-func Rmdir(path string) error {
+func Rmdir(path string) error {mydebug.INFO()
 	return Unlinkat(AT_FDCWD, path, AT_REMOVEDIR)
 }
 
 //sys	Symlinkat(oldpath string, newdirfd int, newpath string) (err error)
 
-func Symlink(oldpath string, newpath string) (err error) {
+func Symlink(oldpath string, newpath string) (err error) {mydebug.INFO()
 	return Symlinkat(oldpath, AT_FDCWD, newpath)
 }
 
-func Unlink(path string) error {
+func Unlink(path string) error {mydebug.INFO()
 	return Unlinkat(AT_FDCWD, path, 0)
 }
 
@@ -97,7 +98,7 @@ func Unlink(path string) error {
 
 //sys	utimes(path string, times *[2]Timeval) (err error)
 
-func Utimes(path string, tv []Timeval) error {
+func Utimes(path string, tv []Timeval) error {mydebug.INFO()
 	if tv == nil {
 		err := utimensat(AT_FDCWD, path, nil, 0)
 		if err != ENOSYS {
@@ -120,7 +121,7 @@ func Utimes(path string, tv []Timeval) error {
 
 //sys	utimensat(dirfd int, path string, times *[2]Timespec, flags int) (err error)
 
-func UtimesNano(path string, ts []Timespec) error {
+func UtimesNano(path string, ts []Timespec) error {mydebug.INFO()
 	if ts == nil {
 		err := utimensat(AT_FDCWD, path, nil, 0)
 		if err != ENOSYS {
@@ -144,7 +145,7 @@ func UtimesNano(path string, ts []Timespec) error {
 	return utimes(path, (*[2]Timeval)(unsafe.Pointer(&tv[0])))
 }
 
-func UtimesNanoAt(dirfd int, path string, ts []Timespec, flags int) error {
+func UtimesNanoAt(dirfd int, path string, ts []Timespec, flags int) error {mydebug.INFO()
 	if ts == nil {
 		return utimensat(dirfd, path, nil, flags)
 	}
@@ -156,7 +157,7 @@ func UtimesNanoAt(dirfd int, path string, ts []Timespec, flags int) error {
 
 //sys	futimesat(dirfd int, path *byte, times *[2]Timeval) (err error)
 
-func Futimesat(dirfd int, path string, tv []Timeval) error {
+func Futimesat(dirfd int, path string, tv []Timeval) error {mydebug.INFO()
 	pathp, err := BytePtrFromString(path)
 	if err != nil {
 		return err
@@ -170,7 +171,7 @@ func Futimesat(dirfd int, path string, tv []Timeval) error {
 	return futimesat(dirfd, pathp, (*[2]Timeval)(unsafe.Pointer(&tv[0])))
 }
 
-func Futimes(fd int, tv []Timeval) (err error) {
+func Futimes(fd int, tv []Timeval) (err error) {mydebug.INFO()
 	// Believe it or not, this is the best we can do on Linux
 	// (and is what glibc does).
 	return Utimes("/proc/self/fd/"+itoa(fd), tv)
@@ -180,7 +181,7 @@ const ImplementsGetwd = true
 
 //sys	Getcwd(buf []byte) (n int, err error)
 
-func Getwd() (wd string, err error) {
+func Getwd() (wd string, err error) {mydebug.INFO()
 	var buf [PathMax]byte
 	n, err := Getcwd(buf[0:])
 	if err != nil {
@@ -193,7 +194,7 @@ func Getwd() (wd string, err error) {
 	return string(buf[0 : n-1]), nil
 }
 
-func Getgroups() (gids []int, err error) {
+func Getgroups() (gids []int, err error) {mydebug.INFO()
 	n, err := getgroups(0, nil)
 	if err != nil {
 		return nil, err
@@ -219,7 +220,7 @@ func Getgroups() (gids []int, err error) {
 	return
 }
 
-func Setgroups(gids []int) (err error) {
+func Setgroups(gids []int) (err error) {mydebug.INFO()
 	if len(gids) == 0 {
 		return setgroups(0, nil)
 	}
@@ -260,28 +261,28 @@ func (w WaitStatus) Continued() bool { return w == 0xFFFF }
 
 func (w WaitStatus) CoreDump() bool { return w.Signaled() && w&core != 0 }
 
-func (w WaitStatus) ExitStatus() int {
+func (w WaitStatus) ExitStatus() int {mydebug.INFO()
 	if !w.Exited() {
 		return -1
 	}
 	return int(w>>shift) & 0xFF
 }
 
-func (w WaitStatus) Signal() syscall.Signal {
+func (w WaitStatus) Signal() syscall.Signal {mydebug.INFO()
 	if !w.Signaled() {
 		return -1
 	}
 	return syscall.Signal(w & mask)
 }
 
-func (w WaitStatus) StopSignal() syscall.Signal {
+func (w WaitStatus) StopSignal() syscall.Signal {mydebug.INFO()
 	if !w.Stopped() {
 		return -1
 	}
 	return syscall.Signal(w>>shift) & 0xFF
 }
 
-func (w WaitStatus) TrapCause() int {
+func (w WaitStatus) TrapCause() int {mydebug.INFO()
 	if w.StopSignal() != SIGTRAP {
 		return -1
 	}
@@ -290,7 +291,7 @@ func (w WaitStatus) TrapCause() int {
 
 //sys	wait4(pid int, wstatus *_C_int, options int, rusage *Rusage) (wpid int, err error)
 
-func Wait4(pid int, wstatus *WaitStatus, options int, rusage *Rusage) (wpid int, err error) {
+func Wait4(pid int, wstatus *WaitStatus, options int, rusage *Rusage) (wpid int, err error) {mydebug.INFO()
 	var status _C_int
 	wpid, err = wait4(pid, &status, options, rusage)
 	if wstatus != nil {
@@ -299,11 +300,11 @@ func Wait4(pid int, wstatus *WaitStatus, options int, rusage *Rusage) (wpid int,
 	return
 }
 
-func Mkfifo(path string, mode uint32) (err error) {
+func Mkfifo(path string, mode uint32) (err error) {mydebug.INFO()
 	return Mknod(path, mode|S_IFIFO, 0)
 }
 
-func (sa *SockaddrInet4) sockaddr() (unsafe.Pointer, _Socklen, error) {
+func (sa *SockaddrInet4) sockaddr() (unsafe.Pointer, _Socklen, error) {mydebug.INFO()
 	if sa.Port < 0 || sa.Port > 0xFFFF {
 		return nil, 0, EINVAL
 	}
@@ -317,7 +318,7 @@ func (sa *SockaddrInet4) sockaddr() (unsafe.Pointer, _Socklen, error) {
 	return unsafe.Pointer(&sa.raw), SizeofSockaddrInet4, nil
 }
 
-func (sa *SockaddrInet6) sockaddr() (unsafe.Pointer, _Socklen, error) {
+func (sa *SockaddrInet6) sockaddr() (unsafe.Pointer, _Socklen, error) {mydebug.INFO()
 	if sa.Port < 0 || sa.Port > 0xFFFF {
 		return nil, 0, EINVAL
 	}
@@ -332,7 +333,7 @@ func (sa *SockaddrInet6) sockaddr() (unsafe.Pointer, _Socklen, error) {
 	return unsafe.Pointer(&sa.raw), SizeofSockaddrInet6, nil
 }
 
-func (sa *SockaddrUnix) sockaddr() (unsafe.Pointer, _Socklen, error) {
+func (sa *SockaddrUnix) sockaddr() (unsafe.Pointer, _Socklen, error) {mydebug.INFO()
 	name := sa.Name
 	n := len(name)
 	if n >= len(sa.raw.Path) {
@@ -366,7 +367,7 @@ type SockaddrLinklayer struct {
 	raw      RawSockaddrLinklayer
 }
 
-func (sa *SockaddrLinklayer) sockaddr() (unsafe.Pointer, _Socklen, error) {
+func (sa *SockaddrLinklayer) sockaddr() (unsafe.Pointer, _Socklen, error) {mydebug.INFO()
 	if sa.Ifindex < 0 || sa.Ifindex > 0x7fffffff {
 		return nil, 0, EINVAL
 	}
@@ -390,7 +391,7 @@ type SockaddrNetlink struct {
 	raw    RawSockaddrNetlink
 }
 
-func (sa *SockaddrNetlink) sockaddr() (unsafe.Pointer, _Socklen, error) {
+func (sa *SockaddrNetlink) sockaddr() (unsafe.Pointer, _Socklen, error) {mydebug.INFO()
 	sa.raw.Family = AF_NETLINK
 	sa.raw.Pad = sa.Pad
 	sa.raw.Pid = sa.Pid
@@ -404,14 +405,14 @@ type SockaddrHCI struct {
 	raw     RawSockaddrHCI
 }
 
-func (sa *SockaddrHCI) sockaddr() (unsafe.Pointer, _Socklen, error) {
+func (sa *SockaddrHCI) sockaddr() (unsafe.Pointer, _Socklen, error) {mydebug.INFO()
 	sa.raw.Family = AF_BLUETOOTH
 	sa.raw.Dev = sa.Dev
 	sa.raw.Channel = sa.Channel
 	return unsafe.Pointer(&sa.raw), SizeofSockaddrHCI, nil
 }
 
-func anyToSockaddr(rsa *RawSockaddrAny) (Sockaddr, error) {
+func anyToSockaddr(rsa *RawSockaddrAny) (Sockaddr, error) {mydebug.INFO()
 	switch rsa.Addr.Family {
 	case AF_NETLINK:
 		pp := (*RawSockaddrNetlink)(unsafe.Pointer(rsa))
@@ -484,7 +485,7 @@ func anyToSockaddr(rsa *RawSockaddrAny) (Sockaddr, error) {
 	return nil, EAFNOSUPPORT
 }
 
-func Accept(fd int) (nfd int, sa Sockaddr, err error) {
+func Accept(fd int) (nfd int, sa Sockaddr, err error) {mydebug.INFO()
 	var rsa RawSockaddrAny
 	var len _Socklen = SizeofSockaddrAny
 	nfd, err = accept(fd, &rsa, &len)
@@ -499,7 +500,7 @@ func Accept(fd int) (nfd int, sa Sockaddr, err error) {
 	return
 }
 
-func Accept4(fd int, flags int) (nfd int, sa Sockaddr, err error) {
+func Accept4(fd int, flags int) (nfd int, sa Sockaddr, err error) {mydebug.INFO()
 	var rsa RawSockaddrAny
 	var len _Socklen = SizeofSockaddrAny
 	nfd, err = accept4(fd, &rsa, &len, flags)
@@ -517,7 +518,7 @@ func Accept4(fd int, flags int) (nfd int, sa Sockaddr, err error) {
 	return
 }
 
-func Getsockname(fd int) (sa Sockaddr, err error) {
+func Getsockname(fd int) (sa Sockaddr, err error) {mydebug.INFO()
 	var rsa RawSockaddrAny
 	var len _Socklen = SizeofSockaddrAny
 	if err = getsockname(fd, &rsa, &len); err != nil {
@@ -526,59 +527,59 @@ func Getsockname(fd int) (sa Sockaddr, err error) {
 	return anyToSockaddr(&rsa)
 }
 
-func GetsockoptInet4Addr(fd, level, opt int) (value [4]byte, err error) {
+func GetsockoptInet4Addr(fd, level, opt int) (value [4]byte, err error) {mydebug.INFO()
 	vallen := _Socklen(4)
 	err = getsockopt(fd, level, opt, unsafe.Pointer(&value[0]), &vallen)
 	return value, err
 }
 
-func GetsockoptIPMreq(fd, level, opt int) (*IPMreq, error) {
+func GetsockoptIPMreq(fd, level, opt int) (*IPMreq, error) {mydebug.INFO()
 	var value IPMreq
 	vallen := _Socklen(SizeofIPMreq)
 	err := getsockopt(fd, level, opt, unsafe.Pointer(&value), &vallen)
 	return &value, err
 }
 
-func GetsockoptIPMreqn(fd, level, opt int) (*IPMreqn, error) {
+func GetsockoptIPMreqn(fd, level, opt int) (*IPMreqn, error) {mydebug.INFO()
 	var value IPMreqn
 	vallen := _Socklen(SizeofIPMreqn)
 	err := getsockopt(fd, level, opt, unsafe.Pointer(&value), &vallen)
 	return &value, err
 }
 
-func GetsockoptIPv6Mreq(fd, level, opt int) (*IPv6Mreq, error) {
+func GetsockoptIPv6Mreq(fd, level, opt int) (*IPv6Mreq, error) {mydebug.INFO()
 	var value IPv6Mreq
 	vallen := _Socklen(SizeofIPv6Mreq)
 	err := getsockopt(fd, level, opt, unsafe.Pointer(&value), &vallen)
 	return &value, err
 }
 
-func GetsockoptIPv6MTUInfo(fd, level, opt int) (*IPv6MTUInfo, error) {
+func GetsockoptIPv6MTUInfo(fd, level, opt int) (*IPv6MTUInfo, error) {mydebug.INFO()
 	var value IPv6MTUInfo
 	vallen := _Socklen(SizeofIPv6MTUInfo)
 	err := getsockopt(fd, level, opt, unsafe.Pointer(&value), &vallen)
 	return &value, err
 }
 
-func GetsockoptICMPv6Filter(fd, level, opt int) (*ICMPv6Filter, error) {
+func GetsockoptICMPv6Filter(fd, level, opt int) (*ICMPv6Filter, error) {mydebug.INFO()
 	var value ICMPv6Filter
 	vallen := _Socklen(SizeofICMPv6Filter)
 	err := getsockopt(fd, level, opt, unsafe.Pointer(&value), &vallen)
 	return &value, err
 }
 
-func GetsockoptUcred(fd, level, opt int) (*Ucred, error) {
+func GetsockoptUcred(fd, level, opt int) (*Ucred, error) {mydebug.INFO()
 	var value Ucred
 	vallen := _Socklen(SizeofUcred)
 	err := getsockopt(fd, level, opt, unsafe.Pointer(&value), &vallen)
 	return &value, err
 }
 
-func SetsockoptIPMreqn(fd, level, opt int, mreq *IPMreqn) (err error) {
+func SetsockoptIPMreqn(fd, level, opt int, mreq *IPMreqn) (err error) {mydebug.INFO()
 	return setsockopt(fd, level, opt, unsafe.Pointer(mreq), unsafe.Sizeof(*mreq))
 }
 
-func Recvmsg(fd int, p, oob []byte, flags int) (n, oobn int, recvflags int, from Sockaddr, err error) {
+func Recvmsg(fd int, p, oob []byte, flags int) (n, oobn int, recvflags int, from Sockaddr, err error) {mydebug.INFO()
 	var msg Msghdr
 	var rsa RawSockaddrAny
 	msg.Name = (*byte)(unsafe.Pointer(&rsa))
@@ -612,12 +613,12 @@ func Recvmsg(fd int, p, oob []byte, flags int) (n, oobn int, recvflags int, from
 	return
 }
 
-func Sendmsg(fd int, p, oob []byte, to Sockaddr, flags int) (err error) {
+func Sendmsg(fd int, p, oob []byte, to Sockaddr, flags int) (err error) {mydebug.INFO()
 	_, err = SendmsgN(fd, p, oob, to, flags)
 	return
 }
 
-func SendmsgN(fd int, p, oob []byte, to Sockaddr, flags int) (n int, err error) {
+func SendmsgN(fd int, p, oob []byte, to Sockaddr, flags int) (n int, err error) {mydebug.INFO()
 	var ptr unsafe.Pointer
 	var salen _Socklen
 	if to != nil {
@@ -657,13 +658,13 @@ func SendmsgN(fd int, p, oob []byte, to Sockaddr, flags int) (n int, err error) 
 }
 
 // BindToDevice binds the socket associated with fd to device.
-func BindToDevice(fd int, device string) (err error) {
+func BindToDevice(fd int, device string) (err error) {mydebug.INFO()
 	return SetsockoptString(fd, SOL_SOCKET, SO_BINDTODEVICE, device)
 }
 
 //sys	ptrace(request int, pid int, addr uintptr, data uintptr) (err error)
 
-func ptracePeek(req int, pid int, addr uintptr, out []byte) (count int, err error) {
+func ptracePeek(req int, pid int, addr uintptr, out []byte) (count int, err error) {mydebug.INFO()
 	// The peek requests are machine-size oriented, so we wrap it
 	// to retrieve arbitrary-length data.
 
@@ -703,15 +704,15 @@ func ptracePeek(req int, pid int, addr uintptr, out []byte) (count int, err erro
 	return n, nil
 }
 
-func PtracePeekText(pid int, addr uintptr, out []byte) (count int, err error) {
+func PtracePeekText(pid int, addr uintptr, out []byte) (count int, err error) {mydebug.INFO()
 	return ptracePeek(PTRACE_PEEKTEXT, pid, addr, out)
 }
 
-func PtracePeekData(pid int, addr uintptr, out []byte) (count int, err error) {
+func PtracePeekData(pid int, addr uintptr, out []byte) (count int, err error) {mydebug.INFO()
 	return ptracePeek(PTRACE_PEEKDATA, pid, addr, out)
 }
 
-func ptracePoke(pokeReq int, peekReq int, pid int, addr uintptr, data []byte) (count int, err error) {
+func ptracePoke(pokeReq int, peekReq int, pid int, addr uintptr, data []byte) (count int, err error) {mydebug.INFO()
 	// As for ptracePeek, we need to align our accesses to deal
 	// with the possibility of straddling an invalid page.
 
@@ -762,38 +763,38 @@ func ptracePoke(pokeReq int, peekReq int, pid int, addr uintptr, data []byte) (c
 	return n, nil
 }
 
-func PtracePokeText(pid int, addr uintptr, data []byte) (count int, err error) {
+func PtracePokeText(pid int, addr uintptr, data []byte) (count int, err error) {mydebug.INFO()
 	return ptracePoke(PTRACE_POKETEXT, PTRACE_PEEKTEXT, pid, addr, data)
 }
 
-func PtracePokeData(pid int, addr uintptr, data []byte) (count int, err error) {
+func PtracePokeData(pid int, addr uintptr, data []byte) (count int, err error) {mydebug.INFO()
 	return ptracePoke(PTRACE_POKEDATA, PTRACE_PEEKDATA, pid, addr, data)
 }
 
-func PtraceGetRegs(pid int, regsout *PtraceRegs) (err error) {
+func PtraceGetRegs(pid int, regsout *PtraceRegs) (err error) {mydebug.INFO()
 	return ptrace(PTRACE_GETREGS, pid, 0, uintptr(unsafe.Pointer(regsout)))
 }
 
-func PtraceSetRegs(pid int, regs *PtraceRegs) (err error) {
+func PtraceSetRegs(pid int, regs *PtraceRegs) (err error) {mydebug.INFO()
 	return ptrace(PTRACE_SETREGS, pid, 0, uintptr(unsafe.Pointer(regs)))
 }
 
-func PtraceSetOptions(pid int, options int) (err error) {
+func PtraceSetOptions(pid int, options int) (err error) {mydebug.INFO()
 	return ptrace(PTRACE_SETOPTIONS, pid, 0, uintptr(options))
 }
 
-func PtraceGetEventMsg(pid int) (msg uint, err error) {
+func PtraceGetEventMsg(pid int) (msg uint, err error) {mydebug.INFO()
 	var data _C_long
 	err = ptrace(PTRACE_GETEVENTMSG, pid, 0, uintptr(unsafe.Pointer(&data)))
 	msg = uint(data)
 	return
 }
 
-func PtraceCont(pid int, signal int) (err error) {
+func PtraceCont(pid int, signal int) (err error) {mydebug.INFO()
 	return ptrace(PTRACE_CONT, pid, 0, uintptr(signal))
 }
 
-func PtraceSyscall(pid int, signal int) (err error) {
+func PtraceSyscall(pid int, signal int) (err error) {mydebug.INFO()
 	return ptrace(PTRACE_SYSCALL, pid, 0, uintptr(signal))
 }
 
@@ -805,11 +806,11 @@ func PtraceDetach(pid int) (err error) { return ptrace(PTRACE_DETACH, pid, 0, 0)
 
 //sys	reboot(magic1 uint, magic2 uint, cmd int, arg string) (err error)
 
-func Reboot(cmd int) (err error) {
+func Reboot(cmd int) (err error) {mydebug.INFO()
 	return reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, cmd, "")
 }
 
-func clen(n []byte) int {
+func clen(n []byte) int {mydebug.INFO()
 	for i := 0; i < len(n); i++ {
 		if n[i] == 0 {
 			return i
@@ -818,11 +819,11 @@ func clen(n []byte) int {
 	return len(n)
 }
 
-func ReadDirent(fd int, buf []byte) (n int, err error) {
+func ReadDirent(fd int, buf []byte) (n int, err error) {mydebug.INFO()
 	return Getdents(fd, buf)
 }
 
-func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {
+func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {mydebug.INFO()
 	origlen := len(buf)
 	count = 0
 	for max != 0 && len(buf) > 0 {
@@ -845,7 +846,7 @@ func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, 
 
 //sys	mount(source string, target string, fstype string, flags uintptr, data *byte) (err error)
 
-func Mount(source string, target string, fstype string, flags uintptr, data string) (err error) {
+func Mount(source string, target string, fstype string, flags uintptr, data string) (err error) {mydebug.INFO()
 	// Certain file systems get rather angry and EINVAL if you give
 	// them an empty string of data, rather than NULL.
 	if data == "" {
@@ -890,7 +891,7 @@ func Mount(source string, target string, fstype string, flags uintptr, data stri
 //sys	Getdents(fd int, buf []byte) (n int, err error) = SYS_GETDENTS64
 //sysnb	Getpgid(pid int) (pgid int, err error)
 
-func Getpgrp() (pid int) {
+func Getpgrp() (pid int) {mydebug.INFO()
 	pid, _ = Getpgid(0)
 	return
 }
@@ -928,11 +929,11 @@ func Getpgrp() (pid int) {
 // This does not match what most callers expect so we must return an error
 // here rather than letting the caller think that the call succeeded.
 
-func Setuid(uid int) (err error) {
+func Setuid(uid int) (err error) {mydebug.INFO()
 	return EOPNOTSUPP
 }
 
-func Setgid(uid int) (err error) {
+func Setgid(uid int) (err error) {mydebug.INFO()
 	return EOPNOTSUPP
 }
 
@@ -962,11 +963,11 @@ var mapper = &mmapper{
 	munmap: munmap,
 }
 
-func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {
+func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {mydebug.INFO()
 	return mapper.Mmap(fd, offset, length, prot, flags)
 }
 
-func Munmap(b []byte) (err error) {
+func Munmap(b []byte) (err error) {mydebug.INFO()
 	return mapper.Munmap(b)
 }
 

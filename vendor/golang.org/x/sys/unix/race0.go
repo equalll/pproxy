@@ -5,6 +5,7 @@
 // +build darwin,!race linux,!race freebsd,!race netbsd openbsd solaris dragonfly
 
 package unix
+import "github.com/equalll/mydebug"
 
 import (
 	"unsafe"
@@ -12,14 +13,14 @@ import (
 
 const raceenabled = false
 
-func raceAcquire(addr unsafe.Pointer) {
+func raceAcquire(addr unsafe.Pointer) {mydebug.INFO()
 }
 
-func raceReleaseMerge(addr unsafe.Pointer) {
+func raceReleaseMerge(addr unsafe.Pointer) {mydebug.INFO()
 }
 
-func raceReadRange(addr unsafe.Pointer, len int) {
+func raceReadRange(addr unsafe.Pointer, len int) {mydebug.INFO()
 }
 
-func raceWriteRange(addr unsafe.Pointer, len int) {
+func raceWriteRange(addr unsafe.Pointer, len int) {mydebug.INFO()
 }

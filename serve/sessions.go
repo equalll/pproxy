@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"log"
@@ -14,7 +15,7 @@ type clientSession struct {
 	User             *User
 }
 
-func (ser *ProxyServe) regirestReq(reqCtx *requestCtx) {
+func (ser *ProxyServe) regirestReq(reqCtx *requestCtx) {mydebug.INFO()
 	ip := reqCtx.GetIp()
 	now := time.Now()
 	ser.mu.Lock()
@@ -51,7 +52,7 @@ func (ser *ProxyServe) regirestReq(reqCtx *requestCtx) {
 	}
 }
 
-func (ser *ProxyServe) cleanExpiredSession() {
+func (ser *ProxyServe) cleanExpiredSession() {mydebug.INFO()
 	ser.mu.Lock()
 	defer ser.mu.Unlock()
 	now := time.Now()

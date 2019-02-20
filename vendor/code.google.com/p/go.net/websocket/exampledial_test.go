@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 
 package websocket_test
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -12,7 +13,7 @@ import (
 )
 
 // This example demonstrates a trivial client.
-func ExampleDial() {
+func ExampleDial() {mydebug.INFO()
 	origin := "http://localhost/"
 	url := "ws://localhost:12345/ws"
 	ws, err := websocket.Dial(url, "", origin)

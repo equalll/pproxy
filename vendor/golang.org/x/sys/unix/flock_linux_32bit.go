@@ -5,8 +5,9 @@
 // license that can be found in the LICENSE file.
 
 package unix
+import "github.com/equalll/mydebug"
 
-func init() {
+func init() {mydebug.INFO()
 	// On 32-bit Linux systems, the fcntl syscall that matches Go's
 	// Flock_t type is SYS_FCNTL64, not SYS_FCNTL.
 	fcntl64Syscall = SYS_FCNTL64

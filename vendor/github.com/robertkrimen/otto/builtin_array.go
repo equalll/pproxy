@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"strconv"
@@ -7,15 +8,15 @@ import (
 
 // Array
 
-func builtinArray(call FunctionCall) Value {
+func builtinArray(call FunctionCall) Value {mydebug.INFO()
 	return toValue_object(builtinNewArrayNative(call.runtime, call.ArgumentList))
 }
 
-func builtinNewArray(self *_object, argumentList []Value) Value {
+func builtinNewArray(self *_object, argumentList []Value) Value {mydebug.INFO()
 	return toValue_object(builtinNewArrayNative(self.runtime, argumentList))
 }
 
-func builtinNewArrayNative(runtime *_runtime, argumentList []Value) *_object {
+func builtinNewArrayNative(runtime *_runtime, argumentList []Value) *_object {mydebug.INFO()
 	if len(argumentList) == 1 {
 		firstArgument := argumentList[0]
 		if firstArgument.IsNumber() {
@@ -25,7 +26,7 @@ func builtinNewArrayNative(runtime *_runtime, argumentList []Value) *_object {
 	return runtime.newArrayOf(argumentList)
 }
 
-func builtinArray_toString(call FunctionCall) Value {
+func builtinArray_toString(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	join := thisObject.get("join")
 	if join.isCallable() {
@@ -35,7 +36,7 @@ func builtinArray_toString(call FunctionCall) Value {
 	return builtinObject_toString(call)
 }
 
-func builtinArray_toLocaleString(call FunctionCall) Value {
+func builtinArray_toLocaleString(call FunctionCall) Value {mydebug.INFO()
 	separator := ","
 	thisObject := call.thisObject()
 	length := int64(toUint32(thisObject.get("length")))
@@ -61,7 +62,7 @@ func builtinArray_toLocaleString(call FunctionCall) Value {
 	return toValue_string(strings.Join(stringList, separator))
 }
 
-func builtinArray_concat(call FunctionCall) Value {
+func builtinArray_concat(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	valueArray := []Value{}
 	source := append([]Value{toValue_object(thisObject)}, call.ArgumentList...)
@@ -89,7 +90,7 @@ func builtinArray_concat(call FunctionCall) Value {
 	return toValue_object(call.runtime.newArrayOf(valueArray))
 }
 
-func builtinArray_shift(call FunctionCall) Value {
+func builtinArray_shift(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	length := int64(toUint32(thisObject.get("length")))
 	if 0 == length {
@@ -111,7 +112,7 @@ func builtinArray_shift(call FunctionCall) Value {
 	return first
 }
 
-func builtinArray_push(call FunctionCall) Value {
+func builtinArray_push(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	itemList := call.ArgumentList
 	index := int64(toUint32(thisObject.get("length")))
@@ -125,7 +126,7 @@ func builtinArray_push(call FunctionCall) Value {
 	return length
 }
 
-func builtinArray_pop(call FunctionCall) Value {
+func builtinArray_pop(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	length := int64(toUint32(thisObject.get("length")))
 	if 0 == length {
@@ -138,7 +139,7 @@ func builtinArray_pop(call FunctionCall) Value {
 	return last
 }
 
-func builtinArray_join(call FunctionCall) Value {
+func builtinArray_join(call FunctionCall) Value {mydebug.INFO()
 	separator := ","
 	{
 		argument := call.Argument(0)
@@ -165,7 +166,7 @@ func builtinArray_join(call FunctionCall) Value {
 	return toValue_string(strings.Join(stringList, separator))
 }
 
-func builtinArray_splice(call FunctionCall) Value {
+func builtinArray_splice(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	length := int64(toUint32(thisObject.get("length")))
 
@@ -242,7 +243,7 @@ func builtinArray_splice(call FunctionCall) Value {
 	return toValue_object(call.runtime.newArrayOf(valueArray))
 }
 
-func builtinArray_slice(call FunctionCall) Value {
+func builtinArray_slice(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 
 	length := int64(toUint32(thisObject.get("length")))
@@ -265,7 +266,7 @@ func builtinArray_slice(call FunctionCall) Value {
 	return toValue_object(call.runtime.newArrayOf(sliceValueArray))
 }
 
-func builtinArray_unshift(call FunctionCall) Value {
+func builtinArray_unshift(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	length := int64(toUint32(thisObject.get("length")))
 	itemList := call.ArgumentList
@@ -290,7 +291,7 @@ func builtinArray_unshift(call FunctionCall) Value {
 	return newLength
 }
 
-func builtinArray_reverse(call FunctionCall) Value {
+func builtinArray_reverse(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	length := int64(toUint32(thisObject.get("length")))
 
@@ -335,7 +336,7 @@ func builtinArray_reverse(call FunctionCall) Value {
 	return call.This
 }
 
-func sortCompare(thisObject *_object, index0, index1 uint, compare *_object) int {
+func sortCompare(thisObject *_object, index0, index1 uint, compare *_object) int {mydebug.INFO()
 	j := struct {
 		name    string
 		exists  bool
@@ -385,7 +386,7 @@ func sortCompare(thisObject *_object, index0, index1 uint, compare *_object) int
 	return int(toInt32(compare.call(Value{}, []Value{x, y}, false, nativeFrame)))
 }
 
-func arraySortSwap(thisObject *_object, index0, index1 uint) {
+func arraySortSwap(thisObject *_object, index0, index1 uint) {mydebug.INFO()
 
 	j := struct {
 		name   string
@@ -416,7 +417,7 @@ func arraySortSwap(thisObject *_object, index0, index1 uint) {
 	}
 }
 
-func arraySortQuickPartition(thisObject *_object, left, right, pivot uint, compare *_object) (uint, uint) {
+func arraySortQuickPartition(thisObject *_object, left, right, pivot uint, compare *_object) (uint, uint) {mydebug.INFO()
 	arraySortSwap(thisObject, pivot, right) // Right is now the pivot value
 	cursor := left
 	cursor2 := left
@@ -438,7 +439,7 @@ func arraySortQuickPartition(thisObject *_object, left, right, pivot uint, compa
 	return cursor, cursor2
 }
 
-func arraySortQuickSort(thisObject *_object, left, right uint, compare *_object) {
+func arraySortQuickSort(thisObject *_object, left, right uint, compare *_object) {mydebug.INFO()
 	if left < right {
 		middle := left + (right-left)/2
 		pivot, pivot2 := arraySortQuickPartition(thisObject, left, right, middle, compare)
@@ -449,7 +450,7 @@ func arraySortQuickSort(thisObject *_object, left, right uint, compare *_object)
 	}
 }
 
-func builtinArray_sort(call FunctionCall) Value {
+func builtinArray_sort(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	length := uint(toUint32(thisObject.get("length")))
 	compareValue := call.Argument(0)
@@ -464,11 +465,11 @@ func builtinArray_sort(call FunctionCall) Value {
 	return call.This
 }
 
-func builtinArray_isArray(call FunctionCall) Value {
+func builtinArray_isArray(call FunctionCall) Value {mydebug.INFO()
 	return toValue_bool(isArray(call.Argument(0)._object()))
 }
 
-func builtinArray_indexOf(call FunctionCall) Value {
+func builtinArray_indexOf(call FunctionCall) Value {mydebug.INFO()
 	thisObject, matchValue := call.thisObject(), call.Argument(0)
 	if length := int64(toUint32(thisObject.get("length"))); length > 0 {
 		index := int64(0)
@@ -496,7 +497,7 @@ func builtinArray_indexOf(call FunctionCall) Value {
 	return toValue_int(-1)
 }
 
-func builtinArray_lastIndexOf(call FunctionCall) Value {
+func builtinArray_lastIndexOf(call FunctionCall) Value {mydebug.INFO()
 	thisObject, matchValue := call.thisObject(), call.Argument(0)
 	length := int64(toUint32(thisObject.get("length")))
 	index := length - 1
@@ -524,7 +525,7 @@ func builtinArray_lastIndexOf(call FunctionCall) Value {
 	return toValue_int(-1)
 }
 
-func builtinArray_every(call FunctionCall) Value {
+func builtinArray_every(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	this := toValue_object(thisObject)
 	if iterator := call.Argument(0); iterator.isCallable() {
@@ -543,7 +544,7 @@ func builtinArray_every(call FunctionCall) Value {
 	panic(call.runtime.panicTypeError())
 }
 
-func builtinArray_some(call FunctionCall) Value {
+func builtinArray_some(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	this := toValue_object(thisObject)
 	if iterator := call.Argument(0); iterator.isCallable() {
@@ -561,7 +562,7 @@ func builtinArray_some(call FunctionCall) Value {
 	panic(call.runtime.panicTypeError())
 }
 
-func builtinArray_forEach(call FunctionCall) Value {
+func builtinArray_forEach(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	this := toValue_object(thisObject)
 	if iterator := call.Argument(0); iterator.isCallable() {
@@ -577,7 +578,7 @@ func builtinArray_forEach(call FunctionCall) Value {
 	panic(call.runtime.panicTypeError())
 }
 
-func builtinArray_map(call FunctionCall) Value {
+func builtinArray_map(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	this := toValue_object(thisObject)
 	if iterator := call.Argument(0); iterator.isCallable() {
@@ -596,7 +597,7 @@ func builtinArray_map(call FunctionCall) Value {
 	panic(call.runtime.panicTypeError())
 }
 
-func builtinArray_filter(call FunctionCall) Value {
+func builtinArray_filter(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	this := toValue_object(thisObject)
 	if iterator := call.Argument(0); iterator.isCallable() {
@@ -616,7 +617,7 @@ func builtinArray_filter(call FunctionCall) Value {
 	panic(call.runtime.panicTypeError())
 }
 
-func builtinArray_reduce(call FunctionCall) Value {
+func builtinArray_reduce(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	this := toValue_object(thisObject)
 	if iterator := call.Argument(0); iterator.isCallable() {
@@ -648,7 +649,7 @@ func builtinArray_reduce(call FunctionCall) Value {
 	panic(call.runtime.panicTypeError())
 }
 
-func builtinArray_reduceRight(call FunctionCall) Value {
+func builtinArray_reduceRight(call FunctionCall) Value {mydebug.INFO()
 	thisObject := call.thisObject()
 	this := toValue_object(thisObject)
 	if iterator := call.Argument(0); iterator.isCallable() {

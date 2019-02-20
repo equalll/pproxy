@@ -1,4 +1,5 @@
 package auth_test
+import "github.com/equalll/mydebug"
 
 import (
 	"encoding/base64"
@@ -20,11 +21,11 @@ import (
 
 type ConstantHanlder string
 
-func (h ConstantHanlder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h ConstantHanlder) ServeHTTP(w http.ResponseWriter, r *http.Request) {mydebug.INFO()
 	io.WriteString(w, string(h))
 }
 
-func oneShotProxy(proxy *goproxy.ProxyHttpServer) (client *http.Client, s *httptest.Server) {
+func oneShotProxy(proxy *goproxy.ProxyHttpServer) (client *http.Client, s *httptest.Server) {mydebug.INFO()
 	s = httptest.NewServer(proxy)
 
 	proxyUrl, _ := url.Parse(s.URL)
@@ -33,7 +34,7 @@ func oneShotProxy(proxy *goproxy.ProxyHttpServer) (client *http.Client, s *httpt
 	return
 }
 
-func times(n int, s string) string {
+func times(n int, s string) string {mydebug.INFO()
 	r := make([]byte, 0, n*len(s))
 	for i := 0; i < n; i++ {
 		r = append(r, s...)
@@ -41,7 +42,7 @@ func times(n int, s string) string {
 	return string(r)
 }
 
-func TestBasicConnectAuthWithCurl(t *testing.T) {
+func TestBasicConnectAuthWithCurl(t *testing.T) {mydebug.INFO()
 	expected := ":c>"
 	background := httptest.NewTLSServer(ConstantHanlder(expected))
 	defer background.Close()
@@ -69,7 +70,7 @@ func TestBasicConnectAuthWithCurl(t *testing.T) {
 	}
 }
 
-func TestBasicAuthWithCurl(t *testing.T) {
+func TestBasicAuthWithCurl(t *testing.T) {mydebug.INFO()
 	expected := ":c>"
 	background := httptest.NewServer(ConstantHanlder(expected))
 	defer background.Close()
@@ -96,7 +97,7 @@ func TestBasicAuthWithCurl(t *testing.T) {
 	}
 }
 
-func TestBasicAuth(t *testing.T) {
+func TestBasicAuth(t *testing.T) {mydebug.INFO()
 	expected := "hello"
 	background := httptest.NewServer(ConstantHanlder(expected))
 	defer background.Close()
@@ -142,7 +143,7 @@ func TestBasicAuth(t *testing.T) {
 	}
 }
 
-func TestWithBrowser(t *testing.T) {
+func TestWithBrowser(t *testing.T) {mydebug.INFO()
 	// an easy way to check if auth works with webserver
 	// to test, run with
 	// $ go test -run TestWithBrowser -- server

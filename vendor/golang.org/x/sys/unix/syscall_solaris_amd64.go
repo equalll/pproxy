@@ -5,31 +5,32 @@
 // +build amd64,solaris
 
 package unix
+import "github.com/equalll/mydebug"
 
 func TimespecToNsec(ts Timespec) int64 { return int64(ts.Sec)*1e9 + int64(ts.Nsec) }
 
-func NsecToTimespec(nsec int64) (ts Timespec) {
+func NsecToTimespec(nsec int64) (ts Timespec) {mydebug.INFO()
 	ts.Sec = nsec / 1e9
 	ts.Nsec = nsec % 1e9
 	return
 }
 
-func NsecToTimeval(nsec int64) (tv Timeval) {
+func NsecToTimeval(nsec int64) (tv Timeval) {mydebug.INFO()
 	nsec += 999 // round up to microsecond
 	tv.Usec = nsec % 1e9 / 1e3
 	tv.Sec = int64(nsec / 1e9)
 	return
 }
 
-func (iov *Iovec) SetLen(length int) {
+func (iov *Iovec) SetLen(length int) {mydebug.INFO()
 	iov.Len = uint64(length)
 }
 
-func (cmsg *Cmsghdr) SetLen(length int) {
+func (cmsg *Cmsghdr) SetLen(length int) {mydebug.INFO()
 	cmsg.Len = uint32(length)
 }
 
-func sendfile(outfd int, infd int, offset *int64, count int) (written int, err error) {
+func sendfile(outfd int, infd int, offset *int64, count int) (written int, err error) {mydebug.INFO()
 	// TODO(aram): implement this, see issue 5847.
 	panic("unimplemented")
 }

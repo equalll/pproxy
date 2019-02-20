@@ -1,4 +1,5 @@
 package regretable
+import "github.com/equalll/mydebug"
 
 import (
 	"io"
@@ -24,27 +25,27 @@ var defaultBufferSize = 500
 // Same as RegretableReader, but allows closing the underlying reader
 type RegretableReaderCloser struct {
 	RegretableReader
-	c      io.Closer
+	c io.Closer
 }
 
 // Closes the underlying readCloser, you cannot regret after closing the stream
-func (rbc *RegretableReaderCloser) Close() error {
+func (rbc *RegretableReaderCloser) Close() error {mydebug.INFO()
 	return rbc.c.Close()
 }
 
 // initialize a RegretableReaderCloser with underlying readCloser rc
-func NewRegretableReaderCloser(rc io.ReadCloser) *RegretableReaderCloser {
+func NewRegretableReaderCloser(rc io.ReadCloser) *RegretableReaderCloser {mydebug.INFO()
 	return &RegretableReaderCloser{*NewRegretableReader(rc), rc}
 }
 
 // initialize a RegretableReaderCloser with underlying readCloser rc
-func NewRegretableReaderCloserSize(rc io.ReadCloser, size int) *RegretableReaderCloser {
+func NewRegretableReaderCloserSize(rc io.ReadCloser, size int) *RegretableReaderCloser {mydebug.INFO()
 	return &RegretableReaderCloser{*NewRegretableReaderSize(rc, size), rc}
 }
 
 // The next read from the RegretableReader will be as if the underlying reader
 // was never read (or from the last point forget is called).
-func (rb *RegretableReader) Regret() {
+func (rb *RegretableReader) Regret() {mydebug.INFO()
 	if rb.overflow {
 		panic("regretting after overflow makes no sense")
 	}
@@ -59,7 +60,7 @@ func (rb *RegretableReader) Regret() {
 //	rb.Read(b) // b[0] = 2
 //	rb.Regret()
 //	ioutil.ReadAll(rb.Read) // returns []byte{2,3},nil
-func (rb *RegretableReader) Forget() {
+func (rb *RegretableReader) Forget() {mydebug.INFO()
 	if rb.overflow {
 		panic("forgetting after overflow makes no sense")
 	}
@@ -68,17 +69,17 @@ func (rb *RegretableReader) Forget() {
 }
 
 // initialize a RegretableReader with underlying reader r, whose buffer is size bytes long
-func NewRegretableReaderSize(r io.Reader, size int) *RegretableReader {
-	return &RegretableReader{reader: r, buf: make([]byte, size) }
+func NewRegretableReaderSize(r io.Reader, size int) *RegretableReader {mydebug.INFO()
+	return &RegretableReader{reader: r, buf: make([]byte, size)}
 }
 
 // initialize a RegretableReader with underlying reader r
-func NewRegretableReader(r io.Reader) *RegretableReader {
+func NewRegretableReader(r io.Reader) *RegretableReader {mydebug.INFO()
 	return NewRegretableReaderSize(r, defaultBufferSize)
 }
 
 // reads from the underlying reader. Will buffer all input until Regret is called.
-func (rb *RegretableReader) Read(p []byte) (n int, err error) {
+func (rb *RegretableReader) Read(p []byte) (n int, err error) {mydebug.INFO()
 	if rb.overflow {
 		return rb.reader.Read(p)
 	}
@@ -89,7 +90,7 @@ func (rb *RegretableReader) Read(p []byte) (n int, err error) {
 	}
 	n, err = rb.reader.Read(p)
 	bn := copy(rb.buf[rb.w:], p[:n])
-	rb.w, rb.r = rb.w + bn, rb.w + n
+	rb.w, rb.r = rb.w+bn, rb.w+n
 	if bn < n {
 		rb.overflow = true
 	}

@@ -4,6 +4,7 @@
 // +build amd64,solaris
 
 package unix
+import "github.com/equalll/mydebug"
 
 import (
 	"syscall"
@@ -366,7 +367,7 @@ var (
 	procsysconf syscallFunc
 )
 
-func pipe(p *[2]_C_int) (n int, err error) {
+func pipe(p *[2]_C_int) (n int, err error) {mydebug.INFO()
 	r0, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procpipe)), 1, uintptr(unsafe.Pointer(p)), 0, 0, 0, 0, 0)
 	n = int(r0)
 	if e1 != 0 {
@@ -375,7 +376,7 @@ func pipe(p *[2]_C_int) (n int, err error) {
 	return
 }
 
-func getsockname(fd int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {
+func getsockname(fd int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procgetsockname)), 3, uintptr(fd), uintptr(unsafe.Pointer(rsa)), uintptr(unsafe.Pointer(addrlen)), 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -383,7 +384,7 @@ func getsockname(fd int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {
 	return
 }
 
-func Getcwd(buf []byte) (n int, err error) {
+func Getcwd(buf []byte) (n int, err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(buf) > 0 {
 		_p0 = &buf[0]
@@ -396,7 +397,7 @@ func Getcwd(buf []byte) (n int, err error) {
 	return
 }
 
-func getgroups(ngid int, gid *_Gid_t) (n int, err error) {
+func getgroups(ngid int, gid *_Gid_t) (n int, err error) {mydebug.INFO()
 	r0, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procgetgroups)), 2, uintptr(ngid), uintptr(unsafe.Pointer(gid)), 0, 0, 0, 0)
 	n = int(r0)
 	if e1 != 0 {
@@ -405,7 +406,7 @@ func getgroups(ngid int, gid *_Gid_t) (n int, err error) {
 	return
 }
 
-func setgroups(ngid int, gid *_Gid_t) (err error) {
+func setgroups(ngid int, gid *_Gid_t) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procsetgroups)), 2, uintptr(ngid), uintptr(unsafe.Pointer(gid)), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -413,7 +414,7 @@ func setgroups(ngid int, gid *_Gid_t) (err error) {
 	return
 }
 
-func wait4(pid int32, statusp *_C_int, options int, rusage *Rusage) (wpid int32, err error) {
+func wait4(pid int32, statusp *_C_int, options int, rusage *Rusage) (wpid int32, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procwait4)), 4, uintptr(pid), uintptr(unsafe.Pointer(statusp)), uintptr(options), uintptr(unsafe.Pointer(rusage)), 0, 0)
 	wpid = int32(r0)
 	if e1 != 0 {
@@ -422,7 +423,7 @@ func wait4(pid int32, statusp *_C_int, options int, rusage *Rusage) (wpid int32,
 	return
 }
 
-func gethostname(buf []byte) (n int, err error) {
+func gethostname(buf []byte) (n int, err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(buf) > 0 {
 		_p0 = &buf[0]
@@ -435,7 +436,7 @@ func gethostname(buf []byte) (n int, err error) {
 	return
 }
 
-func utimes(path string, times *[2]Timeval) (err error) {
+func utimes(path string, times *[2]Timeval) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -449,7 +450,7 @@ func utimes(path string, times *[2]Timeval) (err error) {
 	return
 }
 
-func utimensat(fd int, path string, times *[2]Timespec, flag int) (err error) {
+func utimensat(fd int, path string, times *[2]Timespec, flag int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -463,7 +464,7 @@ func utimensat(fd int, path string, times *[2]Timespec, flag int) (err error) {
 	return
 }
 
-func fcntl(fd int, cmd int, arg int) (val int, err error) {
+func fcntl(fd int, cmd int, arg int) (val int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procfcntl)), 3, uintptr(fd), uintptr(cmd), uintptr(arg), 0, 0, 0)
 	val = int(r0)
 	if e1 != 0 {
@@ -472,7 +473,7 @@ func fcntl(fd int, cmd int, arg int) (val int, err error) {
 	return
 }
 
-func futimesat(fildes int, path *byte, times *[2]Timeval) (err error) {
+func futimesat(fildes int, path *byte, times *[2]Timeval) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procfutimesat)), 3, uintptr(fildes), uintptr(unsafe.Pointer(path)), uintptr(unsafe.Pointer(times)), 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -480,7 +481,7 @@ func futimesat(fildes int, path *byte, times *[2]Timeval) (err error) {
 	return
 }
 
-func accept(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (fd int, err error) {
+func accept(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (fd int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procaccept)), 3, uintptr(s), uintptr(unsafe.Pointer(rsa)), uintptr(unsafe.Pointer(addrlen)), 0, 0, 0)
 	fd = int(r0)
 	if e1 != 0 {
@@ -489,7 +490,7 @@ func accept(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (fd int, err error) {
 	return
 }
 
-func recvmsg(s int, msg *Msghdr, flags int) (n int, err error) {
+func recvmsg(s int, msg *Msghdr, flags int) (n int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procrecvmsg)), 3, uintptr(s), uintptr(unsafe.Pointer(msg)), uintptr(flags), 0, 0, 0)
 	n = int(r0)
 	if e1 != 0 {
@@ -498,7 +499,7 @@ func recvmsg(s int, msg *Msghdr, flags int) (n int, err error) {
 	return
 }
 
-func sendmsg(s int, msg *Msghdr, flags int) (n int, err error) {
+func sendmsg(s int, msg *Msghdr, flags int) (n int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procsendmsg)), 3, uintptr(s), uintptr(unsafe.Pointer(msg)), uintptr(flags), 0, 0, 0)
 	n = int(r0)
 	if e1 != 0 {
@@ -507,7 +508,7 @@ func sendmsg(s int, msg *Msghdr, flags int) (n int, err error) {
 	return
 }
 
-func acct(path *byte) (err error) {
+func acct(path *byte) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procacct)), 1, uintptr(unsafe.Pointer(path)), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -515,7 +516,7 @@ func acct(path *byte) (err error) {
 	return
 }
 
-func ioctl(fd int, req int, arg uintptr) (err error) {
+func ioctl(fd int, req int, arg uintptr) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procioctl)), 3, uintptr(fd), uintptr(req), uintptr(arg), 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -523,7 +524,7 @@ func ioctl(fd int, req int, arg uintptr) (err error) {
 	return
 }
 
-func Access(path string, mode uint32) (err error) {
+func Access(path string, mode uint32) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -537,7 +538,7 @@ func Access(path string, mode uint32) (err error) {
 	return
 }
 
-func Adjtime(delta *Timeval, olddelta *Timeval) (err error) {
+func Adjtime(delta *Timeval, olddelta *Timeval) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procAdjtime)), 2, uintptr(unsafe.Pointer(delta)), uintptr(unsafe.Pointer(olddelta)), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -545,7 +546,7 @@ func Adjtime(delta *Timeval, olddelta *Timeval) (err error) {
 	return
 }
 
-func Chdir(path string) (err error) {
+func Chdir(path string) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -559,7 +560,7 @@ func Chdir(path string) (err error) {
 	return
 }
 
-func Chmod(path string, mode uint32) (err error) {
+func Chmod(path string, mode uint32) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -573,7 +574,7 @@ func Chmod(path string, mode uint32) (err error) {
 	return
 }
 
-func Chown(path string, uid int, gid int) (err error) {
+func Chown(path string, uid int, gid int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -587,7 +588,7 @@ func Chown(path string, uid int, gid int) (err error) {
 	return
 }
 
-func Chroot(path string) (err error) {
+func Chroot(path string) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -601,7 +602,7 @@ func Chroot(path string) (err error) {
 	return
 }
 
-func Close(fd int) (err error) {
+func Close(fd int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procClose)), 1, uintptr(fd), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -609,7 +610,7 @@ func Close(fd int) (err error) {
 	return
 }
 
-func Creat(path string, mode uint32) (fd int, err error) {
+func Creat(path string, mode uint32) (fd int, err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -624,7 +625,7 @@ func Creat(path string, mode uint32) (fd int, err error) {
 	return
 }
 
-func Dup(fd int) (nfd int, err error) {
+func Dup(fd int) (nfd int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procDup)), 1, uintptr(fd), 0, 0, 0, 0, 0)
 	nfd = int(r0)
 	if e1 != 0 {
@@ -633,7 +634,7 @@ func Dup(fd int) (nfd int, err error) {
 	return
 }
 
-func Dup2(oldfd int, newfd int) (err error) {
+func Dup2(oldfd int, newfd int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procDup2)), 2, uintptr(oldfd), uintptr(newfd), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -641,12 +642,12 @@ func Dup2(oldfd int, newfd int) (err error) {
 	return
 }
 
-func Exit(code int) {
+func Exit(code int) {mydebug.INFO()
 	sysvicall6(uintptr(unsafe.Pointer(&procExit)), 1, uintptr(code), 0, 0, 0, 0, 0)
 	return
 }
 
-func Fchdir(fd int) (err error) {
+func Fchdir(fd int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procFchdir)), 1, uintptr(fd), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -654,7 +655,7 @@ func Fchdir(fd int) (err error) {
 	return
 }
 
-func Fchmod(fd int, mode uint32) (err error) {
+func Fchmod(fd int, mode uint32) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procFchmod)), 2, uintptr(fd), uintptr(mode), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -662,7 +663,7 @@ func Fchmod(fd int, mode uint32) (err error) {
 	return
 }
 
-func Fchmodat(dirfd int, path string, mode uint32, flags int) (err error) {
+func Fchmodat(dirfd int, path string, mode uint32, flags int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -676,7 +677,7 @@ func Fchmodat(dirfd int, path string, mode uint32, flags int) (err error) {
 	return
 }
 
-func Fchown(fd int, uid int, gid int) (err error) {
+func Fchown(fd int, uid int, gid int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procFchown)), 3, uintptr(fd), uintptr(uid), uintptr(gid), 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -684,7 +685,7 @@ func Fchown(fd int, uid int, gid int) (err error) {
 	return
 }
 
-func Fchownat(dirfd int, path string, uid int, gid int, flags int) (err error) {
+func Fchownat(dirfd int, path string, uid int, gid int, flags int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -698,7 +699,7 @@ func Fchownat(dirfd int, path string, uid int, gid int, flags int) (err error) {
 	return
 }
 
-func Fdatasync(fd int) (err error) {
+func Fdatasync(fd int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procFdatasync)), 1, uintptr(fd), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -706,7 +707,7 @@ func Fdatasync(fd int) (err error) {
 	return
 }
 
-func Fpathconf(fd int, name int) (val int, err error) {
+func Fpathconf(fd int, name int) (val int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procFpathconf)), 2, uintptr(fd), uintptr(name), 0, 0, 0, 0)
 	val = int(r0)
 	if e1 != 0 {
@@ -715,7 +716,7 @@ func Fpathconf(fd int, name int) (val int, err error) {
 	return
 }
 
-func Fstat(fd int, stat *Stat_t) (err error) {
+func Fstat(fd int, stat *Stat_t) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procFstat)), 2, uintptr(fd), uintptr(unsafe.Pointer(stat)), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -723,7 +724,7 @@ func Fstat(fd int, stat *Stat_t) (err error) {
 	return
 }
 
-func Getdents(fd int, buf []byte, basep *uintptr) (n int, err error) {
+func Getdents(fd int, buf []byte, basep *uintptr) (n int, err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(buf) > 0 {
 		_p0 = &buf[0]
@@ -736,19 +737,19 @@ func Getdents(fd int, buf []byte, basep *uintptr) (n int, err error) {
 	return
 }
 
-func Getgid() (gid int) {
+func Getgid() (gid int) {mydebug.INFO()
 	r0, _, _ := rawSysvicall6(uintptr(unsafe.Pointer(&procGetgid)), 0, 0, 0, 0, 0, 0, 0)
 	gid = int(r0)
 	return
 }
 
-func Getpid() (pid int) {
+func Getpid() (pid int) {mydebug.INFO()
 	r0, _, _ := rawSysvicall6(uintptr(unsafe.Pointer(&procGetpid)), 0, 0, 0, 0, 0, 0, 0)
 	pid = int(r0)
 	return
 }
 
-func Getpgid(pid int) (pgid int, err error) {
+func Getpgid(pid int) (pgid int, err error) {mydebug.INFO()
 	r0, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procGetpgid)), 1, uintptr(pid), 0, 0, 0, 0, 0)
 	pgid = int(r0)
 	if e1 != 0 {
@@ -757,7 +758,7 @@ func Getpgid(pid int) (pgid int, err error) {
 	return
 }
 
-func Getpgrp() (pgid int, err error) {
+func Getpgrp() (pgid int, err error) {mydebug.INFO()
 	r0, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procGetpgrp)), 0, 0, 0, 0, 0, 0, 0)
 	pgid = int(r0)
 	if e1 != 0 {
@@ -766,25 +767,25 @@ func Getpgrp() (pgid int, err error) {
 	return
 }
 
-func Geteuid() (euid int) {
+func Geteuid() (euid int) {mydebug.INFO()
 	r0, _, _ := sysvicall6(uintptr(unsafe.Pointer(&procGeteuid)), 0, 0, 0, 0, 0, 0, 0)
 	euid = int(r0)
 	return
 }
 
-func Getegid() (egid int) {
+func Getegid() (egid int) {mydebug.INFO()
 	r0, _, _ := sysvicall6(uintptr(unsafe.Pointer(&procGetegid)), 0, 0, 0, 0, 0, 0, 0)
 	egid = int(r0)
 	return
 }
 
-func Getppid() (ppid int) {
+func Getppid() (ppid int) {mydebug.INFO()
 	r0, _, _ := sysvicall6(uintptr(unsafe.Pointer(&procGetppid)), 0, 0, 0, 0, 0, 0, 0)
 	ppid = int(r0)
 	return
 }
 
-func Getpriority(which int, who int) (n int, err error) {
+func Getpriority(which int, who int) (n int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procGetpriority)), 2, uintptr(which), uintptr(who), 0, 0, 0, 0)
 	n = int(r0)
 	if e1 != 0 {
@@ -793,7 +794,7 @@ func Getpriority(which int, who int) (n int, err error) {
 	return
 }
 
-func Getrlimit(which int, lim *Rlimit) (err error) {
+func Getrlimit(which int, lim *Rlimit) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procGetrlimit)), 2, uintptr(which), uintptr(unsafe.Pointer(lim)), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -801,7 +802,7 @@ func Getrlimit(which int, lim *Rlimit) (err error) {
 	return
 }
 
-func Getrusage(who int, rusage *Rusage) (err error) {
+func Getrusage(who int, rusage *Rusage) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procGetrusage)), 2, uintptr(who), uintptr(unsafe.Pointer(rusage)), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -809,7 +810,7 @@ func Getrusage(who int, rusage *Rusage) (err error) {
 	return
 }
 
-func Gettimeofday(tv *Timeval) (err error) {
+func Gettimeofday(tv *Timeval) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procGettimeofday)), 1, uintptr(unsafe.Pointer(tv)), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -817,13 +818,13 @@ func Gettimeofday(tv *Timeval) (err error) {
 	return
 }
 
-func Getuid() (uid int) {
+func Getuid() (uid int) {mydebug.INFO()
 	r0, _, _ := rawSysvicall6(uintptr(unsafe.Pointer(&procGetuid)), 0, 0, 0, 0, 0, 0, 0)
 	uid = int(r0)
 	return
 }
 
-func Kill(pid int, signum syscall.Signal) (err error) {
+func Kill(pid int, signum syscall.Signal) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procKill)), 2, uintptr(pid), uintptr(signum), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -831,7 +832,7 @@ func Kill(pid int, signum syscall.Signal) (err error) {
 	return
 }
 
-func Lchown(path string, uid int, gid int) (err error) {
+func Lchown(path string, uid int, gid int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -845,7 +846,7 @@ func Lchown(path string, uid int, gid int) (err error) {
 	return
 }
 
-func Link(path string, link string) (err error) {
+func Link(path string, link string) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -865,7 +866,7 @@ func Link(path string, link string) (err error) {
 	return
 }
 
-func Listen(s int, backlog int) (err error) {
+func Listen(s int, backlog int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&proclisten)), 2, uintptr(s), uintptr(backlog), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -873,7 +874,7 @@ func Listen(s int, backlog int) (err error) {
 	return
 }
 
-func Lstat(path string, stat *Stat_t) (err error) {
+func Lstat(path string, stat *Stat_t) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -887,7 +888,7 @@ func Lstat(path string, stat *Stat_t) (err error) {
 	return
 }
 
-func Madvise(b []byte, advice int) (err error) {
+func Madvise(b []byte, advice int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(b) > 0 {
 		_p0 = &b[0]
@@ -899,7 +900,7 @@ func Madvise(b []byte, advice int) (err error) {
 	return
 }
 
-func Mkdir(path string, mode uint32) (err error) {
+func Mkdir(path string, mode uint32) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -913,7 +914,7 @@ func Mkdir(path string, mode uint32) (err error) {
 	return
 }
 
-func Mkdirat(dirfd int, path string, mode uint32) (err error) {
+func Mkdirat(dirfd int, path string, mode uint32) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -927,7 +928,7 @@ func Mkdirat(dirfd int, path string, mode uint32) (err error) {
 	return
 }
 
-func Mkfifo(path string, mode uint32) (err error) {
+func Mkfifo(path string, mode uint32) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -941,7 +942,7 @@ func Mkfifo(path string, mode uint32) (err error) {
 	return
 }
 
-func Mkfifoat(dirfd int, path string, mode uint32) (err error) {
+func Mkfifoat(dirfd int, path string, mode uint32) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -955,7 +956,7 @@ func Mkfifoat(dirfd int, path string, mode uint32) (err error) {
 	return
 }
 
-func Mknod(path string, mode uint32, dev int) (err error) {
+func Mknod(path string, mode uint32, dev int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -969,7 +970,7 @@ func Mknod(path string, mode uint32, dev int) (err error) {
 	return
 }
 
-func Mknodat(dirfd int, path string, mode uint32, dev int) (err error) {
+func Mknodat(dirfd int, path string, mode uint32, dev int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -983,7 +984,7 @@ func Mknodat(dirfd int, path string, mode uint32, dev int) (err error) {
 	return
 }
 
-func Mlock(b []byte) (err error) {
+func Mlock(b []byte) (err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(b) > 0 {
 		_p0 = &b[0]
@@ -995,7 +996,7 @@ func Mlock(b []byte) (err error) {
 	return
 }
 
-func Mlockall(flags int) (err error) {
+func Mlockall(flags int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procMlockall)), 1, uintptr(flags), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1003,7 +1004,7 @@ func Mlockall(flags int) (err error) {
 	return
 }
 
-func Mprotect(b []byte, prot int) (err error) {
+func Mprotect(b []byte, prot int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(b) > 0 {
 		_p0 = &b[0]
@@ -1015,7 +1016,7 @@ func Mprotect(b []byte, prot int) (err error) {
 	return
 }
 
-func Munlock(b []byte) (err error) {
+func Munlock(b []byte) (err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(b) > 0 {
 		_p0 = &b[0]
@@ -1027,7 +1028,7 @@ func Munlock(b []byte) (err error) {
 	return
 }
 
-func Munlockall() (err error) {
+func Munlockall() (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procMunlockall)), 0, 0, 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1035,7 +1036,7 @@ func Munlockall() (err error) {
 	return
 }
 
-func Nanosleep(time *Timespec, leftover *Timespec) (err error) {
+func Nanosleep(time *Timespec, leftover *Timespec) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procNanosleep)), 2, uintptr(unsafe.Pointer(time)), uintptr(unsafe.Pointer(leftover)), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1043,7 +1044,7 @@ func Nanosleep(time *Timespec, leftover *Timespec) (err error) {
 	return
 }
 
-func Open(path string, mode int, perm uint32) (fd int, err error) {
+func Open(path string, mode int, perm uint32) (fd int, err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1058,7 +1059,7 @@ func Open(path string, mode int, perm uint32) (fd int, err error) {
 	return
 }
 
-func Openat(dirfd int, path string, flags int, mode uint32) (fd int, err error) {
+func Openat(dirfd int, path string, flags int, mode uint32) (fd int, err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1073,7 +1074,7 @@ func Openat(dirfd int, path string, flags int, mode uint32) (fd int, err error) 
 	return
 }
 
-func Pathconf(path string, name int) (val int, err error) {
+func Pathconf(path string, name int) (val int, err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1088,7 +1089,7 @@ func Pathconf(path string, name int) (val int, err error) {
 	return
 }
 
-func Pause() (err error) {
+func Pause() (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procPause)), 0, 0, 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1096,7 +1097,7 @@ func Pause() (err error) {
 	return
 }
 
-func Pread(fd int, p []byte, offset int64) (n int, err error) {
+func Pread(fd int, p []byte, offset int64) (n int, err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(p) > 0 {
 		_p0 = &p[0]
@@ -1109,7 +1110,7 @@ func Pread(fd int, p []byte, offset int64) (n int, err error) {
 	return
 }
 
-func Pwrite(fd int, p []byte, offset int64) (n int, err error) {
+func Pwrite(fd int, p []byte, offset int64) (n int, err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(p) > 0 {
 		_p0 = &p[0]
@@ -1122,7 +1123,7 @@ func Pwrite(fd int, p []byte, offset int64) (n int, err error) {
 	return
 }
 
-func read(fd int, p []byte) (n int, err error) {
+func read(fd int, p []byte) (n int, err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(p) > 0 {
 		_p0 = &p[0]
@@ -1135,7 +1136,7 @@ func read(fd int, p []byte) (n int, err error) {
 	return
 }
 
-func Readlink(path string, buf []byte) (n int, err error) {
+func Readlink(path string, buf []byte) (n int, err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1154,7 +1155,7 @@ func Readlink(path string, buf []byte) (n int, err error) {
 	return
 }
 
-func Rename(from string, to string) (err error) {
+func Rename(from string, to string) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(from)
 	if err != nil {
@@ -1174,7 +1175,7 @@ func Rename(from string, to string) (err error) {
 	return
 }
 
-func Renameat(olddirfd int, oldpath string, newdirfd int, newpath string) (err error) {
+func Renameat(olddirfd int, oldpath string, newdirfd int, newpath string) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(oldpath)
 	if err != nil {
@@ -1194,7 +1195,7 @@ func Renameat(olddirfd int, oldpath string, newdirfd int, newpath string) (err e
 	return
 }
 
-func Rmdir(path string) (err error) {
+func Rmdir(path string) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1208,7 +1209,7 @@ func Rmdir(path string) (err error) {
 	return
 }
 
-func Seek(fd int, offset int64, whence int) (newoffset int64, err error) {
+func Seek(fd int, offset int64, whence int) (newoffset int64, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&proclseek)), 3, uintptr(fd), uintptr(offset), uintptr(whence), 0, 0, 0)
 	newoffset = int64(r0)
 	if e1 != 0 {
@@ -1217,7 +1218,7 @@ func Seek(fd int, offset int64, whence int) (newoffset int64, err error) {
 	return
 }
 
-func Setegid(egid int) (err error) {
+func Setegid(egid int) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSetegid)), 1, uintptr(egid), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1225,7 +1226,7 @@ func Setegid(egid int) (err error) {
 	return
 }
 
-func Seteuid(euid int) (err error) {
+func Seteuid(euid int) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSeteuid)), 1, uintptr(euid), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1233,7 +1234,7 @@ func Seteuid(euid int) (err error) {
 	return
 }
 
-func Setgid(gid int) (err error) {
+func Setgid(gid int) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSetgid)), 1, uintptr(gid), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1241,7 +1242,7 @@ func Setgid(gid int) (err error) {
 	return
 }
 
-func Sethostname(p []byte) (err error) {
+func Sethostname(p []byte) (err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(p) > 0 {
 		_p0 = &p[0]
@@ -1253,7 +1254,7 @@ func Sethostname(p []byte) (err error) {
 	return
 }
 
-func Setpgid(pid int, pgid int) (err error) {
+func Setpgid(pid int, pgid int) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSetpgid)), 2, uintptr(pid), uintptr(pgid), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1261,7 +1262,7 @@ func Setpgid(pid int, pgid int) (err error) {
 	return
 }
 
-func Setpriority(which int, who int, prio int) (err error) {
+func Setpriority(which int, who int, prio int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procSetpriority)), 3, uintptr(which), uintptr(who), uintptr(prio), 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1269,7 +1270,7 @@ func Setpriority(which int, who int, prio int) (err error) {
 	return
 }
 
-func Setregid(rgid int, egid int) (err error) {
+func Setregid(rgid int, egid int) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSetregid)), 2, uintptr(rgid), uintptr(egid), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1277,7 +1278,7 @@ func Setregid(rgid int, egid int) (err error) {
 	return
 }
 
-func Setreuid(ruid int, euid int) (err error) {
+func Setreuid(ruid int, euid int) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSetreuid)), 2, uintptr(ruid), uintptr(euid), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1285,7 +1286,7 @@ func Setreuid(ruid int, euid int) (err error) {
 	return
 }
 
-func Setrlimit(which int, lim *Rlimit) (err error) {
+func Setrlimit(which int, lim *Rlimit) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSetrlimit)), 2, uintptr(which), uintptr(unsafe.Pointer(lim)), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1293,7 +1294,7 @@ func Setrlimit(which int, lim *Rlimit) (err error) {
 	return
 }
 
-func Setsid() (pid int, err error) {
+func Setsid() (pid int, err error) {mydebug.INFO()
 	r0, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSetsid)), 0, 0, 0, 0, 0, 0, 0)
 	pid = int(r0)
 	if e1 != 0 {
@@ -1302,7 +1303,7 @@ func Setsid() (pid int, err error) {
 	return
 }
 
-func Setuid(uid int) (err error) {
+func Setuid(uid int) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procSetuid)), 1, uintptr(uid), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1310,7 +1311,7 @@ func Setuid(uid int) (err error) {
 	return
 }
 
-func Shutdown(s int, how int) (err error) {
+func Shutdown(s int, how int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procshutdown)), 2, uintptr(s), uintptr(how), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1318,7 +1319,7 @@ func Shutdown(s int, how int) (err error) {
 	return
 }
 
-func Stat(path string, stat *Stat_t) (err error) {
+func Stat(path string, stat *Stat_t) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1332,7 +1333,7 @@ func Stat(path string, stat *Stat_t) (err error) {
 	return
 }
 
-func Symlink(path string, link string) (err error) {
+func Symlink(path string, link string) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1352,7 +1353,7 @@ func Symlink(path string, link string) (err error) {
 	return
 }
 
-func Sync() (err error) {
+func Sync() (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procSync)), 0, 0, 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1360,7 +1361,7 @@ func Sync() (err error) {
 	return
 }
 
-func Times(tms *Tms) (ticks uintptr, err error) {
+func Times(tms *Tms) (ticks uintptr, err error) {mydebug.INFO()
 	r0, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procTimes)), 1, uintptr(unsafe.Pointer(tms)), 0, 0, 0, 0, 0)
 	ticks = uintptr(r0)
 	if e1 != 0 {
@@ -1369,7 +1370,7 @@ func Times(tms *Tms) (ticks uintptr, err error) {
 	return
 }
 
-func Truncate(path string, length int64) (err error) {
+func Truncate(path string, length int64) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1383,7 +1384,7 @@ func Truncate(path string, length int64) (err error) {
 	return
 }
 
-func Fsync(fd int) (err error) {
+func Fsync(fd int) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procFsync)), 1, uintptr(fd), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1391,7 +1392,7 @@ func Fsync(fd int) (err error) {
 	return
 }
 
-func Ftruncate(fd int, length int64) (err error) {
+func Ftruncate(fd int, length int64) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procFtruncate)), 2, uintptr(fd), uintptr(length), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1399,13 +1400,13 @@ func Ftruncate(fd int, length int64) (err error) {
 	return
 }
 
-func Umask(mask int) (oldmask int) {
+func Umask(mask int) (oldmask int) {mydebug.INFO()
 	r0, _, _ := sysvicall6(uintptr(unsafe.Pointer(&procUmask)), 1, uintptr(mask), 0, 0, 0, 0, 0)
 	oldmask = int(r0)
 	return
 }
 
-func Uname(buf *Utsname) (err error) {
+func Uname(buf *Utsname) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procUname)), 1, uintptr(unsafe.Pointer(buf)), 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1413,7 +1414,7 @@ func Uname(buf *Utsname) (err error) {
 	return
 }
 
-func Unmount(target string, flags int) (err error) {
+func Unmount(target string, flags int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(target)
 	if err != nil {
@@ -1427,7 +1428,7 @@ func Unmount(target string, flags int) (err error) {
 	return
 }
 
-func Unlink(path string) (err error) {
+func Unlink(path string) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1441,7 +1442,7 @@ func Unlink(path string) (err error) {
 	return
 }
 
-func Unlinkat(dirfd int, path string, flags int) (err error) {
+func Unlinkat(dirfd int, path string, flags int) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1455,7 +1456,7 @@ func Unlinkat(dirfd int, path string, flags int) (err error) {
 	return
 }
 
-func Ustat(dev int, ubuf *Ustat_t) (err error) {
+func Ustat(dev int, ubuf *Ustat_t) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procUstat)), 2, uintptr(dev), uintptr(unsafe.Pointer(ubuf)), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1463,7 +1464,7 @@ func Ustat(dev int, ubuf *Ustat_t) (err error) {
 	return
 }
 
-func Utime(path string, buf *Utimbuf) (err error) {
+func Utime(path string, buf *Utimbuf) (err error) {mydebug.INFO()
 	var _p0 *byte
 	_p0, err = BytePtrFromString(path)
 	if err != nil {
@@ -1477,7 +1478,7 @@ func Utime(path string, buf *Utimbuf) (err error) {
 	return
 }
 
-func bind(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {
+func bind(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procbind)), 3, uintptr(s), uintptr(addr), uintptr(addrlen), 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1485,7 +1486,7 @@ func bind(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {
 	return
 }
 
-func connect(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {
+func connect(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procconnect)), 3, uintptr(s), uintptr(addr), uintptr(addrlen), 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1493,7 +1494,7 @@ func connect(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {
 	return
 }
 
-func mmap(addr uintptr, length uintptr, prot int, flag int, fd int, pos int64) (ret uintptr, err error) {
+func mmap(addr uintptr, length uintptr, prot int, flag int, fd int, pos int64) (ret uintptr, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procmmap)), 6, uintptr(addr), uintptr(length), uintptr(prot), uintptr(flag), uintptr(fd), uintptr(pos))
 	ret = uintptr(r0)
 	if e1 != 0 {
@@ -1502,7 +1503,7 @@ func mmap(addr uintptr, length uintptr, prot int, flag int, fd int, pos int64) (
 	return
 }
 
-func munmap(addr uintptr, length uintptr) (err error) {
+func munmap(addr uintptr, length uintptr) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procmunmap)), 2, uintptr(addr), uintptr(length), 0, 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1510,7 +1511,7 @@ func munmap(addr uintptr, length uintptr) (err error) {
 	return
 }
 
-func sendto(s int, buf []byte, flags int, to unsafe.Pointer, addrlen _Socklen) (err error) {
+func sendto(s int, buf []byte, flags int, to unsafe.Pointer, addrlen _Socklen) (err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(buf) > 0 {
 		_p0 = &buf[0]
@@ -1522,7 +1523,7 @@ func sendto(s int, buf []byte, flags int, to unsafe.Pointer, addrlen _Socklen) (
 	return
 }
 
-func socket(domain int, typ int, proto int) (fd int, err error) {
+func socket(domain int, typ int, proto int) (fd int, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procsocket)), 3, uintptr(domain), uintptr(typ), uintptr(proto), 0, 0, 0)
 	fd = int(r0)
 	if e1 != 0 {
@@ -1531,7 +1532,7 @@ func socket(domain int, typ int, proto int) (fd int, err error) {
 	return
 }
 
-func socketpair(domain int, typ int, proto int, fd *[2]int32) (err error) {
+func socketpair(domain int, typ int, proto int, fd *[2]int32) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procsocketpair)), 4, uintptr(domain), uintptr(typ), uintptr(proto), uintptr(unsafe.Pointer(fd)), 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1539,7 +1540,7 @@ func socketpair(domain int, typ int, proto int, fd *[2]int32) (err error) {
 	return
 }
 
-func write(fd int, p []byte) (n int, err error) {
+func write(fd int, p []byte) (n int, err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(p) > 0 {
 		_p0 = &p[0]
@@ -1552,7 +1553,7 @@ func write(fd int, p []byte) (n int, err error) {
 	return
 }
 
-func getsockopt(s int, level int, name int, val unsafe.Pointer, vallen *_Socklen) (err error) {
+func getsockopt(s int, level int, name int, val unsafe.Pointer, vallen *_Socklen) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procgetsockopt)), 5, uintptr(s), uintptr(level), uintptr(name), uintptr(val), uintptr(unsafe.Pointer(vallen)), 0)
 	if e1 != 0 {
 		err = e1
@@ -1560,7 +1561,7 @@ func getsockopt(s int, level int, name int, val unsafe.Pointer, vallen *_Socklen
 	return
 }
 
-func getpeername(fd int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {
+func getpeername(fd int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {mydebug.INFO()
 	_, _, e1 := rawSysvicall6(uintptr(unsafe.Pointer(&procgetpeername)), 3, uintptr(fd), uintptr(unsafe.Pointer(rsa)), uintptr(unsafe.Pointer(addrlen)), 0, 0, 0)
 	if e1 != 0 {
 		err = e1
@@ -1568,7 +1569,7 @@ func getpeername(fd int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {
 	return
 }
 
-func setsockopt(s int, level int, name int, val unsafe.Pointer, vallen uintptr) (err error) {
+func setsockopt(s int, level int, name int, val unsafe.Pointer, vallen uintptr) (err error) {mydebug.INFO()
 	_, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procsetsockopt)), 5, uintptr(s), uintptr(level), uintptr(name), uintptr(val), uintptr(vallen), 0)
 	if e1 != 0 {
 		err = e1
@@ -1576,7 +1577,7 @@ func setsockopt(s int, level int, name int, val unsafe.Pointer, vallen uintptr) 
 	return
 }
 
-func recvfrom(fd int, p []byte, flags int, from *RawSockaddrAny, fromlen *_Socklen) (n int, err error) {
+func recvfrom(fd int, p []byte, flags int, from *RawSockaddrAny, fromlen *_Socklen) (n int, err error) {mydebug.INFO()
 	var _p0 *byte
 	if len(p) > 0 {
 		_p0 = &p[0]
@@ -1589,7 +1590,7 @@ func recvfrom(fd int, p []byte, flags int, from *RawSockaddrAny, fromlen *_Sockl
 	return
 }
 
-func sysconf(name int) (n int64, err error) {
+func sysconf(name int) (n int64, err error) {mydebug.INFO()
 	r0, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&procsysconf)), 1, uintptr(name), 0, 0, 0, 0, 0)
 	n = int64(r0)
 	if e1 != 0 {

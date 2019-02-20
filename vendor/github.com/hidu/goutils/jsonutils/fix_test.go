@@ -1,4 +1,5 @@
 package jsonutils
+import "github.com/equalll/mydebug"
 
 import (
 	"testing"
@@ -21,7 +22,7 @@ type DataStrcut struct {
         } `json:"gg"`
 }
 
-func TestFixDataWithSchema(t *testing.T){
+func TestFixDataWithSchema(t *testing.T){mydebug.INFO()
 	dataStr:=`{
     "a": 145,
     "b": [

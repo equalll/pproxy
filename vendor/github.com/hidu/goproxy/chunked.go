@@ -1,6 +1,7 @@
 // Taken from $GOROOT/src/pkg/net/http/chunked
 // needed to write https responses to client.
 package goproxy
+import "github.com/equalll/mydebug"
 
 import (
 	"io"
@@ -16,7 +17,7 @@ import (
 // Content-Length header. Using newChunkedWriter inside a handler
 // would result in double chunking or chunking with a Content-Length
 // length, both of which are wrong.
-func newChunkedWriter(w io.Writer) io.WriteCloser {
+func newChunkedWriter(w io.Writer) io.WriteCloser {mydebug.INFO()
 	return &chunkedWriter{w}
 }
 
@@ -29,7 +30,7 @@ type chunkedWriter struct {
 // Write the contents of data as one chunk to Wire.
 // NOTE: Note that the corresponding chunk-writing procedure in Conn.Write has
 // a bug since it does not check for success of io.WriteString
-func (cw *chunkedWriter) Write(data []byte) (n int, err error) {
+func (cw *chunkedWriter) Write(data []byte) (n int, err error) {mydebug.INFO()
 
 	// Don't send 0-length data. It looks like EOF for chunked encoding.
 	if len(data) == 0 {
@@ -53,7 +54,7 @@ func (cw *chunkedWriter) Write(data []byte) (n int, err error) {
 	return
 }
 
-func (cw *chunkedWriter) Close() error {
+func (cw *chunkedWriter) Close() error {mydebug.INFO()
 	_, err := io.WriteString(cw.Wire, "0\r\n")
 	return err
 }

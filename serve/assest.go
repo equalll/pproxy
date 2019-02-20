@@ -2,6 +2,7 @@
 // https://github.com/hidu/goassest/
 
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -34,7 +35,7 @@ type AssestStruct struct {
 
 var _assestDirect bool
 
-func init() {
+func init() {mydebug.INFO()
 	exeName := filepath.Base(os.Getenv("_"))
 	//only enable with go run
 	if exeName == "go" || (runtime.GOOS == "windows" && strings.Contains(os.Args[0], "go-build")) {
@@ -45,7 +46,7 @@ func init() {
 var _assestCwd, _ = os.Getwd()
 
 // GetAssestFile get file by name
-func (statics *AssestStruct) GetAssestFile(name string) (*AssestFile, error) {
+func (statics *AssestStruct) GetAssestFile(name string) (*AssestFile, error) {mydebug.INFO()
 	name = filepath.ToSlash(name)
 	if name != "" && name[0] != '/' {
 		name = "/" + name
@@ -80,7 +81,7 @@ func (statics *AssestStruct) GetAssestFile(name string) (*AssestFile, error) {
 }
 
 // GetContent get content by name
-func (statics AssestStruct) GetContent(name string) string {
+func (statics AssestStruct) GetContent(name string) string {mydebug.INFO()
 	s, err := statics.GetAssestFile(name)
 	if err != nil {
 		return ""
@@ -89,7 +90,7 @@ func (statics AssestStruct) GetContent(name string) string {
 }
 
 // GetFileNames get all file names
-func (statics AssestStruct) GetFileNames(dir string) []string {
+func (statics AssestStruct) GetFileNames(dir string) []string {mydebug.INFO()
 	if dir == "" {
 		dir = "/"
 	}
@@ -112,7 +113,7 @@ func (statics AssestStruct) GetFileNames(dir string) []string {
 }
 
 // FileHandlerFunc handler http files
-func (statics *AssestStruct) FileHandlerFunc(name string) http.HandlerFunc {
+func (statics *AssestStruct) FileHandlerFunc(name string) http.HandlerFunc {mydebug.INFO()
 	if strings.Contains(name, "private") {
 		return http.NotFound
 	}
@@ -151,7 +152,7 @@ func (statics *AssestStruct) FileHandlerFunc(name string) http.HandlerFunc {
 
 //eg:on file system is :/res/js/a.js and request is /js/a.js
 //http.Handle("/js/",res.Assest.HttpHandler("/res/"))
-func (statics *AssestStruct) HTTPHandler(baseDir string) http.Handler {
+func (statics *AssestStruct) HTTPHandler(baseDir string) http.Handler {mydebug.INFO()
 	return &_assestFileServer{sf: statics, pdir: baseDir}
 }
 
@@ -161,19 +162,19 @@ type _assestFileServer struct {
 }
 
 // ServeHTTP ServeHTTP
-func (f *_assestFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (f *_assestFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {mydebug.INFO()
 	rname := filepath.ToSlash(filepath.Join(f.pdir, r.URL.Path))
 	f.sf.FileHandlerFunc(rname).ServeHTTP(w, r)
 }
 
-func _assestGzipBase64decode(data string) string {
+func _assestGzipBase64decode(data string) string {mydebug.INFO()
 	b, _ := base64.StdEncoding.DecodeString(data)
 	gr, _ := gzip.NewReader(bytes.NewBuffer(b))
 	bs, _ := ioutil.ReadAll(gr)
 	return string(bs)
 }
 
-func _assestBase64Decode(data string) string {
+func _assestBase64Decode(data string) string {mydebug.INFO()
 	b, _ := base64.StdEncoding.DecodeString(data)
 	return string(b)
 }

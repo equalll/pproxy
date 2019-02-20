@@ -1,4 +1,5 @@
 package goproxy
+import "github.com/equalll/mydebug"
 
 import (
 	"crypto/aes"
@@ -16,7 +17,7 @@ type CounterEncryptorRand struct {
 	ix      int
 }
 
-func NewCounterEncryptorRandFromKey(key interface{}, seed []byte) (r CounterEncryptorRand, err error) {
+func NewCounterEncryptorRandFromKey(key interface{}, seed []byte) (r CounterEncryptorRand, err error) {mydebug.INFO()
 	var keyBytes []byte
 	switch key := key.(type) {
 	case *rsa.PrivateKey:
@@ -38,14 +39,14 @@ func NewCounterEncryptorRandFromKey(key interface{}, seed []byte) (r CounterEncr
 	return
 }
 
-func (c *CounterEncryptorRand) Seed(b []byte) {
+func (c *CounterEncryptorRand) Seed(b []byte) {mydebug.INFO()
 	if len(b) != len(c.counter) {
 		panic("SetCounter: wrong counter size")
 	}
 	copy(c.counter, b)
 }
 
-func (c *CounterEncryptorRand) refill() {
+func (c *CounterEncryptorRand) refill() {mydebug.INFO()
 	c.cipher.Encrypt(c.rand, c.counter)
 	for i := 0; i < len(c.counter); i++ {
 		if c.counter[i]++; c.counter[i] != 0 {
@@ -55,7 +56,7 @@ func (c *CounterEncryptorRand) refill() {
 	c.ix = 0
 }
 
-func (c *CounterEncryptorRand) Read(b []byte) (n int, err error) {
+func (c *CounterEncryptorRand) Read(b []byte) (n int, err error) {mydebug.INFO()
 	if c.ix == len(c.rand) {
 		c.refill()
 	}

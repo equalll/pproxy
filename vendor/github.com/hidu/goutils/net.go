@@ -1,4 +1,5 @@
 package utils
+import "github.com/equalll/mydebug"
 
 import (
 	"net"
@@ -9,7 +10,7 @@ import (
 	//	"fmt"
 )
 
-func Net_isLocalIp(host string) bool {
+func Net_isLocalIp(host string) bool {mydebug.INFO()
 	ips, _ := net.LookupIP(host)
 	for _, ip := range ips {
 		if ip.IsLoopback() {
@@ -31,7 +32,7 @@ func Net_isLocalIp(host string) bool {
 	return false
 }
 
-func Net_getHostPortFromReq(req *http.Request) (host string, port int, err error) {
+func Net_getHostPortFromReq(req *http.Request) (host string, port int, err error) {mydebug.INFO()
 	urlStr := ""
 	if req.URL.Scheme != "" {
 		urlStr = req.URL.Scheme + "://" + req.Host
@@ -41,7 +42,7 @@ func Net_getHostPortFromReq(req *http.Request) (host string, port int, err error
 	return Net_getHostPortFromUrl(urlStr)
 }
 
-func Net_getHostPortFromUrl(urlStr string) (host string, port int, err error) {
+func Net_getHostPortFromUrl(urlStr string) (host string, port int, err error) {mydebug.INFO()
 	urlObj, err := url.Parse(urlStr)
 	if err != nil {
 		return "", 0, err
@@ -64,7 +65,7 @@ func Net_getHostPortFromUrl(urlStr string) (host string, port int, err error) {
 	return
 }
 
-func parseHostPort(hostPortstr string) (host string, port int, err error) {
+func parseHostPort(hostPortstr string) (host string, port int, err error) {mydebug.INFO()
 	var port_str string
 	if !strings.Contains(hostPortstr, ":") {
 		hostPortstr += ":0"

@@ -1,4 +1,5 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"errors"
@@ -24,11 +25,11 @@ type FileStream struct {
 	f    *os.File
 }
 
-func NewFileStream(path string) *FileStream {
+func NewFileStream(path string) *FileStream {mydebug.INFO()
 	return &FileStream{path, nil}
 }
 
-func (fs *FileStream) Write(b []byte) (nr int, err error) {
+func (fs *FileStream) Write(b []byte) (nr int, err error) {mydebug.INFO()
 	if fs.f == nil {
 		fs.f, err = os.Create(fs.path)
 		if err != nil {
@@ -38,7 +39,7 @@ func (fs *FileStream) Write(b []byte) (nr int, err error) {
 	return fs.f.Write(b)
 }
 
-func (fs *FileStream) Close() error {
+func (fs *FileStream) Close() error {mydebug.INFO()
 	fmt.Println("Close", fs.path)
 	if fs.f == nil {
 		return errors.New("FileStream was never written into")
@@ -56,7 +57,7 @@ type Meta struct {
 	from     string
 }
 
-func fprintf(nr *int64, err *error, w io.Writer, pat string, a ...interface{}) {
+func fprintf(nr *int64, err *error, w io.Writer, pat string, a ...interface{}) {mydebug.INFO()
 	if *err != nil {
 		return
 	}
@@ -65,7 +66,7 @@ func fprintf(nr *int64, err *error, w io.Writer, pat string, a ...interface{}) {
 	*nr += int64(n)
 }
 
-func write(nr *int64, err *error, w io.Writer, b []byte) {
+func write(nr *int64, err *error, w io.Writer, b []byte) {mydebug.INFO()
 	if *err != nil {
 		return
 	}
@@ -74,7 +75,7 @@ func write(nr *int64, err *error, w io.Writer, b []byte) {
 	*nr += int64(n)
 }
 
-func (m *Meta) WriteTo(w io.Writer) (nr int64, err error) {
+func (m *Meta) WriteTo(w io.Writer) (nr int64, err error) {mydebug.INFO()
 	if m.req != nil {
 		fprintf(&nr, &err, w, "Type: request\r\n")
 	} else if m.resp != nil {
@@ -104,13 +105,17 @@ func (m *Meta) WriteTo(w io.Writer) (nr int64, err error) {
 	return
 }
 
+// HttpLogger is an asynchronous HTTP request/response logger. It traces
+// requests and responses headers in a "log" file in logger directory and dumps
+// their bodies in files prefixed with the session identifiers.
+// Close it to ensure pending items are correctly logged.
 type HttpLogger struct {
 	path  string
 	c     chan *Meta
 	errch chan error
 }
 
-func NewLogger(basepath string) (*HttpLogger, error) {
+func NewLogger(basepath string) (*HttpLogger, error) {mydebug.INFO()
 	f, err := os.Create(path.Join(basepath, "log"))
 	if err != nil {
 		return nil, err
@@ -127,7 +132,7 @@ func NewLogger(basepath string) (*HttpLogger, error) {
 	return logger, nil
 }
 
-func (logger *HttpLogger) LogResp(resp *http.Response, ctx *goproxy.ProxyCtx) {
+func (logger *HttpLogger) LogResp(resp *http.Response, ctx *goproxy.ProxyCtx) {mydebug.INFO()
 	body := path.Join(logger.path, fmt.Sprintf("%d_resp", ctx.Session))
 	from := ""
 	if ctx.UserData != nil {
@@ -149,7 +154,7 @@ func (logger *HttpLogger) LogResp(resp *http.Response, ctx *goproxy.ProxyCtx) {
 var emptyResp = &http.Response{}
 var emptyReq = &http.Request{}
 
-func (logger *HttpLogger) LogReq(req *http.Request, ctx *goproxy.ProxyCtx) {
+func (logger *HttpLogger) LogReq(req *http.Request, ctx *goproxy.ProxyCtx) {mydebug.INFO()
 	body := path.Join(logger.path, fmt.Sprintf("%d_req", ctx.Session))
 	if req == nil {
 		req = emptyReq
@@ -164,41 +169,44 @@ func (logger *HttpLogger) LogReq(req *http.Request, ctx *goproxy.ProxyCtx) {
 		from: req.RemoteAddr})
 }
 
-func (logger *HttpLogger) LogMeta(m *Meta) {
+func (logger *HttpLogger) LogMeta(m *Meta) {mydebug.INFO()
 	logger.c <- m
 }
 
-func (logger *HttpLogger) Close() error {
+func (logger *HttpLogger) Close() error {mydebug.INFO()
 	close(logger.c)
 	return <-logger.errch
 }
 
+// TeeReadCloser extends io.TeeReader by allowing reader and writer to be
+// closed.
 type TeeReadCloser struct {
 	r io.Reader
 	w io.WriteCloser
 	c io.Closer
 }
 
-func NewTeeReadCloser(r io.ReadCloser, w io.WriteCloser) io.ReadCloser {
+func NewTeeReadCloser(r io.ReadCloser, w io.WriteCloser) io.ReadCloser {mydebug.INFO()
 	return &TeeReadCloser{io.TeeReader(r, w), w, r}
 }
 
-func (t *TeeReadCloser) Read(b []byte) (int, error) {
+func (t *TeeReadCloser) Read(b []byte) (int, error) {mydebug.INFO()
 	return t.r.Read(b)
 }
 
-func (t *TeeReadCloser) Close() error {
+// Close attempts to close the reader and write. It returns an error if both
+// failed to Close.
+func (t *TeeReadCloser) Close() error {mydebug.INFO()
 	err1 := t.c.Close()
 	err2 := t.w.Close()
-	if err1 == nil && err2 == nil {
-		return nil
-	}
 	if err1 != nil {
-		return err2
+		return err1
 	}
-	return err1
+	return err2
 }
 
+// stoppableListener serves stoppableConn and tracks their lifetime to notify
+// when it is safe to terminate the application.
 type stoppableListener struct {
 	net.Listener
 	sync.WaitGroup
@@ -209,11 +217,11 @@ type stoppableConn struct {
 	wg *sync.WaitGroup
 }
 
-func newStoppableListener(l net.Listener) *stoppableListener {
+func newStoppableListener(l net.Listener) *stoppableListener {mydebug.INFO()
 	return &stoppableListener{l, sync.WaitGroup{}}
 }
 
-func (sl *stoppableListener) Accept() (net.Conn, error) {
+func (sl *stoppableListener) Accept() (net.Conn, error) {mydebug.INFO()
 	c, err := sl.Listener.Accept()
 	if err != nil {
 		return c, err
@@ -222,12 +230,12 @@ func (sl *stoppableListener) Accept() (net.Conn, error) {
 	return &stoppableConn{c, &sl.WaitGroup}, nil
 }
 
-func (sc *stoppableConn) Close() error {
+func (sc *stoppableConn) Close() error {mydebug.INFO()
 	sc.wg.Done()
 	return sc.Conn.Close()
 }
 
-func main() {
+func main() {mydebug.INFO()
 	verbose := flag.Bool("v", false, "should every proxy request be logged to stdout")
 	addr := flag.String("l", ":8080", "on which address should the proxy listen")
 	flag.Parse()
@@ -241,8 +249,11 @@ func main() {
 		log.Fatal("can't open log file", err)
 	}
 	tr := transport.Transport{Proxy: transport.ProxyFromEnvironment}
+	// For every incoming request, override the RoundTripper to extract
+	// connection information. Store it is session context log it after
+	// handling the response.
 	proxy.OnRequest().DoFunc(func(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
-		ctx.RoundTripper = goproxy.RoundTripperFunc(func (req *http.Request, ctx *goproxy.ProxyCtx) (resp *http.Response, err error) {
+		ctx.RoundTripper = goproxy.RoundTripperFunc(func(req *http.Request, ctx *goproxy.ProxyCtx) (resp *http.Response, err error) {
 			ctx.UserData, resp, err = tr.DetailedRoundTrip(req)
 			return
 		})

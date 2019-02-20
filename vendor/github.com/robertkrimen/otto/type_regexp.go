@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -17,7 +18,7 @@ type _regExpObject struct {
 	flags             string
 }
 
-func (runtime *_runtime) newRegExpObject(pattern string, flags string) *_object {
+func (runtime *_runtime) newRegExpObject(pattern string, flags string) *_object {mydebug.INFO()
 	self := runtime.newObject()
 	self.class = "RegExp"
 
@@ -79,12 +80,12 @@ func (runtime *_runtime) newRegExpObject(pattern string, flags string) *_object 
 	return self
 }
 
-func (self *_object) regExpValue() _regExpObject {
+func (self *_object) regExpValue() _regExpObject {mydebug.INFO()
 	value, _ := self.value.(_regExpObject)
 	return value
 }
 
-func execRegExp(this *_object, target string) (match bool, result []int) {
+func execRegExp(this *_object, target string) (match bool, result []int) {mydebug.INFO()
 	if this.class != "RegExp" {
 		panic(this.runtime.panicTypeError("Calling RegExp.exec on a non-RegExp object"))
 	}
@@ -118,7 +119,7 @@ func execRegExp(this *_object, target string) (match bool, result []int) {
 	return // match
 }
 
-func execResultToArray(runtime *_runtime, target string, result []int) *_object {
+func execResultToArray(runtime *_runtime, target string, result []int) *_object {mydebug.INFO()
 	captureCount := len(result) / 2
 	valueArray := make([]Value, captureCount)
 	for index := 0; index < captureCount; index++ {

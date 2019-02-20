@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import "unsafe"
 
@@ -11,7 +12,7 @@ const maxAllocSize = 0xFFFFFFF
 // Are unaligned load/stores broken on this arch?
 var brokenUnaligned bool
 
-func init() {
+func init() {mydebug.INFO()
 	// Simple check to see whether this arch handles unaligned load/stores
 	// correctly.
 

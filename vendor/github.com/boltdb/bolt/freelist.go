@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -15,7 +16,7 @@ type freelist struct {
 }
 
 // newFreelist returns an empty, initialized freelist.
-func newFreelist() *freelist {
+func newFreelist() *freelist {mydebug.INFO()
 	return &freelist{
 		pending: make(map[txid][]pgid),
 		cache:   make(map[pgid]bool),
@@ -23,22 +24,22 @@ func newFreelist() *freelist {
 }
 
 // size returns the size of the page after serialization.
-func (f *freelist) size() int {
+func (f *freelist) size() int {mydebug.INFO()
 	return pageHeaderSize + (int(unsafe.Sizeof(pgid(0))) * f.count())
 }
 
 // count returns count of pages on the freelist
-func (f *freelist) count() int {
+func (f *freelist) count() int {mydebug.INFO()
 	return f.free_count() + f.pending_count()
 }
 
 // free_count returns count of free pages
-func (f *freelist) free_count() int {
+func (f *freelist) free_count() int {mydebug.INFO()
 	return len(f.ids)
 }
 
 // pending_count returns count of pending pages
-func (f *freelist) pending_count() int {
+func (f *freelist) pending_count() int {mydebug.INFO()
 	var count int
 	for _, list := range f.pending {
 		count += len(list)
@@ -47,7 +48,7 @@ func (f *freelist) pending_count() int {
 }
 
 // all returns a list of all free ids and all pending ids in one sorted list.
-func (f *freelist) all() []pgid {
+func (f *freelist) all() []pgid {mydebug.INFO()
 	m := make(pgids, 0)
 
 	for _, list := range f.pending {
@@ -60,7 +61,7 @@ func (f *freelist) all() []pgid {
 
 // allocate returns the starting page id of a contiguous list of pages of a given size.
 // If a contiguous block cannot be found then 0 is returned.
-func (f *freelist) allocate(n int) pgid {
+func (f *freelist) allocate(n int) pgid {mydebug.INFO()
 	if len(f.ids) == 0 {
 		return 0
 	}
@@ -104,7 +105,7 @@ func (f *freelist) allocate(n int) pgid {
 
 // free releases a page and its overflow for a given transaction id.
 // If the page is already free then a panic will occur.
-func (f *freelist) free(txid txid, p *page) {
+func (f *freelist) free(txid txid, p *page) {mydebug.INFO()
 	if p.id <= 1 {
 		panic(fmt.Sprintf("cannot free page 0 or 1: %d", p.id))
 	}
@@ -125,7 +126,7 @@ func (f *freelist) free(txid txid, p *page) {
 }
 
 // release moves all page ids for a transaction id (or older) to the freelist.
-func (f *freelist) release(txid txid) {
+func (f *freelist) release(txid txid) {mydebug.INFO()
 	m := make(pgids, 0)
 	for tid, ids := range f.pending {
 		if tid <= txid {
@@ -140,7 +141,7 @@ func (f *freelist) release(txid txid) {
 }
 
 // rollback removes the pages from a given pending tx.
-func (f *freelist) rollback(txid txid) {
+func (f *freelist) rollback(txid txid) {mydebug.INFO()
 	// Remove page ids from cache.
 	for _, id := range f.pending[txid] {
 		delete(f.cache, id)
@@ -151,12 +152,12 @@ func (f *freelist) rollback(txid txid) {
 }
 
 // freed returns whether a given page is in the free list.
-func (f *freelist) freed(pgid pgid) bool {
+func (f *freelist) freed(pgid pgid) bool {mydebug.INFO()
 	return f.cache[pgid]
 }
 
 // read initializes the freelist from a freelist page.
-func (f *freelist) read(p *page) {
+func (f *freelist) read(p *page) {mydebug.INFO()
 	// If the page.count is at the max uint16 value (64k) then it's considered
 	// an overflow and the size of the freelist is stored as the first element.
 	idx, count := 0, int(p.count)
@@ -184,7 +185,7 @@ func (f *freelist) read(p *page) {
 // write writes the page ids onto a freelist page. All free and pending ids are
 // saved to disk since in the event of a program crash, all pending ids will
 // become free.
-func (f *freelist) write(p *page) error {
+func (f *freelist) write(p *page) error {mydebug.INFO()
 	// Combine the old free pgids and pgids waiting on an open transaction.
 	ids := f.all()
 
@@ -208,7 +209,7 @@ func (f *freelist) write(p *page) error {
 }
 
 // reload reads the freelist from a page and filters out pending items.
-func (f *freelist) reload(p *page) {
+func (f *freelist) reload(p *page) {mydebug.INFO()
 	f.read(p)
 
 	// Build a cache of only pending pages.
@@ -235,7 +236,7 @@ func (f *freelist) reload(p *page) {
 }
 
 // reindex rebuilds the free cache based on available and pending free lists.
-func (f *freelist) reindex() {
+func (f *freelist) reindex() {mydebug.INFO()
 	f.cache = make(map[pgid]bool, len(f.ids))
 	for _, id := range f.ids {
 		f.cache[id] = true

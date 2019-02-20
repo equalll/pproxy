@@ -1,4 +1,5 @@
 package utils
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -14,7 +15,7 @@ type TxtLine struct {
 	Origin  string
 }
 
-func (line *TxtLine) String() string {
+func (line *TxtLine) String() string {mydebug.INFO()
 	if line.Comment == "" {
 		return line.Str
 	} else {
@@ -22,15 +23,15 @@ func (line *TxtLine) String() string {
 	}
 }
 
-func (line *TxtLine) Empty() bool {
+func (line *TxtLine) Empty() bool {mydebug.INFO()
 	return line.Str == ""
 }
 
-func (line *TxtLine) Slice() []string {
+func (line *TxtLine) Slice() []string {mydebug.INFO()
 	return regSpace.Split(line.Str, -1)
 }
 
-func (line *TxtLine) KvMap(splitStr string) (result map[string]string, err error) {
+func (line *TxtLine) KvMap(splitStr string) (result map[string]string, err error) {mydebug.INFO()
 	if line.Empty() {
 		return
 	}
@@ -52,7 +53,7 @@ type TxtFile struct {
 	Lines []*TxtLine
 }
 
-func NewTxtFile(path string) (*TxtFile, error) {
+func NewTxtFile(path string) (*TxtFile, error) {mydebug.INFO()
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -60,7 +61,7 @@ func NewTxtFile(path string) (*TxtFile, error) {
 	return NewTxtFileFromString(string(data)), nil
 }
 
-func NewTxtFileFromString(text string) *TxtFile {
+func NewTxtFileFromString(text string) *TxtFile {mydebug.INFO()
 	linesObj := []*TxtLine{}
 	lines := strings.Split(text, "\n")
 	for lineNo, lineStr := range lines {
@@ -80,7 +81,7 @@ func NewTxtFileFromString(text string) *TxtFile {
 	return txtFile
 }
 
-func (txt *TxtFile) KvMapSlice(splitStr string, ignoreError bool, fields map[string]string) (result []map[string]string, err error) {
+func (txt *TxtFile) KvMapSlice(splitStr string, ignoreError bool, fields map[string]string) (result []map[string]string, err error) {mydebug.INFO()
 	for _, line := range txt.Lines {
 		if line.Empty() {
 			continue

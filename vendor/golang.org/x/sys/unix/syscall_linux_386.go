@@ -8,6 +8,7 @@
 // +build 386,linux
 
 package unix
+import "github.com/equalll/mydebug"
 
 import (
 	"syscall"
@@ -18,13 +19,13 @@ func Getpagesize() int { return 4096 }
 
 func TimespecToNsec(ts Timespec) int64 { return int64(ts.Sec)*1e9 + int64(ts.Nsec) }
 
-func NsecToTimespec(nsec int64) (ts Timespec) {
+func NsecToTimespec(nsec int64) (ts Timespec) {mydebug.INFO()
 	ts.Sec = int32(nsec / 1e9)
 	ts.Nsec = int32(nsec % 1e9)
 	return
 }
 
-func NsecToTimeval(nsec int64) (tv Timeval) {
+func NsecToTimeval(nsec int64) (tv Timeval) {mydebug.INFO()
 	nsec += 999 // round up to microsecond
 	tv.Sec = int32(nsec / 1e9)
 	tv.Usec = int32(nsec % 1e9 / 1e3)
@@ -33,7 +34,7 @@ func NsecToTimeval(nsec int64) (tv Timeval) {
 
 //sysnb	pipe(p *[2]_C_int) (err error)
 
-func Pipe(p []int) (err error) {
+func Pipe(p []int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -46,7 +47,7 @@ func Pipe(p []int) (err error) {
 
 //sysnb pipe2(p *[2]_C_int, flags int) (err error)
 
-func Pipe2(p []int, flags int) (err error) {
+func Pipe2(p []int, flags int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -94,7 +95,7 @@ func Pipe2(p []int, flags int) (err error) {
 //sys	EpollWait(epfd int, events []EpollEvent, msec int) (n int, err error)
 //sys	Pause() (err error)
 
-func mmap(addr uintptr, length uintptr, prot int, flags int, fd int, offset int64) (xaddr uintptr, err error) {
+func mmap(addr uintptr, length uintptr, prot int, flags int, fd int, offset int64) (xaddr uintptr, err error) {mydebug.INFO()
 	page := uintptr(offset / 4096)
 	if offset != int64(page)*4096 {
 		return 0, EINVAL
@@ -112,7 +113,7 @@ type rlimit32 struct {
 const rlimInf32 = ^uint32(0)
 const rlimInf64 = ^uint64(0)
 
-func Getrlimit(resource int, rlim *Rlimit) (err error) {
+func Getrlimit(resource int, rlim *Rlimit) (err error) {mydebug.INFO()
 	err = prlimit(0, resource, nil, rlim)
 	if err != ENOSYS {
 		return err
@@ -140,7 +141,7 @@ func Getrlimit(resource int, rlim *Rlimit) (err error) {
 
 //sysnb setrlimit(resource int, rlim *rlimit32) (err error) = SYS_SETRLIMIT
 
-func Setrlimit(resource int, rlim *Rlimit) (err error) {
+func Setrlimit(resource int, rlim *Rlimit) (err error) {mydebug.INFO()
 	err = prlimit(0, resource, rlim, nil)
 	if err != ENOSYS {
 		return err
@@ -169,7 +170,7 @@ func Setrlimit(resource int, rlim *Rlimit) (err error) {
 // Implemented in assembly to avoid allocation.
 func seek(fd int, offset int64, whence int) (newoffset int64, err syscall.Errno)
 
-func Seek(fd int, offset int64, whence int) (newoffset int64, err error) {
+func Seek(fd int, offset int64, whence int) (newoffset int64, err error) {mydebug.INFO()
 	newoffset, errno := seek(fd, offset, whence)
 	if errno != 0 {
 		return 0, errno
@@ -217,7 +218,7 @@ const (
 func socketcall(call int, a0, a1, a2, a3, a4, a5 uintptr) (n int, err syscall.Errno)
 func rawsocketcall(call int, a0, a1, a2, a3, a4, a5 uintptr) (n int, err syscall.Errno)
 
-func accept(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (fd int, err error) {
+func accept(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (fd int, err error) {mydebug.INFO()
 	fd, e := socketcall(_ACCEPT, uintptr(s), uintptr(unsafe.Pointer(rsa)), uintptr(unsafe.Pointer(addrlen)), 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -225,7 +226,7 @@ func accept(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (fd int, err error) {
 	return
 }
 
-func accept4(s int, rsa *RawSockaddrAny, addrlen *_Socklen, flags int) (fd int, err error) {
+func accept4(s int, rsa *RawSockaddrAny, addrlen *_Socklen, flags int) (fd int, err error) {mydebug.INFO()
 	fd, e := socketcall(_ACCEPT4, uintptr(s), uintptr(unsafe.Pointer(rsa)), uintptr(unsafe.Pointer(addrlen)), uintptr(flags), 0, 0)
 	if e != 0 {
 		err = e
@@ -233,7 +234,7 @@ func accept4(s int, rsa *RawSockaddrAny, addrlen *_Socklen, flags int) (fd int, 
 	return
 }
 
-func getsockname(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {
+func getsockname(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {mydebug.INFO()
 	_, e := rawsocketcall(_GETSOCKNAME, uintptr(s), uintptr(unsafe.Pointer(rsa)), uintptr(unsafe.Pointer(addrlen)), 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -241,7 +242,7 @@ func getsockname(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {
 	return
 }
 
-func getpeername(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {
+func getpeername(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {mydebug.INFO()
 	_, e := rawsocketcall(_GETPEERNAME, uintptr(s), uintptr(unsafe.Pointer(rsa)), uintptr(unsafe.Pointer(addrlen)), 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -249,7 +250,7 @@ func getpeername(s int, rsa *RawSockaddrAny, addrlen *_Socklen) (err error) {
 	return
 }
 
-func socketpair(domain int, typ int, flags int, fd *[2]int32) (err error) {
+func socketpair(domain int, typ int, flags int, fd *[2]int32) (err error) {mydebug.INFO()
 	_, e := rawsocketcall(_SOCKETPAIR, uintptr(domain), uintptr(typ), uintptr(flags), uintptr(unsafe.Pointer(fd)), 0, 0)
 	if e != 0 {
 		err = e
@@ -257,7 +258,7 @@ func socketpair(domain int, typ int, flags int, fd *[2]int32) (err error) {
 	return
 }
 
-func bind(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {
+func bind(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {mydebug.INFO()
 	_, e := socketcall(_BIND, uintptr(s), uintptr(addr), uintptr(addrlen), 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -265,7 +266,7 @@ func bind(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {
 	return
 }
 
-func connect(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {
+func connect(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {mydebug.INFO()
 	_, e := socketcall(_CONNECT, uintptr(s), uintptr(addr), uintptr(addrlen), 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -273,7 +274,7 @@ func connect(s int, addr unsafe.Pointer, addrlen _Socklen) (err error) {
 	return
 }
 
-func socket(domain int, typ int, proto int) (fd int, err error) {
+func socket(domain int, typ int, proto int) (fd int, err error) {mydebug.INFO()
 	fd, e := rawsocketcall(_SOCKET, uintptr(domain), uintptr(typ), uintptr(proto), 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -281,7 +282,7 @@ func socket(domain int, typ int, proto int) (fd int, err error) {
 	return
 }
 
-func getsockopt(s int, level int, name int, val unsafe.Pointer, vallen *_Socklen) (err error) {
+func getsockopt(s int, level int, name int, val unsafe.Pointer, vallen *_Socklen) (err error) {mydebug.INFO()
 	_, e := socketcall(_GETSOCKOPT, uintptr(s), uintptr(level), uintptr(name), uintptr(val), uintptr(unsafe.Pointer(vallen)), 0)
 	if e != 0 {
 		err = e
@@ -289,7 +290,7 @@ func getsockopt(s int, level int, name int, val unsafe.Pointer, vallen *_Socklen
 	return
 }
 
-func setsockopt(s int, level int, name int, val unsafe.Pointer, vallen uintptr) (err error) {
+func setsockopt(s int, level int, name int, val unsafe.Pointer, vallen uintptr) (err error) {mydebug.INFO()
 	_, e := socketcall(_SETSOCKOPT, uintptr(s), uintptr(level), uintptr(name), uintptr(val), vallen, 0)
 	if e != 0 {
 		err = e
@@ -297,7 +298,7 @@ func setsockopt(s int, level int, name int, val unsafe.Pointer, vallen uintptr) 
 	return
 }
 
-func recvfrom(s int, p []byte, flags int, from *RawSockaddrAny, fromlen *_Socklen) (n int, err error) {
+func recvfrom(s int, p []byte, flags int, from *RawSockaddrAny, fromlen *_Socklen) (n int, err error) {mydebug.INFO()
 	var base uintptr
 	if len(p) > 0 {
 		base = uintptr(unsafe.Pointer(&p[0]))
@@ -309,7 +310,7 @@ func recvfrom(s int, p []byte, flags int, from *RawSockaddrAny, fromlen *_Sockle
 	return
 }
 
-func sendto(s int, p []byte, flags int, to unsafe.Pointer, addrlen _Socklen) (err error) {
+func sendto(s int, p []byte, flags int, to unsafe.Pointer, addrlen _Socklen) (err error) {mydebug.INFO()
 	var base uintptr
 	if len(p) > 0 {
 		base = uintptr(unsafe.Pointer(&p[0]))
@@ -321,7 +322,7 @@ func sendto(s int, p []byte, flags int, to unsafe.Pointer, addrlen _Socklen) (er
 	return
 }
 
-func recvmsg(s int, msg *Msghdr, flags int) (n int, err error) {
+func recvmsg(s int, msg *Msghdr, flags int) (n int, err error) {mydebug.INFO()
 	n, e := socketcall(_RECVMSG, uintptr(s), uintptr(unsafe.Pointer(msg)), uintptr(flags), 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -329,7 +330,7 @@ func recvmsg(s int, msg *Msghdr, flags int) (n int, err error) {
 	return
 }
 
-func sendmsg(s int, msg *Msghdr, flags int) (n int, err error) {
+func sendmsg(s int, msg *Msghdr, flags int) (n int, err error) {mydebug.INFO()
 	n, e := socketcall(_SENDMSG, uintptr(s), uintptr(unsafe.Pointer(msg)), uintptr(flags), 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -337,7 +338,7 @@ func sendmsg(s int, msg *Msghdr, flags int) (n int, err error) {
 	return
 }
 
-func Listen(s int, n int) (err error) {
+func Listen(s int, n int) (err error) {mydebug.INFO()
 	_, e := socketcall(_LISTEN, uintptr(s), uintptr(n), 0, 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -345,7 +346,7 @@ func Listen(s int, n int) (err error) {
 	return
 }
 
-func Shutdown(s, how int) (err error) {
+func Shutdown(s, how int) (err error) {mydebug.INFO()
 	_, e := socketcall(_SHUTDOWN, uintptr(s), uintptr(how), 0, 0, 0, 0)
 	if e != 0 {
 		err = e
@@ -353,7 +354,7 @@ func Shutdown(s, how int) (err error) {
 	return
 }
 
-func Fstatfs(fd int, buf *Statfs_t) (err error) {
+func Fstatfs(fd int, buf *Statfs_t) (err error) {mydebug.INFO()
 	_, _, e := Syscall(SYS_FSTATFS64, uintptr(fd), unsafe.Sizeof(*buf), uintptr(unsafe.Pointer(buf)))
 	if e != 0 {
 		err = e
@@ -361,7 +362,7 @@ func Fstatfs(fd int, buf *Statfs_t) (err error) {
 	return
 }
 
-func Statfs(path string, buf *Statfs_t) (err error) {
+func Statfs(path string, buf *Statfs_t) (err error) {mydebug.INFO()
 	pathp, err := BytePtrFromString(path)
 	if err != nil {
 		return err
@@ -377,21 +378,21 @@ func (r *PtraceRegs) PC() uint64 { return uint64(uint32(r.Eip)) }
 
 func (r *PtraceRegs) SetPC(pc uint64) { r.Eip = int32(pc) }
 
-func (iov *Iovec) SetLen(length int) {
+func (iov *Iovec) SetLen(length int) {mydebug.INFO()
 	iov.Len = uint32(length)
 }
 
-func (msghdr *Msghdr) SetControllen(length int) {
+func (msghdr *Msghdr) SetControllen(length int) {mydebug.INFO()
 	msghdr.Controllen = uint32(length)
 }
 
-func (cmsg *Cmsghdr) SetLen(length int) {
+func (cmsg *Cmsghdr) SetLen(length int) {mydebug.INFO()
 	cmsg.Len = uint32(length)
 }
 
 //sys	poll(fds *PollFd, nfds int, timeout int) (n int, err error)
 
-func Poll(fds []PollFd, timeout int) (n int, err error) {
+func Poll(fds []PollFd, timeout int) (n int, err error) {mydebug.INFO()
 	if len(fds) == 0 {
 		return poll(nil, 0, timeout)
 	}

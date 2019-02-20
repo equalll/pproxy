@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"crypto/tls"
@@ -55,12 +56,12 @@ type User struct {
 }
 
 // String string format
-func (u *User) String() string {
+func (u *User) String() string {mydebug.INFO()
 	return fmt.Sprintf("Name:%s,Psw:%s,isAdmin:%v,SkipCheckPsw:%v", u.Name, u.Psw, u.IsAdmin, u.SkipCheckPsw)
 }
 
 // ConfigString one line in file
-func (u *User) ConfigString() string {
+func (u *User) ConfigString() string {mydebug.INFO()
 	return fmt.Sprintf("name:%s\tpsw:%s\tis_admin:%v\tpsw_md5:%s", u.Name, u.Psw, u.IsAdmin, u.PswMd5)
 }
 
@@ -71,21 +72,21 @@ const (
 //"0:no auth | 1:basic auth | 2:basic auth with any name"
 
 // GetVersion get current version
-func GetVersion() string {
+func GetVersion() string {mydebug.INFO()
 	return Assest.GetContent("res/version")
 }
 
 // GetDemoConf get the demo config
-func GetDemoConf() string {
+func GetDemoConf() string {mydebug.INFO()
 	return strings.TrimSpace(Assest.GetContent("res/conf/demo.conf"))
 }
 
-func (u *User) isPswEq(psw string) bool {
+func (u *User) isPswEq(psw string) bool {mydebug.INFO()
 	return u.PswMd5 == utils.StrMd5(psw)
 }
 
 // LoadConfig load the pproxy's config
-func LoadConfig(confPath string) (*Config, error) {
+func LoadConfig(confPath string) (*Config, error) {mydebug.INFO()
 	gconf, err := goconfig.LoadConfigFile(confPath)
 	if err != nil {
 		log.Println("load config", confPath, "failed,err:", err)
@@ -177,7 +178,7 @@ func LoadConfig(confPath string) (*Config, error) {
 type configHosts map[string]string
 
 //  loadHosts 读取host配置文件
-func loadHosts(confPath string) (hosts configHosts, err error) {
+func loadHosts(confPath string) (hosts configHosts, err error) {mydebug.INFO()
 	hosts = make(configHosts)
 	if !utils.File_exists(confPath) {
 		return
@@ -198,7 +199,7 @@ func loadHosts(confPath string) (hosts configHosts, err error) {
 	return
 }
 
-func loadUsers(confPath string) (users map[string]*User, err error) {
+func loadUsers(confPath string) (users map[string]*User, err error) {mydebug.INFO()
 	users = make(map[string]*User)
 	if !utils.File_exists(confPath) {
 		return
@@ -239,7 +240,7 @@ func loadUsers(confPath string) (users map[string]*User, err error) {
 	return
 }
 
-func (config *Config) getTransport() *http.Transport {
+func (config *Config) getTransport() *http.Transport {mydebug.INFO()
 	if config.ParentProxy == nil {
 		return nil
 	}

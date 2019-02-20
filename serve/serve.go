@@ -1,4 +1,5 @@
 package serve
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -41,7 +42,7 @@ type ProxyServe struct {
 
 type KvType map[string]interface{}
 
-func (ser *ProxyServe) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (ser *ProxyServe) ServeHTTP(w http.ResponseWriter, req *http.Request) {mydebug.INFO()
 	atomic.AddInt64(&ser.reqNum, 1)
 
 	//	reqDump, _ := httputil.DumpRequest(req, true)
@@ -72,13 +73,13 @@ func (ser *ProxyServe) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 //for replay
-func (ser *ProxyServe) ServeHTTPProxy(w http.ResponseWriter, req *http.Request) {
+func (ser *ProxyServe) ServeHTTPProxy(w http.ResponseWriter, req *http.Request) {mydebug.INFO()
 	atomic.AddInt64(&ser.reqNum, 1)
 	ctx := NewRequestCtx(ser, w, req)
 	ctx.RoundTrip()
 }
 
-func (ser *ProxyServe) Start() {
+func (ser *ProxyServe) Start() {mydebug.INFO()
 	addr := fmt.Sprintf("%s:%d", "", ser.conf.Port)
 	fmt.Println("proxy listen at ", addr)
 	defer log.Println("pproxy exit")
@@ -103,7 +104,7 @@ func (ser *ProxyServe) Start() {
 	wg.Wait()
 }
 
-func (ser *ProxyServe) startAdmin() {
+func (ser *ProxyServe) startAdmin() {mydebug.INFO()
 	if ser.conf.Port == ser.conf.AdminPort {
 		return
 	}
@@ -116,20 +117,20 @@ func (ser *ProxyServe) startAdmin() {
 	http.ListenAndServe(addr, httpSer)
 }
 
-func (ser *ProxyServe) getResponseByDocid(docid int) (resData *StoreType, err error) {
+func (ser *ProxyServe) getResponseByDocid(docid int) (resData *StoreType, err error) {mydebug.INFO()
 	tb := ser.mydb.GetkvStoreTable(KV_TABLE_RES)
 	return tb.Get(IntToBytes(docid))
 }
-func (ser *ProxyServe) getRequestByDocid(docid int) (reqData *StoreType, err error) {
+func (ser *ProxyServe) getRequestByDocid(docid int) (reqData *StoreType, err error) {mydebug.INFO()
 	tb := ser.mydb.GetkvStoreTable(KV_TABLE_REQ)
 	return tb.Get(IntToBytes(docid))
 }
 
-func (ser *ProxyServe) getHostsFilePath() string {
+func (ser *ProxyServe) getHostsFilePath() string {mydebug.INFO()
 	return fmt.Sprintf("%s/hosts_%d", ser.configDir, ser.conf.Port)
 }
 
-func (ser *ProxyServe) loadHosts() {
+func (ser *ProxyServe) loadHosts() {mydebug.INFO()
 	ser.mu.Lock()
 	defer ser.mu.Unlock()
 	hostsPath := ser.getHostsFilePath()
@@ -137,7 +138,7 @@ func (ser *ProxyServe) loadHosts() {
 	ser.hosts, _ = loadHosts(hostsPath)
 }
 
-func NewProxyServe(confPath string, port int) (*ProxyServe, error) {
+func NewProxyServe(confPath string, port int) (*ProxyServe, error) {mydebug.INFO()
 	conf, err := LoadConfig(confPath)
 	if err != nil {
 		log.Println("load config faield", err)
@@ -195,7 +196,7 @@ func NewProxyServe(confPath string, port int) (*ProxyServe, error) {
 	return proxy, nil
 }
 
-func setupLog(dataDir string, port int) {
+func setupLog(dataDir string, port int) {mydebug.INFO()
 	logPath := fmt.Sprintf("%s/%d.log", dataDir, port)
 
 	logFile, err := os.OpenFile(logPath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)

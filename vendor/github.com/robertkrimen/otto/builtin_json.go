@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -12,7 +13,7 @@ type _builtinJSON_parseContext struct {
 	reviver Value
 }
 
-func builtinJSON_parse(call FunctionCall) Value {
+func builtinJSON_parse(call FunctionCall) Value {mydebug.INFO()
 	ctx := _builtinJSON_parseContext{
 		call: call,
 	}
@@ -39,7 +40,7 @@ func builtinJSON_parse(call FunctionCall) Value {
 	return value
 }
 
-func builtinJSON_reviveWalk(ctx _builtinJSON_parseContext, holder *_object, name string) Value {
+func builtinJSON_reviveWalk(ctx _builtinJSON_parseContext, holder *_object, name string) Value {mydebug.INFO()
 	value := holder.get(name)
 	if object := value._object(); object != nil {
 		if isArray(object) {
@@ -68,7 +69,7 @@ func builtinJSON_reviveWalk(ctx _builtinJSON_parseContext, holder *_object, name
 	return ctx.reviver.call(ctx.call.runtime, toValue_object(holder), name, value)
 }
 
-func builtinJSON_parseWalk(ctx _builtinJSON_parseContext, rawValue interface{}) (Value, bool) {
+func builtinJSON_parseWalk(ctx _builtinJSON_parseContext, rawValue interface{}) (Value, bool) {mydebug.INFO()
 	switch value := rawValue.(type) {
 	case nil:
 		return nullValue, true
@@ -106,7 +107,7 @@ type _builtinJSON_stringifyContext struct {
 	gap              string
 }
 
-func builtinJSON_stringify(call FunctionCall) Value {
+func builtinJSON_stringify(call FunctionCall) Value {mydebug.INFO()
 	ctx := _builtinJSON_stringifyContext{
 		call:  call,
 		stack: []*_object{nil},
@@ -192,7 +193,7 @@ func builtinJSON_stringify(call FunctionCall) Value {
 	return toValue_string(string(valueJSON))
 }
 
-func builtinJSON_stringifyWalk(ctx _builtinJSON_stringifyContext, key string, holder *_object) (interface{}, bool) {
+func builtinJSON_stringifyWalk(ctx _builtinJSON_stringifyContext, key string, holder *_object) (interface{}, bool) {mydebug.INFO()
 	value := holder.get(key)
 
 	if value.IsObject() {

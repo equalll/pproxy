@@ -1,4 +1,5 @@
 package goproxy
+import "github.com/equalll/mydebug"
 
 import (
 	"crypto/rsa"
@@ -13,7 +14,7 @@ import (
 	"time"
 )
 
-func hashSorted(lst []string) []byte {
+func hashSorted(lst []string) []byte {mydebug.INFO()
 	c := make([]string, len(lst))
 	copy(c, lst)
 	sort.Strings(c)
@@ -24,7 +25,7 @@ func hashSorted(lst []string) []byte {
 	return h.Sum(nil)
 }
 
-func hashSortedBigInt(lst []string) *big.Int {
+func hashSortedBigInt(lst []string) *big.Int {mydebug.INFO()
 	rv := new(big.Int)
 	rv.SetBytes(hashSorted(lst))
 	return rv
@@ -32,7 +33,7 @@ func hashSortedBigInt(lst []string) *big.Int {
 
 var goproxySignerVersion = ":goroxy1"
 
-func signHost(ca tls.Certificate, hosts []string) (cert tls.Certificate, err error) {
+func signHost(ca tls.Certificate, hosts []string) (cert tls.Certificate, err error) {mydebug.INFO()
 	var x509ca *x509.Certificate
 
 	// Use the provided ca and not the global GoproxyCa for certificate generation.
@@ -66,6 +67,7 @@ func signHost(ca tls.Certificate, hosts []string) (cert tls.Certificate, err err
 			template.IPAddresses = append(template.IPAddresses, ip)
 		} else {
 			template.DNSNames = append(template.DNSNames, h)
+			template.Subject.CommonName = h
 		}
 	}
 	var csprng CounterEncryptorRand
@@ -73,7 +75,7 @@ func signHost(ca tls.Certificate, hosts []string) (cert tls.Certificate, err err
 		return
 	}
 	var certpriv *rsa.PrivateKey
-	if certpriv, err = rsa.GenerateKey(&csprng, 1024); err != nil {
+	if certpriv, err = rsa.GenerateKey(&csprng, 2048); err != nil {
 		return
 	}
 	var derBytes []byte

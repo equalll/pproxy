@@ -5,6 +5,7 @@
 // +build amd64,darwin
 
 package unix
+import "github.com/equalll/mydebug"
 
 import (
 	"syscall"
@@ -17,13 +18,13 @@ func Getpagesize() int { return 4096 }
 
 func TimespecToNsec(ts Timespec) int64 { return int64(ts.Sec)*1e9 + int64(ts.Nsec) }
 
-func NsecToTimespec(nsec int64) (ts Timespec) {
+func NsecToTimespec(nsec int64) (ts Timespec) {mydebug.INFO()
 	ts.Sec = nsec / 1e9
 	ts.Nsec = nsec % 1e9
 	return
 }
 
-func NsecToTimeval(nsec int64) (tv Timeval) {
+func NsecToTimeval(nsec int64) (tv Timeval) {mydebug.INFO()
 	nsec += 999 // round up to microsecond
 	tv.Usec = int32(nsec % 1e9 / 1e3)
 	tv.Sec = int64(nsec / 1e9)
@@ -31,7 +32,7 @@ func NsecToTimeval(nsec int64) (tv Timeval) {
 }
 
 //sysnb	gettimeofday(tp *Timeval) (sec int64, usec int32, err error)
-func Gettimeofday(tv *Timeval) (err error) {
+func Gettimeofday(tv *Timeval) (err error) {mydebug.INFO()
 	// The tv passed to gettimeofday must be non-nil
 	// but is otherwise unused.  The answers come back
 	// in the two registers.
@@ -41,25 +42,25 @@ func Gettimeofday(tv *Timeval) (err error) {
 	return err
 }
 
-func SetKevent(k *Kevent_t, fd, mode, flags int) {
+func SetKevent(k *Kevent_t, fd, mode, flags int) {mydebug.INFO()
 	k.Ident = uint64(fd)
 	k.Filter = int16(mode)
 	k.Flags = uint16(flags)
 }
 
-func (iov *Iovec) SetLen(length int) {
+func (iov *Iovec) SetLen(length int) {mydebug.INFO()
 	iov.Len = uint64(length)
 }
 
-func (msghdr *Msghdr) SetControllen(length int) {
+func (msghdr *Msghdr) SetControllen(length int) {mydebug.INFO()
 	msghdr.Controllen = uint32(length)
 }
 
-func (cmsg *Cmsghdr) SetLen(length int) {
+func (cmsg *Cmsghdr) SetLen(length int) {mydebug.INFO()
 	cmsg.Len = uint32(length)
 }
 
-func sendfile(outfd int, infd int, offset *int64, count int) (written int, err error) {
+func sendfile(outfd int, infd int, offset *int64, count int) (written int, err error) {mydebug.INFO()
 	var length = uint64(count)
 
 	_, _, e1 := Syscall6(SYS_SENDFILE, uintptr(infd), uintptr(outfd), uintptr(*offset), uintptr(unsafe.Pointer(&length)), 0, 0)

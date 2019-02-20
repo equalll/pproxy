@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 import (
 	"fmt"
@@ -7,7 +8,7 @@ import (
 	"github.com/robertkrimen/otto/token"
 )
 
-func (self *_runtime) cmpl_evaluate_nodeStatement(node _nodeStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeStatement(node _nodeStatement) Value {mydebug.INFO()
 	// Allow interpreter interruption
 	// If the Interrupt channel is nil, then
 	// we avoid runtime.Gosched() overhead (if any)
@@ -115,7 +116,7 @@ func (self *_runtime) cmpl_evaluate_nodeStatement(node _nodeStatement) Value {
 	panic(fmt.Errorf("Here be dragons: evaluate_nodeStatement(%T)", node))
 }
 
-func (self *_runtime) cmpl_evaluate_nodeStatementList(list []_nodeStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeStatementList(list []_nodeStatement) Value {mydebug.INFO()
 	var result Value
 	for _, node := range list {
 		value := self.cmpl_evaluate_nodeStatement(node)
@@ -135,7 +136,7 @@ func (self *_runtime) cmpl_evaluate_nodeStatementList(list []_nodeStatement) Val
 	return result
 }
 
-func (self *_runtime) cmpl_evaluate_nodeDoWhileStatement(node *_nodeDoWhileStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeDoWhileStatement(node *_nodeDoWhileStatement) Value {mydebug.INFO()
 
 	labels := append(self.labels, "")
 	self.labels = nil
@@ -171,7 +172,7 @@ resultBreak:
 	return result
 }
 
-func (self *_runtime) cmpl_evaluate_nodeForInStatement(node *_nodeForInStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeForInStatement(node *_nodeForInStatement) Value {mydebug.INFO()
 
 	labels := append(self.labels, "")
 	self.labels = nil
@@ -234,7 +235,7 @@ func (self *_runtime) cmpl_evaluate_nodeForInStatement(node *_nodeForInStatement
 	return result
 }
 
-func (self *_runtime) cmpl_evaluate_nodeForStatement(node *_nodeForStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeForStatement(node *_nodeForStatement) Value {mydebug.INFO()
 
 	labels := append(self.labels, "")
 	self.labels = nil
@@ -285,7 +286,7 @@ resultBreak:
 	return result
 }
 
-func (self *_runtime) cmpl_evaluate_nodeIfStatement(node *_nodeIfStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeIfStatement(node *_nodeIfStatement) Value {mydebug.INFO()
 	test := self.cmpl_evaluate_nodeExpression(node.test)
 	testValue := test.resolve()
 	if testValue.bool() {
@@ -297,7 +298,7 @@ func (self *_runtime) cmpl_evaluate_nodeIfStatement(node *_nodeIfStatement) Valu
 	return emptyValue
 }
 
-func (self *_runtime) cmpl_evaluate_nodeSwitchStatement(node *_nodeSwitchStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeSwitchStatement(node *_nodeSwitchStatement) Value {mydebug.INFO()
 
 	labels := append(self.labels, "")
 	self.labels = nil
@@ -339,7 +340,7 @@ func (self *_runtime) cmpl_evaluate_nodeSwitchStatement(node *_nodeSwitchStateme
 	return result
 }
 
-func (self *_runtime) cmpl_evaluate_nodeTryStatement(node *_nodeTryStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeTryStatement(node *_nodeTryStatement) Value {mydebug.INFO()
 	tryCatchValue, exception := self.tryCatchEvaluate(func() Value {
 		return self.cmpl_evaluate_nodeStatement(node.body)
 	})
@@ -376,7 +377,7 @@ func (self *_runtime) cmpl_evaluate_nodeTryStatement(node *_nodeTryStatement) Va
 	return tryCatchValue
 }
 
-func (self *_runtime) cmpl_evaluate_nodeWhileStatement(node *_nodeWhileStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeWhileStatement(node *_nodeWhileStatement) Value {mydebug.INFO()
 
 	test := node.test
 	body := node.body
@@ -411,7 +412,7 @@ resultBreakContinue:
 	return result
 }
 
-func (self *_runtime) cmpl_evaluate_nodeWithStatement(node *_nodeWithStatement) Value {
+func (self *_runtime) cmpl_evaluate_nodeWithStatement(node *_nodeWithStatement) Value {mydebug.INFO()
 	object := self.cmpl_evaluate_nodeExpression(node.object)
 	outer := self.scope.lexical
 	lexical := self.newObjectStash(self.toObject(object.resolve()), outer)

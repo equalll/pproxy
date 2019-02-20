@@ -1,4 +1,5 @@
 package auth
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -12,24 +13,27 @@ import (
 
 var unauthorizedMsg = []byte("407 Proxy Authentication Required")
 
-func BasicUnauthorized(req *http.Request, realm string) *http.Response {
+func BasicUnauthorized(req *http.Request, realm string) *http.Response {mydebug.INFO()
 	// TODO(elazar): verify realm is well formed
 	return &http.Response{
-		StatusCode:    407,
-		ProtoMajor:    1,
-		ProtoMinor:    1,
-		Request:       req,
-		Header:        http.Header{"Proxy-Authenticate": []string{"Basic realm=" + realm}},
+		StatusCode: 407,
+		ProtoMajor: 1,
+		ProtoMinor: 1,
+		Request:    req,
+		Header: http.Header{
+			"Proxy-Authenticate": []string{"Basic realm=" + realm},
+			"Proxy-Connection":   []string{"close"},
+		},
 		Body:          ioutil.NopCloser(bytes.NewBuffer(unauthorizedMsg)),
 		ContentLength: int64(len(unauthorizedMsg)),
 	}
 }
 
-var proxyAuthorizatonHeader = "Proxy-Authorization"
+var proxyAuthorizationHeader = "Proxy-Authorization"
 
-func auth(req *http.Request, f func(user, passwd string) bool) bool {
-	authheader := strings.SplitN(req.Header.Get(proxyAuthorizatonHeader), " ", 2)
-	req.Header.Del(proxyAuthorizatonHeader)
+func auth(req *http.Request, f func(user, passwd string) bool) bool {mydebug.INFO()
+	authheader := strings.SplitN(req.Header.Get(proxyAuthorizationHeader), " ", 2)
+	req.Header.Del(proxyAuthorizationHeader)
 	if len(authheader) != 2 || authheader[0] != "Basic" {
 		return false
 	}
@@ -47,7 +51,7 @@ func auth(req *http.Request, f func(user, passwd string) bool) bool {
 // Basic returns a basic HTTP authentication handler for requests
 //
 // You probably want to use auth.ProxyBasic(proxy) to enable authentication for all proxy activities
-func Basic(realm string, f func(user, passwd string) bool) goproxy.ReqHandler {
+func Basic(realm string, f func(user, passwd string) bool) goproxy.ReqHandler {mydebug.INFO()
 	return goproxy.FuncReqHandler(func(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Request, *http.Response) {
 		if !auth(req, f) {
 			return nil, BasicUnauthorized(req, realm)
@@ -59,7 +63,7 @@ func Basic(realm string, f func(user, passwd string) bool) goproxy.ReqHandler {
 // BasicConnect returns a basic HTTP authentication handler for CONNECT requests
 //
 // You probably want to use auth.ProxyBasic(proxy) to enable authentication for all proxy activities
-func BasicConnect(realm string, f func(user, passwd string) bool) goproxy.HttpsHandler {
+func BasicConnect(realm string, f func(user, passwd string) bool) goproxy.HttpsHandler {mydebug.INFO()
 	return goproxy.FuncHttpsHandler(func(host string, ctx *goproxy.ProxyCtx) (*goproxy.ConnectAction, string) {
 		if !auth(ctx.Req, f) {
 			ctx.Resp = BasicUnauthorized(ctx.Req, realm)
@@ -70,7 +74,7 @@ func BasicConnect(realm string, f func(user, passwd string) bool) goproxy.HttpsH
 }
 
 // ProxyBasic will force HTTP authentication before any request to the proxy is processed
-func ProxyBasic(proxy *goproxy.ProxyHttpServer, realm string, f func(user, passwd string) bool) {
+func ProxyBasic(proxy *goproxy.ProxyHttpServer, realm string, f func(user, passwd string) bool) {mydebug.INFO()
 	proxy.OnRequest().Do(Basic(realm, f))
 	proxy.OnRequest().HandleConnect(BasicConnect(realm, f))
 }

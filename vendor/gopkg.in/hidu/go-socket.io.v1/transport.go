@@ -1,4 +1,5 @@
 package socketio
+import "github.com/equalll/mydebug"
 
 import (
 	"io"
@@ -19,19 +20,19 @@ type TransportManager struct {
 	transports map[string]bool
 }
 
-func NewTransportManager() *TransportManager {
+func NewTransportManager() *TransportManager {mydebug.INFO()
 	return &TransportManager{
 		transports: make(map[string]bool),
 	}
 }
 
-func (tm *TransportManager) RegisterTransport(name string) {
+func (tm *TransportManager) RegisterTransport(name string) {mydebug.INFO()
 	tm.mutex.Lock()
 	defer tm.mutex.Unlock()
 	tm.transports[name] = true
 }
 
-func (tm *TransportManager) GetTransportNames() (names []string) {
+func (tm *TransportManager) GetTransportNames() (names []string) {mydebug.INFO()
 	tm.mutex.RLock()
 	defer tm.mutex.RUnlock()
 	names = make([]string, 0, len(tm.transports))

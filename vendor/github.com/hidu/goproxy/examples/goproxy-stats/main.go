@@ -1,6 +1,8 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
+	"fmt"
 	"github.com/elazarl/goproxy"
 	"github.com/elazarl/goproxy/ext/html"
 	"io"
@@ -20,24 +22,23 @@ type CountReadCloser struct {
 	nr int64
 }
 
-func (c *CountReadCloser) Read(b []byte) (n int, err error) {
+func (c *CountReadCloser) Read(b []byte) (n int, err error) {mydebug.INFO()
 	n, err = c.R.Read(b)
 	c.nr += int64(n)
 	return
 }
-func (c CountReadCloser) Close() error {
+func (c CountReadCloser) Close() error {mydebug.INFO()
 	c.ch <- Count{c.Id, c.nr}
 	return c.R.Close()
 }
 
-func main() {
+func main() {mydebug.INFO()
 	proxy := goproxy.NewProxyHttpServer()
-	//proxy.Verbose = true
 	timer := make(chan bool)
 	ch := make(chan Count, 10)
 	go func() {
 		for {
-			time.Sleep(time.Minute * 2)
+			time.Sleep(20 * time.Second)
 			timer <- true
 		}
 	}()
@@ -48,16 +49,19 @@ func main() {
 			case c := <-ch:
 				m[c.Id] = m[c.Id] + c.Count
 			case <-timer:
-				println("statistics")
+				fmt.Printf("statistics\n")
 				for k, v := range m {
-					println(k, "->", v)
+					fmt.Printf("%s -> %d\n", k, v)
 				}
 			}
 		}
 	}()
+
+	// IsWebRelatedText filters on html/javascript/css resources
 	proxy.OnResponse(goproxy_html.IsWebRelatedText).DoFunc(func(resp *Response, ctx *goproxy.ProxyCtx) *Response {
 		resp.Body = &CountReadCloser{ctx.Req.URL.String(), resp.Body, ch, 0}
 		return resp
 	})
+	fmt.Printf("listening on :8080\n")
 	log.Fatal(ListenAndServe(":8080", proxy))
 }

@@ -1,4 +1,5 @@
 package goproxy_html_test
+import "github.com/equalll/mydebug"
 
 import (
 	"github.com/elazarl/goproxy"
@@ -12,13 +13,13 @@ import (
 
 type ConstantServer int
 
-func (s ConstantServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s ConstantServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {mydebug.INFO()
 	w.Header().Set("Content-Type", "text/plain; charset=iso-8859-8")
 	//w.Header().Set("Content-Type","text/plain; charset=cp-1255")
 	w.Write([]byte{0xe3, 0xf3})
 }
 
-func TestCharset(t *testing.T) {
+func TestCharset(t *testing.T) {mydebug.INFO()
 	s := httptest.NewServer(ConstantServer(1))
 	defer s.Close()
 

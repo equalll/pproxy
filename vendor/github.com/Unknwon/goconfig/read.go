@@ -13,6 +13,7 @@
 // under the License.
 
 package goconfig
+import "github.com/equalll/mydebug"
 
 import (
 	"bufio"
@@ -28,7 +29,7 @@ import (
 
 // Read reads an io.Reader and returns a configuration representation.
 // This representation can be queried with GetValue.
-func (c *ConfigFile) read(reader io.Reader) (err error) {
+func (c *ConfigFile) read(reader io.Reader) (err error) {mydebug.INFO()
 	buf := bufio.NewReader(reader)
 
 	// Handle BOM-UTF8.
@@ -176,7 +177,7 @@ func (c *ConfigFile) read(reader io.Reader) (err error) {
 
 // LoadFromData accepts raw data directly from memory
 // and returns a new configuration representation.
-func LoadFromData(data []byte) (c *ConfigFile, err error) {
+func LoadFromData(data []byte) (c *ConfigFile, err error) {mydebug.INFO()
 	// Save memory data to temporary file to support further operations.
 	tmpName := path.Join(os.TempDir(), "goconfig", fmt.Sprintf("%d", time.Now().Nanosecond()))
 	os.MkdirAll(path.Dir(tmpName), os.ModePerm)
@@ -189,7 +190,7 @@ func LoadFromData(data []byte) (c *ConfigFile, err error) {
 	return c, err
 }
 
-func (c *ConfigFile) loadFile(fileName string) (err error) {
+func (c *ConfigFile) loadFile(fileName string) (err error) {mydebug.INFO()
 	f, err := os.Open(fileName)
 	if err != nil {
 		return err
@@ -201,7 +202,7 @@ func (c *ConfigFile) loadFile(fileName string) (err error) {
 
 // LoadConfigFile reads a file and returns a new configuration representation.
 // This representation can be queried with GetValue.
-func LoadConfigFile(fileName string, moreFiles ...string) (c *ConfigFile, err error) {
+func LoadConfigFile(fileName string, moreFiles ...string) (c *ConfigFile, err error) {mydebug.INFO()
 	// Append files' name together.
 	fileNames := make([]string, 1, len(moreFiles)+1)
 	fileNames[0] = fileName
@@ -221,7 +222,7 @@ func LoadConfigFile(fileName string, moreFiles ...string) (c *ConfigFile, err er
 }
 
 // Reload reloads configuration file in case it has changes.
-func (c *ConfigFile) Reload() (err error) {
+func (c *ConfigFile) Reload() (err error) {mydebug.INFO()
 	var cfg *ConfigFile
 	if len(c.fileNames) == 1 {
 		cfg, err = LoadConfigFile(c.fileNames[0])
@@ -236,7 +237,7 @@ func (c *ConfigFile) Reload() (err error) {
 }
 
 // AppendFiles appends more files to ConfigFile and reload automatically.
-func (c *ConfigFile) AppendFiles(files ...string) error {
+func (c *ConfigFile) AppendFiles(files ...string) error {mydebug.INFO()
 	c.fileNames = append(c.fileNames, files...)
 	return c.Reload()
 }
@@ -248,7 +249,7 @@ type readError struct {
 }
 
 // Error implement Error interface.
-func (err readError) Error() string {
+func (err readError) Error() string {mydebug.INFO()
 	switch err.Reason {
 	case ERR_BLANK_SECTION_NAME:
 		return "empty section name not allowed"

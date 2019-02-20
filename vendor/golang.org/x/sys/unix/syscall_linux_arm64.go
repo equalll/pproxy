@@ -5,6 +5,7 @@
 // +build arm64,linux
 
 package unix
+import "github.com/equalll/mydebug"
 
 //sys	EpollWait(epfd int, events []EpollEvent, msec int) (n int, err error) = SYS_EPOLL_PWAIT
 //sys	Fchown(fd int, uid int, gid int) (err error)
@@ -33,15 +34,15 @@ package unix
 //sys	Shutdown(fd int, how int) (err error)
 //sys	Splice(rfd int, roff *int64, wfd int, woff *int64, len int, flags int) (n int64, err error)
 
-func Stat(path string, stat *Stat_t) (err error) {
+func Stat(path string, stat *Stat_t) (err error) {mydebug.INFO()
 	return Fstatat(AT_FDCWD, path, stat, 0)
 }
 
-func Lchown(path string, uid int, gid int) (err error) {
+func Lchown(path string, uid int, gid int) (err error) {mydebug.INFO()
 	return Fchownat(AT_FDCWD, path, uid, gid, AT_SYMLINK_NOFOLLOW)
 }
 
-func Lstat(path string, stat *Stat_t) (err error) {
+func Lstat(path string, stat *Stat_t) (err error) {mydebug.INFO()
 	return Fstatat(AT_FDCWD, path, stat, AT_SYMLINK_NOFOLLOW)
 }
 
@@ -72,20 +73,20 @@ func Getpagesize() int { return 65536 }
 
 func TimespecToNsec(ts Timespec) int64 { return int64(ts.Sec)*1e9 + int64(ts.Nsec) }
 
-func NsecToTimespec(nsec int64) (ts Timespec) {
+func NsecToTimespec(nsec int64) (ts Timespec) {mydebug.INFO()
 	ts.Sec = nsec / 1e9
 	ts.Nsec = nsec % 1e9
 	return
 }
 
-func NsecToTimeval(nsec int64) (tv Timeval) {
+func NsecToTimeval(nsec int64) (tv Timeval) {mydebug.INFO()
 	nsec += 999 // round up to microsecond
 	tv.Sec = nsec / 1e9
 	tv.Usec = nsec % 1e9 / 1e3
 	return
 }
 
-func Time(t *Time_t) (Time_t, error) {
+func Time(t *Time_t) (Time_t, error) {mydebug.INFO()
 	var tv Timeval
 	err := Gettimeofday(&tv)
 	if err != nil {
@@ -97,7 +98,7 @@ func Time(t *Time_t) (Time_t, error) {
 	return Time_t(tv.Sec), nil
 }
 
-func Utime(path string, buf *Utimbuf) error {
+func Utime(path string, buf *Utimbuf) error {mydebug.INFO()
 	tv := []Timeval{
 		{Sec: buf.Actime},
 		{Sec: buf.Modtime},
@@ -105,7 +106,7 @@ func Utime(path string, buf *Utimbuf) error {
 	return Utimes(path, tv)
 }
 
-func Pipe(p []int) (err error) {
+func Pipe(p []int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -118,7 +119,7 @@ func Pipe(p []int) (err error) {
 
 //sysnb pipe2(p *[2]_C_int, flags int) (err error)
 
-func Pipe2(p []int, flags int) (err error) {
+func Pipe2(p []int, flags int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -133,27 +134,27 @@ func (r *PtraceRegs) PC() uint64 { return r.Pc }
 
 func (r *PtraceRegs) SetPC(pc uint64) { r.Pc = pc }
 
-func (iov *Iovec) SetLen(length int) {
+func (iov *Iovec) SetLen(length int) {mydebug.INFO()
 	iov.Len = uint64(length)
 }
 
-func (msghdr *Msghdr) SetControllen(length int) {
+func (msghdr *Msghdr) SetControllen(length int) {mydebug.INFO()
 	msghdr.Controllen = uint64(length)
 }
 
-func (cmsg *Cmsghdr) SetLen(length int) {
+func (cmsg *Cmsghdr) SetLen(length int) {mydebug.INFO()
 	cmsg.Len = uint64(length)
 }
 
-func InotifyInit() (fd int, err error) {
+func InotifyInit() (fd int, err error) {mydebug.INFO()
 	return InotifyInit1(0)
 }
 
-func Dup2(oldfd int, newfd int) (err error) {
+func Dup2(oldfd int, newfd int) (err error) {mydebug.INFO()
 	return Dup3(oldfd, newfd, 0)
 }
 
-func Pause() (err error) {
+func Pause() (err error) {mydebug.INFO()
 	_, _, e1 := Syscall6(SYS_PPOLL, 0, 0, 0, 0, 0, 0)
 	if e1 != 0 {
 		err = errnoErr(e1)
@@ -177,7 +178,7 @@ const (
 	SYS_EPOLL_WAIT   = 1069
 )
 
-func Poll(fds []PollFd, timeout int) (n int, err error) {
+func Poll(fds []PollFd, timeout int) (n int, err error) {mydebug.INFO()
 	var ts *Timespec
 	if timeout >= 0 {
 		ts = new(Timespec)

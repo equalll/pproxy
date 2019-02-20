@@ -1,4 +1,5 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"github.com/elazarl/goproxy"
@@ -7,7 +8,7 @@ import (
 	"net/http"
 )
 
-func main() {
+func main() {mydebug.INFO()
 	verbose := flag.Bool("v", false, "should every proxy request be logged to stdout")
 	addr := flag.String("addr", ":8080", "proxy listen address")
 	flag.Parse()

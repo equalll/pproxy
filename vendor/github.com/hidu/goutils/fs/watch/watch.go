@@ -1,4 +1,5 @@
 package watch
+import "github.com/equalll/mydebug"
 
 /**
 *@see https://github.com/gophertown/looper/blob/master/watch.go
@@ -12,12 +13,12 @@ import (
 	"path/filepath"
 )
 
-func debugMessage(format string, a ...interface{}) {
+func debugMessage(format string, a ...interface{}) {mydebug.INFO()
 	msg := fmt.Sprintf(format, a...)
 	fmt.Println(msg)
 }
 
-func debugError(msg error) {
+func debugError(msg error) {mydebug.INFO()
 	fmt.Println(msg.Error())
 }
 
@@ -31,7 +32,7 @@ type RecursiveWatcher struct {
 	Filter      func(path string) bool
 }
 
-func NewRecurisveWatcher(path string) (*RecursiveWatcher, error) {
+func NewRecurisveWatcher(path string) (*RecursiveWatcher, error) {mydebug.INFO()
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
@@ -47,11 +48,11 @@ func NewRecurisveWatcher(path string) (*RecursiveWatcher, error) {
 
 	return rw, nil
 }
-func (rw *RecursiveWatcher) Close() error {
+func (rw *RecursiveWatcher) Close() error {mydebug.INFO()
 	return rw.Watcher.Close()
 }
 
-func (rw *RecursiveWatcher) watchFolder(folder string) {
+func (rw *RecursiveWatcher) watchFolder(folder string) {mydebug.INFO()
 	err := rw.Watcher.WatchFlags(folder, rw.Flags)
 	if err != nil {
 		log.Println("Error watching: ", folder, err)
@@ -59,7 +60,7 @@ func (rw *RecursiveWatcher) watchFolder(folder string) {
 	fmt.Println("watch:", folder, rw.Flags)
 }
 
-func (rw *RecursiveWatcher) AddFolder(path string) {
+func (rw *RecursiveWatcher) AddFolder(path string) {mydebug.INFO()
 	folders := rw.walkSubfolders(path)
 	if len(folders) == 0 {
 		errors.New("No folders to watch.")
@@ -70,7 +71,7 @@ func (rw *RecursiveWatcher) AddFolder(path string) {
 	}
 }
 
-func (rw *RecursiveWatcher) Run(debug bool) {
+func (rw *RecursiveWatcher) Run(debug bool) {mydebug.INFO()
 	rw.AddFolder(rw.path)
 	//        go func() {
 	for {
@@ -108,7 +109,7 @@ func (rw *RecursiveWatcher) Run(debug bool) {
 }
 
 // returns a slice of subfolders (recursive), including the folder passed in
-func (rw *RecursiveWatcher) walkSubfolders(path string) (paths []string) {
+func (rw *RecursiveWatcher) walkSubfolders(path string) (paths []string) {mydebug.INFO()
 	filepath.Walk(path, func(newPath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err

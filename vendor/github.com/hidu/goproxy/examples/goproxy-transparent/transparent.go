@@ -1,4 +1,5 @@
 package main
+import "github.com/equalll/mydebug"
 
 import (
 	"bufio"
@@ -15,13 +16,13 @@ import (
 	"github.com/inconshreveable/go-vhost"
 )
 
-func orPanic(err error) {
+func orPanic(err error) {mydebug.INFO()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func main() {
+func main() {mydebug.INFO()
 	verbose := flag.Bool("v", true, "should every proxy request be logged to stdout")
 	http_addr := flag.String("httpaddr", ":3129", "proxy http listen address")
 	https_addr := flag.String("httpsaddr", ":3128", "proxy https listen address")
@@ -109,7 +110,7 @@ func main() {
 }
 
 // copied/converted from https.go
-func dial(proxy *goproxy.ProxyHttpServer, network, addr string) (c net.Conn, err error) {
+func dial(proxy *goproxy.ProxyHttpServer, network, addr string) (c net.Conn, err error) {mydebug.INFO()
 	if proxy.Tr.Dial != nil {
 		return proxy.Tr.Dial(network, addr)
 	}
@@ -117,7 +118,7 @@ func dial(proxy *goproxy.ProxyHttpServer, network, addr string) (c net.Conn, err
 }
 
 // copied/converted from https.go
-func connectDial(proxy *goproxy.ProxyHttpServer, network, addr string) (c net.Conn, err error) {
+func connectDial(proxy *goproxy.ProxyHttpServer, network, addr string) (c net.Conn, err error) {mydebug.INFO()
 	if proxy.ConnectDial == nil {
 		return dial(proxy, network, addr)
 	}
@@ -128,21 +129,21 @@ type dumbResponseWriter struct {
 	net.Conn
 }
 
-func (dumb dumbResponseWriter) Header() http.Header {
+func (dumb dumbResponseWriter) Header() http.Header {mydebug.INFO()
 	panic("Header() should not be called on this ResponseWriter")
 }
 
-func (dumb dumbResponseWriter) Write(buf []byte) (int, error) {
+func (dumb dumbResponseWriter) Write(buf []byte) (int, error) {mydebug.INFO()
 	if bytes.Equal(buf, []byte("HTTP/1.0 200 OK\r\n\r\n")) {
 		return len(buf), nil // throw away the HTTP OK response from the faux CONNECT request
 	}
 	return dumb.Conn.Write(buf)
 }
 
-func (dumb dumbResponseWriter) WriteHeader(code int) {
+func (dumb dumbResponseWriter) WriteHeader(code int) {mydebug.INFO()
 	panic("WriteHeader() should not be called on this ResponseWriter")
 }
 
-func (dumb dumbResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+func (dumb dumbResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {mydebug.INFO()
 	return dumb, bufio.NewReadWriter(bufio.NewReader(dumb), bufio.NewWriter(dumb)), nil
 }

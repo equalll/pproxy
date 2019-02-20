@@ -1,4 +1,5 @@
 package otto
+import "github.com/equalll/mydebug"
 
 type _reference interface {
 	invalid() bool         // IsUnresolvableReference
@@ -17,7 +18,7 @@ type _propertyReference struct {
 	at      _at
 }
 
-func newPropertyReference(rt *_runtime, base *_object, name string, strict bool, at _at) *_propertyReference {
+func newPropertyReference(rt *_runtime, base *_object, name string, strict bool, at _at) *_propertyReference {mydebug.INFO()
 	return &_propertyReference{
 		runtime: rt,
 		name:    name,
@@ -27,18 +28,18 @@ func newPropertyReference(rt *_runtime, base *_object, name string, strict bool,
 	}
 }
 
-func (self *_propertyReference) invalid() bool {
+func (self *_propertyReference) invalid() bool {mydebug.INFO()
 	return self.base == nil
 }
 
-func (self *_propertyReference) getValue() Value {
+func (self *_propertyReference) getValue() Value {mydebug.INFO()
 	if self.base == nil {
 		panic(self.runtime.panicReferenceError("'%s' is not defined", self.name, self.at))
 	}
 	return self.base.get(self.name)
 }
 
-func (self *_propertyReference) putValue(value Value) string {
+func (self *_propertyReference) putValue(value Value) string {mydebug.INFO()
 	if self.base == nil {
 		return self.name
 	}
@@ -46,7 +47,7 @@ func (self *_propertyReference) putValue(value Value) string {
 	return ""
 }
 
-func (self *_propertyReference) delete() bool {
+func (self *_propertyReference) delete() bool {mydebug.INFO()
 	if self.base == nil {
 		// TODO Throw an error if strict
 		return true
@@ -56,7 +57,7 @@ func (self *_propertyReference) delete() bool {
 
 // ArgumentReference
 
-func newArgumentReference(runtime *_runtime, base *_object, name string, strict bool, at _at) *_propertyReference {
+func newArgumentReference(runtime *_runtime, base *_object, name string, strict bool, at _at) *_propertyReference {mydebug.INFO()
 	if base == nil {
 		panic(hereBeDragons())
 	}
@@ -69,20 +70,20 @@ type _stashReference struct {
 	base   _stash
 }
 
-func (self *_stashReference) invalid() bool {
+func (self *_stashReference) invalid() bool {mydebug.INFO()
 	return false // The base (an environment) will never be nil
 }
 
-func (self *_stashReference) getValue() Value {
+func (self *_stashReference) getValue() Value {mydebug.INFO()
 	return self.base.getBinding(self.name, self.strict)
 }
 
-func (self *_stashReference) putValue(value Value) string {
+func (self *_stashReference) putValue(value Value) string {mydebug.INFO()
 	self.base.setValue(self.name, value, self.strict)
 	return ""
 }
 
-func (self *_stashReference) delete() bool {
+func (self *_stashReference) delete() bool {mydebug.INFO()
 	if self.base == nil {
 		// This should never be reached, but just in case
 		return false
@@ -92,7 +93,7 @@ func (self *_stashReference) delete() bool {
 
 // getIdentifierReference
 
-func getIdentifierReference(runtime *_runtime, stash _stash, name string, strict bool, at _at) _reference {
+func getIdentifierReference(runtime *_runtime, stash _stash, name string, strict bool, at _at) _reference {mydebug.INFO()
 	if stash == nil {
 		return newPropertyReference(runtime, nil, name, strict, at)
 	}

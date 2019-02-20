@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 
 package websocket_test
+import "github.com/equalll/mydebug"
 
 import (
 	"io"
@@ -12,12 +13,12 @@ import (
 )
 
 // Echo the data received on the WebSocket.
-func EchoServer(ws *websocket.Conn) {
+func EchoServer(ws *websocket.Conn) {mydebug.INFO()
 	io.Copy(ws, ws)
 }
 
 // This example demonstrates a trivial echo server.
-func ExampleHandler() {
+func ExampleHandler() {mydebug.INFO()
 	http.Handle("/echo", websocket.Handler(EchoServer))
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {

@@ -1,4 +1,5 @@
 package bolt
+import "github.com/equalll/mydebug"
 
 import (
 	"bytes"
@@ -21,14 +22,14 @@ type Cursor struct {
 }
 
 // Bucket returns the bucket that this cursor was created from.
-func (c *Cursor) Bucket() *Bucket {
+func (c *Cursor) Bucket() *Bucket {mydebug.INFO()
 	return c.bucket
 }
 
 // First moves the cursor to the first item in the bucket and returns its key and value.
 // If the bucket is empty then a nil key and value are returned.
 // The returned key and value are only valid for the life of the transaction.
-func (c *Cursor) First() (key []byte, value []byte) {
+func (c *Cursor) First() (key []byte, value []byte) {mydebug.INFO()
 	_assert(c.bucket.tx.db != nil, "tx closed")
 	c.stack = c.stack[:0]
 	p, n := c.bucket.pageNode(c.bucket.root)
@@ -52,7 +53,7 @@ func (c *Cursor) First() (key []byte, value []byte) {
 // Last moves the cursor to the last item in the bucket and returns its key and value.
 // If the bucket is empty then a nil key and value are returned.
 // The returned key and value are only valid for the life of the transaction.
-func (c *Cursor) Last() (key []byte, value []byte) {
+func (c *Cursor) Last() (key []byte, value []byte) {mydebug.INFO()
 	_assert(c.bucket.tx.db != nil, "tx closed")
 	c.stack = c.stack[:0]
 	p, n := c.bucket.pageNode(c.bucket.root)
@@ -70,7 +71,7 @@ func (c *Cursor) Last() (key []byte, value []byte) {
 // Next moves the cursor to the next item in the bucket and returns its key and value.
 // If the cursor is at the end of the bucket then a nil key and value are returned.
 // The returned key and value are only valid for the life of the transaction.
-func (c *Cursor) Next() (key []byte, value []byte) {
+func (c *Cursor) Next() (key []byte, value []byte) {mydebug.INFO()
 	_assert(c.bucket.tx.db != nil, "tx closed")
 	k, v, flags := c.next()
 	if (flags & uint32(bucketLeafFlag)) != 0 {
@@ -82,7 +83,7 @@ func (c *Cursor) Next() (key []byte, value []byte) {
 // Prev moves the cursor to the previous item in the bucket and returns its key and value.
 // If the cursor is at the beginning of the bucket then a nil key and value are returned.
 // The returned key and value are only valid for the life of the transaction.
-func (c *Cursor) Prev() (key []byte, value []byte) {
+func (c *Cursor) Prev() (key []byte, value []byte) {mydebug.INFO()
 	_assert(c.bucket.tx.db != nil, "tx closed")
 
 	// Attempt to move back one element until we're successful.
@@ -114,7 +115,7 @@ func (c *Cursor) Prev() (key []byte, value []byte) {
 // If the key does not exist then the next key is used. If no keys
 // follow, a nil key is returned.
 // The returned key and value are only valid for the life of the transaction.
-func (c *Cursor) Seek(seek []byte) (key []byte, value []byte) {
+func (c *Cursor) Seek(seek []byte) (key []byte, value []byte) {mydebug.INFO()
 	k, v, flags := c.seek(seek)
 
 	// If we ended up after the last element of a page then move to the next one.
@@ -132,7 +133,7 @@ func (c *Cursor) Seek(seek []byte) (key []byte, value []byte) {
 
 // Delete removes the current key/value under the cursor from the bucket.
 // Delete fails if current key/value is a bucket or if the transaction is not writable.
-func (c *Cursor) Delete() error {
+func (c *Cursor) Delete() error {mydebug.INFO()
 	if c.bucket.tx.db == nil {
 		return ErrTxClosed
 	} else if !c.bucket.Writable() {
@@ -151,7 +152,7 @@ func (c *Cursor) Delete() error {
 
 // seek moves the cursor to a given key and returns it.
 // If the key does not exist then the next key is used.
-func (c *Cursor) seek(seek []byte) (key []byte, value []byte, flags uint32) {
+func (c *Cursor) seek(seek []byte) (key []byte, value []byte, flags uint32) {mydebug.INFO()
 	_assert(c.bucket.tx.db != nil, "tx closed")
 
 	// Start from root page/node and traverse to correct page.
@@ -169,7 +170,7 @@ func (c *Cursor) seek(seek []byte) (key []byte, value []byte, flags uint32) {
 }
 
 // first moves the cursor to the first leaf element under the last page in the stack.
-func (c *Cursor) first() {
+func (c *Cursor) first() {mydebug.INFO()
 	for {
 		// Exit when we hit a leaf page.
 		var ref = &c.stack[len(c.stack)-1]
@@ -190,7 +191,7 @@ func (c *Cursor) first() {
 }
 
 // last moves the cursor to the last leaf element under the last page in the stack.
-func (c *Cursor) last() {
+func (c *Cursor) last() {mydebug.INFO()
 	for {
 		// Exit when we hit a leaf page.
 		ref := &c.stack[len(c.stack)-1]
@@ -215,7 +216,7 @@ func (c *Cursor) last() {
 
 // next moves to the next leaf element and returns the key and value.
 // If the cursor is at the last leaf element then it stays there and returns nil.
-func (c *Cursor) next() (key []byte, value []byte, flags uint32) {
+func (c *Cursor) next() (key []byte, value []byte, flags uint32) {mydebug.INFO()
 	for {
 		// Attempt to move over one element until we're successful.
 		// Move up the stack as we hit the end of each page in our stack.
@@ -250,7 +251,7 @@ func (c *Cursor) next() (key []byte, value []byte, flags uint32) {
 }
 
 // search recursively performs a binary search against a given page/node until it finds a given key.
-func (c *Cursor) search(key []byte, pgid pgid) {
+func (c *Cursor) search(key []byte, pgid pgid) {mydebug.INFO()
 	p, n := c.bucket.pageNode(pgid)
 	if p != nil && (p.flags&(branchPageFlag|leafPageFlag)) == 0 {
 		panic(fmt.Sprintf("invalid page type: %d: %x", p.id, p.flags))
@@ -271,7 +272,7 @@ func (c *Cursor) search(key []byte, pgid pgid) {
 	c.searchPage(key, p)
 }
 
-func (c *Cursor) searchNode(key []byte, n *node) {
+func (c *Cursor) searchNode(key []byte, n *node) {mydebug.INFO()
 	var exact bool
 	index := sort.Search(len(n.inodes), func(i int) bool {
 		// TODO(benbjohnson): Optimize this range search. It's a bit hacky right now.
@@ -291,7 +292,7 @@ func (c *Cursor) searchNode(key []byte, n *node) {
 	c.search(key, n.inodes[index].pgid)
 }
 
-func (c *Cursor) searchPage(key []byte, p *page) {
+func (c *Cursor) searchPage(key []byte, p *page) {mydebug.INFO()
 	// Binary search for the correct range.
 	inodes := p.branchPageElements()
 
@@ -315,7 +316,7 @@ func (c *Cursor) searchPage(key []byte, p *page) {
 }
 
 // nsearch searches the leaf node on the top of the stack for a key.
-func (c *Cursor) nsearch(key []byte) {
+func (c *Cursor) nsearch(key []byte) {mydebug.INFO()
 	e := &c.stack[len(c.stack)-1]
 	p, n := e.page, e.node
 
@@ -337,7 +338,7 @@ func (c *Cursor) nsearch(key []byte) {
 }
 
 // keyValue returns the key and value of the current leaf element.
-func (c *Cursor) keyValue() ([]byte, []byte, uint32) {
+func (c *Cursor) keyValue() ([]byte, []byte, uint32) {mydebug.INFO()
 	ref := &c.stack[len(c.stack)-1]
 	if ref.count() == 0 || ref.index >= ref.count() {
 		return nil, nil, 0
@@ -355,7 +356,7 @@ func (c *Cursor) keyValue() ([]byte, []byte, uint32) {
 }
 
 // node returns the node that the cursor is currently positioned on.
-func (c *Cursor) node() *node {
+func (c *Cursor) node() *node {mydebug.INFO()
 	_assert(len(c.stack) > 0, "accessing a node with a zero-length cursor stack")
 
 	// If the top of the stack is a leaf node then just return it.
@@ -384,7 +385,7 @@ type elemRef struct {
 }
 
 // isLeaf returns whether the ref is pointing at a leaf page/node.
-func (r *elemRef) isLeaf() bool {
+func (r *elemRef) isLeaf() bool {mydebug.INFO()
 	if r.node != nil {
 		return r.node.isLeaf
 	}
@@ -392,7 +393,7 @@ func (r *elemRef) isLeaf() bool {
 }
 
 // count returns the number of inodes or page elements.
-func (r *elemRef) count() int {
+func (r *elemRef) count() int {mydebug.INFO()
 	if r.node != nil {
 		return len(r.node.inodes)
 	}

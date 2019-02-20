@@ -1,15 +1,16 @@
 package regretable_test
+import "github.com/equalll/mydebug"
 
 import (
-	. "github.com/elazarl/goproxy/regretable"
 	"bytes"
+	. "github.com/elazarl/goproxy/regretable"
 	"io"
 	"io/ioutil"
 	"strings"
 	"testing"
 )
 
-func TestRegretableReader(t *testing.T) {
+func TestRegretableReader(t *testing.T) {mydebug.INFO()
 	buf := new(bytes.Buffer)
 	mb := NewRegretableReader(buf)
 	word := "12345678"
@@ -25,7 +26,7 @@ func TestRegretableReader(t *testing.T) {
 	}
 }
 
-func TestRegretableEmptyRead(t *testing.T) {
+func TestRegretableEmptyRead(t *testing.T) {mydebug.INFO()
 	buf := new(bytes.Buffer)
 	mb := NewRegretableReader(buf)
 	word := "12345678"
@@ -41,7 +42,7 @@ func TestRegretableEmptyRead(t *testing.T) {
 	}
 }
 
-func TestRegretableAlsoEmptyRead(t *testing.T) {
+func TestRegretableAlsoEmptyRead(t *testing.T) {mydebug.INFO()
 	buf := new(bytes.Buffer)
 	mb := NewRegretableReader(buf)
 	word := "12345678"
@@ -61,7 +62,7 @@ func TestRegretableAlsoEmptyRead(t *testing.T) {
 	}
 }
 
-func TestRegretableRegretBeforeRead(t *testing.T) {
+func TestRegretableRegretBeforeRead(t *testing.T) {mydebug.INFO()
 	buf := new(bytes.Buffer)
 	mb := NewRegretableReader(buf)
 	word := "12345678"
@@ -77,7 +78,7 @@ func TestRegretableRegretBeforeRead(t *testing.T) {
 	}
 }
 
-func TestRegretableFullRead(t *testing.T) {
+func TestRegretableFullRead(t *testing.T) {mydebug.INFO()
 	buf := new(bytes.Buffer)
 	mb := NewRegretableReader(buf)
 	word := "12345678"
@@ -93,21 +94,21 @@ func TestRegretableFullRead(t *testing.T) {
 	}
 }
 
-func assertEqual(t *testing.T, expected, actual string) {
-	if expected!=actual {
+func assertEqual(t *testing.T, expected, actual string) {mydebug.INFO()
+	if expected != actual {
 		t.Fatal("Expected", expected, "actual", actual)
 	}
 }
 
-func assertReadAll(t *testing.T, r io.Reader) string {
+func assertReadAll(t *testing.T, r io.Reader) string {mydebug.INFO()
 	s, err := ioutil.ReadAll(r)
-	if err!=nil {
+	if err != nil {
 		t.Fatal("error when reading", err)
 	}
 	return string(s)
 }
 
-func TestRegretableRegretTwice(t *testing.T) {
+func TestRegretableRegretTwice(t *testing.T) {mydebug.INFO()
 	buf := new(bytes.Buffer)
 	mb := NewRegretableReader(buf)
 	word := "12345678"
@@ -125,22 +126,22 @@ type CloseCounter struct {
 	closed int
 }
 
-func (cc *CloseCounter) Read(b []byte) (int, error) {
+func (cc *CloseCounter) Read(b []byte) (int, error) {mydebug.INFO()
 	return cc.r.Read(b)
 }
 
-func (cc *CloseCounter) Close() error {
+func (cc *CloseCounter) Close() error {mydebug.INFO()
 	cc.closed++
 	return nil
 }
 
-func assert(t *testing.T, b bool, msg string) {
+func assert(t *testing.T, b bool, msg string) {mydebug.INFO()
 	if !b {
 		t.Errorf("Assertion Error: %s", msg)
 	}
 }
 
-func TestRegretableCloserSizeRegrets(t *testing.T) {
+func TestRegretableCloserSizeRegrets(t *testing.T) {mydebug.INFO()
 	defer func() {
 		if r := recover(); r == nil || !strings.Contains(r.(string), "regret") {
 			t.Error("Did not panic when regretting overread buffer:", r)
@@ -153,7 +154,7 @@ func TestRegretableCloserSizeRegrets(t *testing.T) {
 	mb.Regret()
 }
 
-func TestRegretableCloserRegretsClose(t *testing.T) {
+func TestRegretableCloserRegretsClose(t *testing.T) {mydebug.INFO()
 	buf := new(bytes.Buffer)
 	cc := &CloseCounter{buf, 0}
 	mb := NewRegretableReaderCloser(cc)

@@ -11,6 +11,7 @@
 // syscall_bsd.go or syscall_unix.go.
 
 package unix
+import "github.com/equalll/mydebug"
 
 import "unsafe"
 
@@ -27,7 +28,7 @@ type SockaddrDatalink struct {
 }
 
 // Translate "kern.hostname" to []_C_int{0,1,2,3}.
-func nametomib(name string) (mib []_C_int, err error) {
+func nametomib(name string) (mib []_C_int, err error) {mydebug.INFO()
 	const siz = unsafe.Sizeof(mib[0])
 
 	// NOTE(rsc): It seems strange to set the buffer to have
@@ -58,7 +59,7 @@ func nametomib(name string) (mib []_C_int, err error) {
 // appending the names to names.  It returns the number
 // bytes consumed from buf, the number of entries added
 // to names, and the new names slice.
-func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {
+func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, newnames []string) {mydebug.INFO()
 	origlen := len(buf)
 	for max != 0 && len(buf) > 0 {
 		dirent := (*Dirent)(unsafe.Pointer(&buf[0]))
@@ -84,7 +85,7 @@ func ParseDirent(buf []byte, max int, names []string) (consumed int, count int, 
 
 //sysnb pipe() (r int, w int, err error)
 
-func Pipe(p []int) (err error) {
+func Pipe(p []int) (err error) {mydebug.INFO()
 	if len(p) != 2 {
 		return EINVAL
 	}
@@ -92,18 +93,18 @@ func Pipe(p []int) (err error) {
 	return
 }
 
-func GetsockoptIPMreqn(fd, level, opt int) (*IPMreqn, error) {
+func GetsockoptIPMreqn(fd, level, opt int) (*IPMreqn, error) {mydebug.INFO()
 	var value IPMreqn
 	vallen := _Socklen(SizeofIPMreqn)
 	errno := getsockopt(fd, level, opt, unsafe.Pointer(&value), &vallen)
 	return &value, errno
 }
 
-func SetsockoptIPMreqn(fd, level, opt int, mreq *IPMreqn) (err error) {
+func SetsockoptIPMreqn(fd, level, opt int, mreq *IPMreqn) (err error) {mydebug.INFO()
 	return setsockopt(fd, level, opt, unsafe.Pointer(mreq), unsafe.Sizeof(*mreq))
 }
 
-func Accept4(fd, flags int) (nfd int, sa Sockaddr, err error) {
+func Accept4(fd, flags int) (nfd int, sa Sockaddr, err error) {mydebug.INFO()
 	var rsa RawSockaddrAny
 	var len _Socklen = SizeofSockaddrAny
 	nfd, err = accept4(fd, &rsa, &len, flags)
@@ -121,7 +122,7 @@ func Accept4(fd, flags int) (nfd int, sa Sockaddr, err error) {
 	return
 }
 
-func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
+func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {mydebug.INFO()
 	var _p0 unsafe.Pointer
 	var bufsize uintptr
 	if len(buf) > 0 {
@@ -139,7 +140,7 @@ func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
 
 // Derive extattr namespace and attribute name
 
-func xattrnamespace(fullattr string) (ns int, attr string, err error) {
+func xattrnamespace(fullattr string) (ns int, attr string, err error) {mydebug.INFO()
 	s := -1
 	for idx, val := range fullattr {
 		if val == '.' {
@@ -165,7 +166,7 @@ func xattrnamespace(fullattr string) (ns int, attr string, err error) {
 	}
 }
 
-func initxattrdest(dest []byte, idx int) (d unsafe.Pointer) {
+func initxattrdest(dest []byte, idx int) (d unsafe.Pointer) {mydebug.INFO()
 	if len(dest) > idx {
 		return unsafe.Pointer(&dest[idx])
 	} else {
@@ -175,7 +176,7 @@ func initxattrdest(dest []byte, idx int) (d unsafe.Pointer) {
 
 // FreeBSD implements its own syscalls to handle extended attributes
 
-func Getxattr(file string, attr string, dest []byte) (sz int, err error) {
+func Getxattr(file string, attr string, dest []byte) (sz int, err error) {mydebug.INFO()
 	d := initxattrdest(dest, 0)
 	destsize := len(dest)
 
@@ -187,7 +188,7 @@ func Getxattr(file string, attr string, dest []byte) (sz int, err error) {
 	return ExtattrGetFile(file, nsid, a, uintptr(d), destsize)
 }
 
-func Fgetxattr(fd int, attr string, dest []byte) (sz int, err error) {
+func Fgetxattr(fd int, attr string, dest []byte) (sz int, err error) {mydebug.INFO()
 	d := initxattrdest(dest, 0)
 	destsize := len(dest)
 
@@ -199,7 +200,7 @@ func Fgetxattr(fd int, attr string, dest []byte) (sz int, err error) {
 	return ExtattrGetFd(fd, nsid, a, uintptr(d), destsize)
 }
 
-func Lgetxattr(link string, attr string, dest []byte) (sz int, err error) {
+func Lgetxattr(link string, attr string, dest []byte) (sz int, err error) {mydebug.INFO()
 	d := initxattrdest(dest, 0)
 	destsize := len(dest)
 
@@ -213,7 +214,7 @@ func Lgetxattr(link string, attr string, dest []byte) (sz int, err error) {
 
 // flags are unused on FreeBSD
 
-func Fsetxattr(fd int, attr string, data []byte, flags int) (err error) {
+func Fsetxattr(fd int, attr string, data []byte, flags int) (err error) {mydebug.INFO()
 	d := unsafe.Pointer(&data[0])
 	datasiz := len(data)
 
@@ -226,7 +227,7 @@ func Fsetxattr(fd int, attr string, data []byte, flags int) (err error) {
 	return
 }
 
-func Setxattr(file string, attr string, data []byte, flags int) (err error) {
+func Setxattr(file string, attr string, data []byte, flags int) (err error) {mydebug.INFO()
 	d := unsafe.Pointer(&data[0])
 	datasiz := len(data)
 
@@ -239,7 +240,7 @@ func Setxattr(file string, attr string, data []byte, flags int) (err error) {
 	return
 }
 
-func Lsetxattr(link string, attr string, data []byte, flags int) (err error) {
+func Lsetxattr(link string, attr string, data []byte, flags int) (err error) {mydebug.INFO()
 	d := unsafe.Pointer(&data[0])
 	datasiz := len(data)
 
@@ -252,7 +253,7 @@ func Lsetxattr(link string, attr string, data []byte, flags int) (err error) {
 	return
 }
 
-func Removexattr(file string, attr string) (err error) {
+func Removexattr(file string, attr string) (err error) {mydebug.INFO()
 	nsid, a, err := xattrnamespace(attr)
 	if err != nil {
 		return
@@ -262,7 +263,7 @@ func Removexattr(file string, attr string) (err error) {
 	return
 }
 
-func Fremovexattr(fd int, attr string) (err error) {
+func Fremovexattr(fd int, attr string) (err error) {mydebug.INFO()
 	nsid, a, err := xattrnamespace(attr)
 	if err != nil {
 		return
@@ -272,7 +273,7 @@ func Fremovexattr(fd int, attr string) (err error) {
 	return
 }
 
-func Lremovexattr(link string, attr string) (err error) {
+func Lremovexattr(link string, attr string) (err error) {mydebug.INFO()
 	nsid, a, err := xattrnamespace(attr)
 	if err != nil {
 		return
@@ -282,7 +283,7 @@ func Lremovexattr(link string, attr string) (err error) {
 	return
 }
 
-func Listxattr(file string, dest []byte) (sz int, err error) {
+func Listxattr(file string, dest []byte) (sz int, err error) {mydebug.INFO()
 	d := initxattrdest(dest, 0)
 	destsiz := len(dest)
 
@@ -317,7 +318,7 @@ func Listxattr(file string, dest []byte) (sz int, err error) {
 	return s, e
 }
 
-func Flistxattr(fd int, dest []byte) (sz int, err error) {
+func Flistxattr(fd int, dest []byte) (sz int, err error) {mydebug.INFO()
 	d := initxattrdest(dest, 0)
 	destsiz := len(dest)
 
@@ -343,7 +344,7 @@ func Flistxattr(fd int, dest []byte) (sz int, err error) {
 	return s, e
 }
 
-func Llistxattr(link string, dest []byte) (sz int, err error) {
+func Llistxattr(link string, dest []byte) (sz int, err error) {mydebug.INFO()
 	d := initxattrdest(dest, 0)
 	destsiz := len(dest)
 
