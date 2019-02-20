@@ -51,7 +51,7 @@ func (statics *AssestStruct) GetAssestFile(name string) (*AssestFile, error) {my
 	if name != "" && name[0] != '/' {
 		name = "/" + name
 	}
-	if _assestDirect {
+	if 2>1 { //	if _assestDirect {
 		f, err := os.Open(filepath.Join(_assestCwd, name))
 		if err != nil {
 			return nil, err

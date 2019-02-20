@@ -1,3 +1,4 @@
+
 var socket = io.connect();
 var connectNum=0;
 var pproxy_colors=["#FFFFFF","#CCFFFF","#FFCCCC","#99CCCC","996699","#CC9999","#0099CC","#FFFF66","#336633","#99CC00"]
@@ -8,6 +9,7 @@ var pproxy_table_max_row=2000;
 
 
 var pproxy_req_list=[];
+var flag = true;
 
 if(window.localStorage){
 	pproxy_req_list=$.parseJSON(window.localStorage["reqs"]||"[]")
@@ -36,9 +38,19 @@ function pproxy_save_req_local(dataStr64){
 	}
 }
 
+function pporxy_session_stop(){
+    flag = !flag;
+    if (flag) {
+        $("#btn_stop").text("stop");
+    } else {
+        $("#btn_stop").html("&nbsp;go&nbsp;");
+    }
+
+}
+
 function pporxy_session_clean(){
-	pproxy_req_list=[];
-	$('#tb_network tbody').empty();
+    pproxy_req_list=[];
+    $('#tb_network tbody').empty();
 }
 
 function pproxy_log(msg){
@@ -161,8 +173,10 @@ function pproxy_show_req(data) {
 
 socket.on("req",function(data){
 	console && console.log("on.req","data:",data);
-	pproxy_save_req_local(data);
-	pproxy_show_req(data);
+	// pproxy_save_req_local(data);
+    if(flag){
+        pproxy_show_req(data);
+    }
 });
 
 
